@@ -11,8 +11,19 @@ def setup
   c = 2
   d = 1
 
-  translate(w/2, w/2)
-  stroke(0, 200, 255, 80)
+  translate(w/4, w/2)
+  stroke(30, 150, 160, 80)
+  (1..300000).each do | i |
+    xx = Math.sin(a*y) - Math.cos(a*x)*c
+    yy = Math.sin(b*x) - Math.cos(b*y)*d
+
+    point(-xx * scale, -yy*scale)
+    x = xx
+    y = yy
+  end
+
+  translate((w/4)*2, 0)
+  stroke(250, 70, 130, 80)
   (1..300000).each do | i |
     xx = Math.sin(a*y) - Math.cos(a*x)*c
     yy = Math.sin(b*x) - Math.cos(b*y)*d
@@ -22,4 +33,5 @@ def setup
     y = yy
   end
 end
+
 
