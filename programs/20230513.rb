@@ -1,14 +1,15 @@
 $base = 80
+$split = 9
 $colors = ["#ba083d", "#444444", "#a9a7ad"]
 def setup
-  createCanvas($base*8, $base*8)
+  createCanvas($base * $split, $base * $split)
   noStroke
   noLoop
 end
 
 def draw
   background(255)
-  d = width / 8
+  d = width / $split
   x = d / 2
   while x < width do
     y = d / 2
