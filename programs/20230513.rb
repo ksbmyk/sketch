@@ -57,13 +57,13 @@ def ruby_kaigi_logo
   ellipse(x - $base, y + $base, d, d)
 
   fill($colors[1])
-  arc(x - $base / 2, y -  $base / 2, $base*2, $base*2, 90, 270)
-  arc(x + $base / 2, y +  $base / 2, $base*2, $base*2, 270, 90)
+  arc(x - $base / 2, y -  $base / 2, $base * 2, $base * 2, 90, 270)
+  arc(x + $base / 2, y +  $base / 2, $base * 2, $base * 2, 270, 90)
 
   fill($colors[2])
-  arc(x - $base / 2 + $base, y - $base / 2 - $base, $base*2, $base*2, 90, 180)
-  arc(x + $base / 2, y - $base / 2, $base*2, $base*2, 270, 360)
-  arc(x - $base / 2, y + $base / 2 + $base, $base*2, $base*2, 270, 360)
+  arc(x - $base / 2 + $base, y - $base / 2 - $base, $base * 2, $base * 2, 90, 180)
+  arc(x + $base / 2, y - $base / 2, $base * 2, $base * 2, 270, 360)
+  arc(x - $base / 2, y + $base / 2 + $base, $base * 2, $base * 2, 270, 360)
 end
 
 def fill_pale_color(color_code)
