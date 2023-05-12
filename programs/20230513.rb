@@ -27,7 +27,7 @@ def draw
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 270, 360)
         pop
       when 2
-        arc(x - d / 2, y - d / 2, d * 2, d * 2, 0, 90) # このままでいい
+        arc(x - d / 2, y - d / 2, d * 2, d * 2, 0, 90)
       when 3
         push
         translate(d, 0)
@@ -64,4 +64,8 @@ def ruby_kaigi_logo
   arc(x - $base / 2 + $base, y - $base / 2 - $base, $base*2, $base*2, 90, 180)
   arc(x + $base / 2, y - $base / 2, $base*2, $base*2, 270, 360)
   arc(x - $base / 2, y + $base / 2 + $base, $base*2, $base*2, 270, 360)
+end
+
+def keyPressed
+  redraw
 end
