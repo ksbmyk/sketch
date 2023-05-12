@@ -17,25 +17,30 @@ def draw
     y = d / 2
     while y < width do
       r = rand(0..4)
-      fill_pale_color($colors[r])
+
       case r
       when 0
+        fill_pale_color($colors[0])
         ellipse(x, y, d, d)
       when 1
         push
         translate(0, d)
+        fill_pale_color($colors[rand(1..4)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 270, 360)
         pop
       when 2
+        fill_pale_color($colors[rand(1..4)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 0, 90)
       when 3
         push
         translate(d, 0)
+        fill_pale_color($colors[rand(1..4)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 90, 180)
         pop
       when 4
         push
         translate(d, d)
+        fill_pale_color($colors[rand(1..4)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 180, 270)
         pop
       end
