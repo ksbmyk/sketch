@@ -16,9 +16,9 @@ def draw
   while x < width do
     y = d / 2
     while y < width do
-      c = rand(0..4)
-      fill($colors[c])
-      case c
+      r = rand(0..4)
+      fill_pale_color($colors[r])
+      case r
       when 0
         ellipse(x, y, d, d)
       when 1
@@ -64,6 +64,12 @@ def ruby_kaigi_logo
   arc(x - $base / 2 + $base, y - $base / 2 - $base, $base*2, $base*2, 90, 180)
   arc(x + $base / 2, y - $base / 2, $base*2, $base*2, 270, 360)
   arc(x - $base / 2, y + $base / 2 + $base, $base*2, $base*2, 270, 360)
+end
+
+def fill_pale_color(color_code)
+  rgba = color(color_code).to_s
+  agb_valus = rgba.to_s.delete('('  'rgba' ')').split(',').slice(0,3)
+  fill(agb_valus[0].to_i, agb_valus[1].to_i, agb_valus[2].to_i, 160)
 end
 
 def keyPressed
