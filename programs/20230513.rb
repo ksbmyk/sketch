@@ -1,6 +1,6 @@
 $base = 80
 $split = 9
-$colors = ["#ba083d", "#444444", "#a9a7ad", "#444444", "#a9a7ad"]
+$colors = ["#ba083d", "#444444", "#a9a7ad"]
 def setup
   createCanvas($base * $split, $base * $split)
   angleMode(DEGREES)
@@ -25,22 +25,22 @@ def draw
       when 1
         push
         translate(0, d)
-        fill_pale_color($colors[rand(1..4)])
+        fill_pale_color($colors[rand(1..2)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 270, 360)
         pop
       when 2
-        fill_pale_color($colors[rand(1..4)])
+        fill_pale_color($colors[rand(1..2)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 0, 90)
       when 3
         push
         translate(d, 0)
-        fill_pale_color($colors[rand(1..4)])
+        fill_pale_color($colors[rand(1..2)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 90, 180)
         pop
       when 4
         push
         translate(d, d)
-        fill_pale_color($colors[rand(1..4)])
+        fill_pale_color($colors[rand(1..2)])
         arc(x - d / 2, y - d / 2, d * 2, d * 2, 180, 270)
         pop
       end
