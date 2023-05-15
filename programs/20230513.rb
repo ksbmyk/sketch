@@ -73,8 +73,8 @@ end
 
 def fill_pale_color(color_code)
   rgba = color(color_code)
-  agb_valus = rgba.to_s.delete('('  'rgba' ')').split(',').slice(0,3)
-  fill(agb_valus[0].to_i, agb_valus[1].to_i, agb_valus[2].to_i, 160)
+  rgba.setAlpha(160)
+  fill(rgba)
 end
 
 def keyPressed
