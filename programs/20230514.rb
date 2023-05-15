@@ -41,19 +41,23 @@ def draw
 
   x = 100
   y = 250
-  gradient = drawingContext.createRadialGradient(x - 20, y, 30, x - 20, y + 10, 50)
-  gradient.addColorStop(0, color(150, 251, 196))
-  gradient.addColorStop(1, color(249, 245, 134))
-  drawingContext.fillStyle = gradient
-  circle(x, y , 120)
-
-
-  x = 250
-  y = 250
   gradient = drawingContext.createRadialGradient(x, y, 20, x , y, 60)
   gradient.addColorStop(0, color(150, 251, 196))
   gradient.addColorStop(0.5, color(249, 245, 134))
   gradient.addColorStop(1, color(150, 251, 196))
+  drawingContext.fillStyle = gradient
+  circle(x, y , 120)
+
+  # x1 : グラデーションの開始点の x 座標
+  # y1 : グラデーションの開始点の y 座標
+  # x2 : グラデーションの終了点の x 座標
+  # y2 : グラデーションの終了点の y 座標
+  x = 250
+  y = 250
+
+  gradient = drawingContext.createLinearGradient(x, y, x - 10, y - 10)
+  gradient.addColorStop(0, color(150, 251, 196))
+  gradient.addColorStop(1, color(249, 245, 134))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 end
