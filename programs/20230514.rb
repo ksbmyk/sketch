@@ -26,25 +26,25 @@ def draw
   x = 250
   y = 100
   gradient = drawingContext.createRadialGradient(x + 20, y, 30, x + 20, y + 10, 50)
-  gradient.addColorStop(0, color(150, 251, 196))
-  gradient.addColorStop(1, color(249, 245, 134))
+  gradient.addColorStop(0, color('#74ebd5'))
+  gradient.addColorStop(1, color('#9face6'))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 
   x = 100
   y = 250
   gradient = drawingContext.createRadialGradient(x-20, y, 30, x-20, y+10, 50)
-  gradient.addColorStop(0, color(150, 251, 196))
-  gradient.addColorStop(1, color(249, 245, 134))
+  gradient.addColorStop(0, color('#6e45e2'))
+  gradient.addColorStop(1, color('#88d3ce'))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 
   x = 100
   y = 250
   gradient = drawingContext.createRadialGradient(x, y, 20, x , y, 60)
-  gradient.addColorStop(0, color(150, 251, 196))
-  gradient.addColorStop(0.5, color(249, 245, 134))
-  gradient.addColorStop(1, color(150, 251, 196))
+  gradient.addColorStop(0, color('#37ecba'))
+  gradient.addColorStop(0.5, color('#72afd3'))
+  gradient.addColorStop(1, color('#37ecba'))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 
@@ -54,10 +54,9 @@ def draw
   # y2 : グラデーションの終了点の y 座標
   x = 250
   y = 250
-
   gradient = drawingContext.createLinearGradient(x, y, x - 10, y - 10)
-  gradient.addColorStop(0, color(150, 251, 196))
-  gradient.addColorStop(1, color(249, 245, 134))
+  gradient.addColorStop(0, color('#accbee'))
+  gradient.addColorStop(1, color('#e7f0fd'))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 end
