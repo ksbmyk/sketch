@@ -5,7 +5,6 @@ end
 
 def draw
   background(255)
-
   noStroke
 
   #x1 : グラデーションの中心点の x 座標
@@ -56,7 +55,7 @@ def draw
   y = 250
   gradient = drawingContext.createLinearGradient(x, y, x - 10, y - 10)
   gradient.addColorStop(0, color('#accbee'))
-  gradient.addColorStop(1, color('#e7f0fd'))
+  gradient.addColorStop(1, color(249, 245, 134))
   drawingContext.fillStyle = gradient
   circle(x, y , 120)
 end
