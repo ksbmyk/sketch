@@ -1,6 +1,6 @@
 $base = 80
 $split = 9
-$colors = ["#ba083d", "#444444", "#a9a7ad"]
+$colors = %w(#ba083d #444444 #a9a7ad)
 def setup
   createCanvas($base * $split, $base * $split)
   angleMode(DEGREES)
