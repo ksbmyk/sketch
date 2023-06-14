@@ -1,4 +1,6 @@
 import Image from 'next/image'
+import Link from 'next/link'
+
 const images = [
   '20230614.png',
   '20230613.gif',
@@ -17,7 +19,9 @@ export default function Home() {
         <div className='grid-container'>
           {images.map((image, index) => (
               <div className='grid-item' key={index}>
-                <Image src={`/images/${image}`} alt="" width={250} height={250} />
+                <Link href={`/${image.substring(0, 8)}`}>
+                  <Image src={`/images/${image}`} alt="" width={250} height={250} />
+                </Link>
               </div>
           ))}
         </div>
