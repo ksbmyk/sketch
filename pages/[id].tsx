@@ -22,6 +22,14 @@ const DynamicPage = () => {
         <div>
             {id && (
                 <Head>
+                    <meta name='description' content='sketch stock with creative coding' key='desc' />
+                    <meta name='twitter:card' content='summary_large_image' />
+                    <meta property='og:title' content={`${id} Sketch`} />
+                    <meta property='og:site_name' content='Sketch' />
+                    <meta property='og:description' content='sketch stock with creative coding' />
+                    <meta property='og:url' content={`https://ksbmyk.github.io/sketch/${id}`} />
+                    <meta property='og:image' content={`https://ksbmyk.github.io/sketch/images/${id}.png`} />
+                    <meta property='og:type' content='website' />
                     <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
                     <script type="text/ruby" src="p5.rb"></script>
