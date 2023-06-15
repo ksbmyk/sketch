@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import Head from 'next/head';
 
@@ -32,14 +31,14 @@ export default function Home() {
               {images.map((image, index) => (
                   <div className='grid-item' key={index}>
                     <Link href={`/${image.substring(0, 8)}`}>
-                      <Image src={`/sketch/images/${image}`} alt="" width={250} height={250} />
+                      <img src={`/sketch/images/${image}`} alt="" width={250} height={250} />
                     </Link>
                   </div>
               ))}
             </div>
             <div>
                 <Link href="https://twitter.com/chobishiba" target="_blank">
-                    <Image src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+                    <img src="/sketch/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
                 </Link>
             </div>
         </main>
