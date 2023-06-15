@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
-    basePath: process.env.GITHUB_ACTIONS && "/sketch/",
-    trailingSlash: false,
+    assetPrefix: process.env.BASE_PATH || '',
+    basePath: process.env.BASE_PATH || '',
+    trailingSlash: true,
 }
 
 module.exports = nextConfig
