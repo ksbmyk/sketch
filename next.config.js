@@ -2,7 +2,7 @@
 const nextConfig = {
     output: 'export',
     basePath: process.env.GITHUB_ACTIONS && "/sketch",
-    trailingSlash: false,
+    trailingSlash: true,
 }
 
 module.exports = nextConfig
