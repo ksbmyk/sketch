@@ -21,7 +21,9 @@ def attractor
   c = 2
   d = 1
 
-  (1..300000).each do | i |
+  # p5.rbで描画するには重いので回数を減らしている
+  #(1..300000).each do | i |
+  (1..10000).each do | i |
     xx = Math.sin(a*y) - Math.cos(a*x)*c
     yy = Math.sin(b*x) - Math.cos(b*y)*d
 
