@@ -7,7 +7,7 @@ const nextConfig = {
     assetPrefix: process.env.BASE_PATH || '',
     basePath: process.env.BASE_PATH || '',
     trailingSlash: false,
-    exportPathMap: async function () {
+    generateStaticParams: async function () {
         const paths = {
             '/': { page: '/' }, // ルートページ
         };
