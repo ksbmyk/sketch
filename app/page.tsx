@@ -30,9 +30,9 @@ export default function Home() {
             <div className='grid-container'>
               {images.map((image, index) => (
                   <div className='grid-item' key={index}>
-                    <Link href={`/${image.substring(0, 8)}`}>
+                    {/*<Link href={`/${image.substring(0, 8)}`}>*/}
                       <img src={`/sketch/images/${image}`} alt="" width={250} height={250} />
-                    </Link>
+                    {/*</Link>*/}
                   </div>
               ))}
             </div>
