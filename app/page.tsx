@@ -32,7 +32,7 @@ export default function Home() {
               {images.map((image, index) => (
                   <div className='grid-item' key={index}>
                     <Link href={`/${image.substring(0, 8)}`}>
-                      <Image src={`/images/${image}`} alt="" width={250} height={250} />
+                      <Image src={`/sketch/images/${image}`} alt="" width={250} height={250} />
                     </Link>
                   </div>
               ))}
