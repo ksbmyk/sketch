@@ -10,6 +10,7 @@ const ListDetail = ({ item: image }: ListDetailProps) => (
   <div>
     <h1>Detail for {image.name}</h1>
     <p>ID: {image.id}</p>
+      <main></main>
   </div>
 )
 

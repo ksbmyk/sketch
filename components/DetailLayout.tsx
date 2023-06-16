@@ -1,0 +1,42 @@
+import React, { ReactNode } from 'react'
+import Link from 'next/link'
+import Head from 'next/head'
+import {Image} from "../interfaces";
+
+type Props = {
+  children?: ReactNode
+  title?: string
+  id?: number
+}
+
+const DetailLayout = ({ children, title = 'sketch', id }: Props) => (
+  <div>
+    <Head>
+      <title>{title}</title>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <script async src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
+        <script async src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+        <script async type="text/ruby" src="p5.rb"></script>
+        <script async type="text/ruby" src={`programs/${id}.rb`}></script>
+        <script type="text/ruby">P5::init</script>
+    </Head>
+    <header>
+      <nav>
+        <Link href="/">Home</Link> |{' '}
+        <a href="/api/images">Users API</a> | {id}
+      </nav>
+    </header>
+    {children}
+    <footer>
+      <hr />
+      <span>
+          <Link href="https://twitter.com/chobishiba" target="_blank">
+                    <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+          </Link>
+      </span>
+    </footer>
+  </div>
+)
+
+export default DetailLayout

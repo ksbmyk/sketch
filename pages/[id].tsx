@@ -2,7 +2,7 @@ import { GetStaticProps, GetStaticPaths } from 'next'
 
 import { Image } from '../interfaces'
 import { imageData } from '../utils/image-data'
-import Layout from '../components/Layout'
+import DetailLayout from '../components/DetailLayout'
 import ListDetail from '../components/ListDetail'
 
 type Props = {
@@ -13,22 +13,21 @@ type Props = {
 const StaticPropsDetail = ({ item, errors }: Props) => {
   if (errors) {
     return (
-      <Layout title="Error | Next.js + TypeScript Example">
+      <DetailLayout title="Error | Next.js + TypeScript Example">
         <p>
           <span style={{ color: 'red' }}>Error:</span> {errors}
         </p>
-      </Layout>
+      </DetailLayout>
     )
   }
 
   return (
-    <Layout
-      title={`${
-        item ? item.name : 'Image Data'
-      } | Next.js + TypeScript Example`}
+    <DetailLayout
+      title={`${item ? item.id : 'Image Data'}`}
+      id={item.id}
     >
       {item && <ListDetail item={item} />}
-    </Layout>
+    </DetailLayout>
   )
 }
 
