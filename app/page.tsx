@@ -30,15 +30,15 @@ export default function Home() {
             <div className='grid-container'>
               {images.map((image, index) => (
                   <div className='grid-item' key={index}>
-                    {/*<Link href={`/${image.substring(0, 8)}`}>*/}
-                      <img src={`/sketch/images/${image}`} alt="" width={250} height={250} />
-                    {/*</Link>*/}
+                    <Link href={`/${image.substring(0, 8)}`}>
+                      <img src={`/images/${image}`} alt="" width={250} height={250} />
+                    </Link>
                   </div>
               ))}
             </div>
             <div>
                 <Link href="https://twitter.com/chobishiba" target="_blank">
-                    <img src="/sketch/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+                    <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
                 </Link>
             </div>
         </main>
