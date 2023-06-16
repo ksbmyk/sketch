@@ -4,7 +4,7 @@
 //
 // import { User } from 'path/to/interfaces';
 
-export type User = {
+export type Image = {
   id: number
   name: string
 }

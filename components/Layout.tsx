@@ -7,7 +7,7 @@ type Props = {
   title?: string
 }
 
-const Layout = ({ children, title = 'This is the default title' }: Props) => (
+const Layout = ({ children, title = 'sketch' }: Props) => (
   <div>
     <Head>
       <title>{title}</title>
@@ -24,7 +24,11 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
     {children}
     <footer>
       <hr />
-      <span>I'm here to stay (Footer)</span>
+      <span>
+          <Link href="https://twitter.com/chobishiba" target="_blank">
+                    <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+          </Link>
+      </span>
     </footer>
   </div>
 )
