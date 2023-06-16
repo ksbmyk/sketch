@@ -1,4 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
+import { useEffect, useState } from 'react';
 
 import { Image } from '../interfaces'
 import { imageData } from '../utils/image-data'
@@ -11,6 +12,17 @@ type Props = {
 }
 
 const StaticPropsDetail = ({ item, errors }: Props) => {
+  const [fileContent, setFileContent] = useState('');
+
+  useEffect(() => {
+    // const filePath = new URL(`programs/${id}.rb`, router.asPath).toString();
+    const filePath = `programs/${item.id}.rb`;
+    fetch(filePath)
+        .then((response) => response.text())
+        .then((data) => setFileContent(data))
+        .catch((error) => console.log(error));
+  }, []);
+
   if (errors) {
     return (
       <DetailLayout title="Error | Next.js + TypeScript Example">
@@ -26,7 +38,7 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
       title={`${item ? item.id : 'Image Data'}`}
       id={item.id}
     >
-      {item && <ListDetail item={item} />}
+      {item && <ListDetail item={item} code={fileContent}/>}
     </DetailLayout>
   )
 }

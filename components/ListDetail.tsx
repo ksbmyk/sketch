@@ -1,15 +1,15 @@
 import * as React from 'react'
-
 import { Image } from '../interfaces'
 
 type ListDetailProps = {
-  item: Image
+  item: Image,
+  code: string
 }
 
-const ListDetail = ({ item: image }: ListDetailProps) => (
+const ListDetail = ({ item: image, code: code }: ListDetailProps) => (
   <div>
-    <h1>Detail for {image.name}</h1>
     <p>ID: {image.id}</p>
+      <textarea value={code} readOnly />
       <main></main>
   </div>
 )
