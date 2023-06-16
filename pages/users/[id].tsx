@@ -35,7 +35,7 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
 export default StaticPropsDetail
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Get the paths we want to pre-render based on users
+  // Get the paths we want to pre-render based on images
   const paths = imageData.map((image) => ({
     params: { id: image.id.toString() },
   }))
