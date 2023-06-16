@@ -4,17 +4,11 @@ import { Image } from '../interfaces'
 export const imageData: Image[] = [
   { id: 20230614, name: '20230614.png' },
   { id: 20230613, name: '20230613.gif' },
-  { id: 103, name: 'Caroline' },
-  { id: 104, name: 'Dave' },
-]
-// const images = [
-//   '20230614.png',
-//   '20230613.gif',
-//   '20230612.png',
-//   '20230514.png',
-//   '20230513.gif',
-//   '20230508.png',
-//   '20230506.png',
-//   '20230505.png',
-//   '20230312.png',
-// ];
+  { id: 20230612, name: '20230612.png' },
+  { id: 20230514, name: '20230514.png' },
+  { id: 20230513, name: '20230513.gif' },
+  { id: 20230508, name: '20230508.png' },
+  { id: 20230506, name: '20230506.png' },
+  { id: 20230505, name: '20230505.png' },
+  { id: 20230312, name: '20230312.png' },
+];

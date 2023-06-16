@@ -8,8 +8,9 @@ type Props = {
 }
 
 const ListItem = ({ data }: Props) => (
+
   <Link href="/[id]" as={`/${data.id}`}>
-    {data.id}:{data.name}
+    <img src={`/images/${data.name}`} alt={data.name} width={250} height={250} />
   </Link>
 )
 
