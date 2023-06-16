@@ -17,7 +17,6 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
     <header>
       <nav>
         <Link href="/">Home</Link> |{' '}
-        <Link href="/users">Users List</Link> |{' '}
         <a href="/api/images">Users API</a>
       </nav>
     </header>
