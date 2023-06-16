@@ -7,13 +7,15 @@ type Props = {
 }
 
 const List = ({ items }: Props) => (
-  <ul>
-    {items.map((item) => (
-      <li key={item.id}>
-        <ListItem data={item} />
-      </li>
-    ))}
-  </ul>
+    <div className="flex min-h-screen flex-col items-center justify-between p-24">
+        <div className='grid-container'>
+            {items.map((item) => (
+              <div className='grid-item' key={item.id}>
+                  <ListItem data={item} />
+              </div>
+          ))}
+        </div>
+    </div>
 )
 
 export default List
