@@ -7,14 +7,14 @@ type ListDetailProps = {
 }
 
 const ListDetail = ({ item: image, code: code }: ListDetailProps) => (
-  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-    <div className="m-4 mr-8">
-      <textarea className="bg-gray-200 p-3 text-sm h-textarea w-full resize-none" value={code} readOnly />
+    <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="m-4 col-span-1">
+            <textarea className="bg-gray-200 p-3 text-sm h-textarea w-full resize-none" value={code} readOnly />
+        </div>
+        <div className="m-4 col-span-2">
+            <main></main>
+        </div>
     </div>
-    <div className="m-4">
-      <main></main>
-    </div>
-  </div>
 )
 
 export default ListDetail

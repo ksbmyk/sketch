@@ -9,6 +9,9 @@ module.exports = {
       height: {
         'textarea': '700px',
       },
+      width: {
+        'textarea': '500px',
+      },
       colors: {
         customLink: '#0A3069',
         customLinkHover: '#B6E3FF',
@@ -17,11 +20,3 @@ module.exports = {
   },
   plugins: [],
 }
-
-// a {
-//   color: #0A3069;
-// }
-//
-// a:hover {
-//   color: #B6E3FF;
-// }
