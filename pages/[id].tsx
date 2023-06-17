@@ -15,7 +15,6 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
   const [fileContent, setFileContent] = useState('');
 
   useEffect(() => {
-    // const filePath = new URL(`programs/${id}.rb`, router.asPath).toString();
     const filePath = `programs/${item.id}.rb`;
     fetch(filePath)
         .then((response) => response.text())

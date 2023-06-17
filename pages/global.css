@@ -4,8 +4,8 @@
 
 :root {
     --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 214, 219, 220;
-    --background-end-rgb: 255, 255, 255;
+    --background-start-rgb: 250, 250, 250;
+    --background-end-rgb: 250, 250, 250;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,10 +39,16 @@ body {
 .detail-grid-container {
     @apply grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
 }
 
 .detail-grid-item {
-    @apply w-5/6;
-    @apply m-4;
+    @apply w-5/6 m-4;
+}
+
+a {
+    color: #0A3069;
+}
+
+a:hover {
+    color: #B6E3FF;
 }

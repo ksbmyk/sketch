@@ -8,7 +8,7 @@ type ListDetailProps = {
 
 const ListDetail = ({ item: image, code: code }: ListDetailProps) => (
   <div className="detail-grid-container">
-    <div className="id-grid-item">
+    <div className="detail-grid-item">
       <textarea className="bg-gray-200 p-3 text-sm h-full w-full" value={code} readOnly />
     </div>
     <div className="detail-grid-item">

@@ -1,5 +1,4 @@
 import { GetStaticProps } from 'next'
-import Link from 'next/link'
 
 import { Image } from '../interfaces'
 import { imageData } from '../utils/image-data'
@@ -10,16 +9,8 @@ type Props = {
     items: Image[]
 }
 const WithStaticProps = ({ items }: Props) => (
-    <Layout title="Users List | Next.js + TypeScript Example">
-        <h1>Image List</h1>
-        <p>
-            Example fetching data from inside <code>getStaticProps()</code>.
-        </p>
-        <p>You are currently</p>
+    <Layout title="sketch">
         <List items={items} />
-        <p>
-            <Link href="/">Go home</Link>
-        </p>
     </Layout>
 )
 
