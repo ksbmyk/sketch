@@ -16,8 +16,8 @@ const DetailLayout = ({ children, title = 'sketch', id }: Props) => (
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       <script async src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
       <script async src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
-      <script async type="text/ruby" src="p5.rb"></script>
-      <script async type="text/ruby" src={`programs/${id}.rb`}></script>
+      <script async type="text/ruby" src="../p5.rb"></script>
+      <script async type="text/ruby" src={`../programs/${id}.rb`}></script>
       <script type="text/ruby">P5::init</script>
     </Head>
     <header className="mx-4">
