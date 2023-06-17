@@ -1,6 +1,6 @@
 $base = 80
 def setup
-  createCanvas(800, 800)
+  createCanvas(600, 400)
   colorMode(RGB)
   angleMode(DEGREES)
   background(255, 255, 255)
