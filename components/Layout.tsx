@@ -21,6 +21,7 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
       <meta property='og:url' content='https://ksbmyk.github.io/sketch' />
       <meta property='og:image' content='https://ksbmyk.github.io/sketch/images/20230614.png' />
       <meta property='og:type' content='website' />
+      <Link rel="icon" href="favicon.ico"></Link>
     </Head>
     {children}
       <footer className="py-4">
