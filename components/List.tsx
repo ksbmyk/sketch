@@ -7,10 +7,10 @@ type Props = {
 }
 
 const List = ({ items }: Props) => (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24">
-        <div className='grid-container'>
+    <div className="m-8 flex justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {items.map((item) => (
-              <div className='grid-item' key={item.id}>
+              <div className='w-full sm:w-auto' key={item.id}>
                   <ListItem data={item} />
               </div>
           ))}

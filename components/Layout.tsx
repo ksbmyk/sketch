@@ -21,15 +21,13 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
       <meta property='og:url' content='https://ksbmyk.github.io/sketch' />
       <meta property='og:image' content='https://ksbmyk.github.io/sketch/images/20230614.png' />
       <meta property='og:type' content='website' />
-      <Link rel="icon" href="favicon.ico"></Link>
     </Head>
+
     {children}
-      <footer className="py-4">
-      <div className="flex justify-center items-center">
-        <Link href="https://twitter.com/chobishiba" target="_blank">
-          <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
-        </Link>
-      </div>
+    <footer className="flex justify-center">
+      <Link href="https://twitter.com/chobishiba" target="_blank">
+        <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+      </Link>
     </footer>
   </div>
 )

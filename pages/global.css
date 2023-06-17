@@ -25,30 +25,3 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
-
-.grid-container {
-    @apply grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-
-.grid-item {
-    @apply w-72 h-72;
-}
-
-.detail-grid-container {
-    @apply grid;
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.detail-grid-item {
-    @apply w-5/6 m-4;
-}
-
-a {
-    color: #0A3069;
-}
-
-a:hover {
-    color: #B6E3FF;
-}
