@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import { isMobile } from "react-device-detect"
 
 type Props = {
     children?: ReactNode
