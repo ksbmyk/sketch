@@ -20,7 +20,6 @@ const P5rbLayout = ({ children, title = 'sketch', id }: Props) => (
             <script async type="text/ruby" src="../../p5.rb"></script>
             <script async type="text/ruby" src={`../../programs/${id}.rb`}></script>
             <script type="text/ruby">P5::init</script>
-            <link rel="icon" href="favicon.ico" />
         </Head>
         <header className="mx-4">
             <nav>
