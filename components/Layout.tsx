@@ -27,7 +27,7 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
     {children}
     <footer className="flex justify-center">
       <Link href="https://twitter.com/chobishiba" target="_blank">
-        <img src="/twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+        <img src="./twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
       </Link>
     </footer>
   </div>
