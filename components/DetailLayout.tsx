@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { isMobile } from "react-device-detect"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretLeft, faRetweet } from "@fortawesome/free-solid-svg-icons";
+import { faCaretLeft, faSync } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   children?: ReactNode
@@ -36,7 +36,7 @@ const DetailLayout = ({ children, title = 'sketch', id }: Props) => (
             <>
               <span className="ml-1">|</span>
               <Link href="../p5rb/[id]" as={`../p5rb/${id}`} className="text-customLink hover:text-customLinkHover flex items-center ml-1">
-                <FontAwesomeIcon icon={faRetweet} className="h-[20px]" /><span className="ml-2">switch p5.rb</span>
+                <FontAwesomeIcon icon={faSync} className="h-[20px]" /><span className="ml-2">p5.rb</span>
               </Link>
             </>
           }
