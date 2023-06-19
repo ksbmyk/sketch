@@ -21,7 +21,7 @@ const P5rbLayout = ({ children, title = 'sketch', id }: Props) => (
             <script async type="text/ruby" src={`../../programs/${id}.rb`}></script>
             <script type="text/ruby">P5::init</script>
         </Head>
-        <header className="mx-4">
+        <header className="mx-4 mt-4">
             <nav>
                 <Link href="/" className="text-customLink hover:text-customLinkHover">◀</Link>
                 <span> | </span>
@@ -29,7 +29,7 @@ const P5rbLayout = ({ children, title = 'sketch', id }: Props) => (
             </nav>
         </header>
         {children}
-        <footer className="mx-4">
+        <footer className="mx-4 mb-4">
             <nav>
                 <Link href="/" className="text-customLink hover:text-customLinkHover">◀</Link>
             </nav>
