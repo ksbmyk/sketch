@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons"
 
 type Props = {
   children?: ReactNode
@@ -26,8 +28,8 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
 
     {children}
     <footer className="flex justify-center mb-4">
-      <Link href="https://twitter.com/chobishiba" target="_blank">
-        <img src="./twitter_logo_black.svg" alt="@chobishiba" width={20} height={20}/>
+      <Link href="https://twitter.com/chobishiba" target="_blank" className="text-customLink hover:text-customLinkHover">
+        <span> <FontAwesomeIcon icon={faTwitter} className="h-[20px]" /> </span>
       </Link>
     </footer>
   </div>
