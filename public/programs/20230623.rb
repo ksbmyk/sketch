@@ -1,4 +1,4 @@
-# refs https://editor.p5js.org/techty/sketches/HUs2dx-vF
+# ref https://techty.hatenablog.com/entry/2019/05/29/194903
 
 $tile_count = 100
 $noise_scale = 0.02
@@ -39,9 +39,9 @@ def draw_ellipse
   stroke('#F0F8FF')
   noFill
   10.times do
-    r1 = rand(10..20)
-    r2 = rand(1..10)
-    ellipse(r1 * 10, r1 * 10,  r2 * 100, r2 * 100)
+    random_number1 = rand(10..20)
+    random_number2 = rand(1..10)
+    ellipse(random_number1 * 10, random_number1 * 10,  random_number2 * 100, random_number2 * 100)
   end
 end
 
