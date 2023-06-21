@@ -5,7 +5,7 @@ $noise_scale = 0.02
 
 def setup
   createCanvas(700, 700)
-  angleMode(DEGREES) # 角度を使わないかもしれないが
+  angleMode(DEGREES)
   background('#6EAAFF')
   noStroke
   noLoop
@@ -14,6 +14,8 @@ end
 def draw
   draw_tile
   draw_ellipse
+  draw_hydrangea
+
 end
 
 def draw_tile
@@ -45,4 +47,25 @@ def draw_ellipse
   end
 end
 
+def draw_hydrangea
+  rounded_rect_size = 12 #四角形のサイズ
+  corner_radius = 3 #角の半径
 
+  rectMode(CENTER)
+
+  colors = %w(#9EA0D1 #9093E0 #90BAE0)
+
+  (0..2).each do | i |
+    fill(colors[i])
+    noStroke
+    x = rand(1..6) * 100
+    y = rand(1..6) * 100
+    push
+    rotate(rand(1..3)*10)
+    rect(x, y, rounded_rect_size, rounded_rect_size, corner_radius) #rect(x, y, w, [h], [tl], [tr], [br], [bl])
+    rect(x+rounded_rect_size, y, rounded_rect_size, rounded_rect_size, corner_radius)
+    rect(x, y+rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
+    rect(x+rounded_rect_size, y+rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
+    pop
+  end
+end
