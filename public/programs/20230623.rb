@@ -12,6 +12,11 @@ def setup
 end
 
 def draw
+  draw_tile
+  draw_ellipse
+end
+
+def draw_tile
   tile_size = width / $tile_count # tile1つの幅。10分割なら70
   y_noise = 0
   (0...$tile_count).each do |row|
@@ -28,8 +33,6 @@ def draw
     end
     y_noise += $noise_scale
   end
-
-  draw_ellipse
 end
 
 def draw_ellipse
@@ -41,4 +44,5 @@ def draw_ellipse
     ellipse(r1 * 10, r1 * 10,  r2 * 100, r2 * 100)
   end
 end
+
 
