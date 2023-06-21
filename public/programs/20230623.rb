@@ -29,9 +29,12 @@ def draw
     y_noise += $noise_scale
   end
 
-  stroke('#F0F8FF') #線の色
-  noFill
+  draw_ellipse
+end
 
+def draw_ellipse
+  stroke('#F0F8FF')
+  noFill
   10.times do
     r1 = rand(10..20)
     r2 = rand(1..10)
