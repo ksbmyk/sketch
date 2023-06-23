@@ -28,7 +28,7 @@ def draw_tile
       y = row * tile_size
       a = noise(x_noise, y_noise) * 255 # 指定した座標のパーリンノイズ値を取得(0〜1)、255を乗じて透明度（アルファ値）にする
       noStroke
-      c = color(255, a) # color(gray, [alpha])
+      c = color(221,234, 240, a) # color(gray, [alpha])
       fill(c)
       rect(x, y, tile_size, tile_size)
       x_noise += $noise_scale
@@ -50,20 +50,20 @@ end
 def draw_hydrangea
   rounded_rect_size = 12
   corner_radius = 3
+  rotate_numbers = %w(30 45 60)
   rectMode(CENTER)
-  colors = %w(#9093E0 #9093E0 #9093E0)
   (0..2).each do | i |
-    fill(colors[i])
+    fill('#9093E0')
     noStroke
-    push
-    translate(width / 2, height / 2)
-    rotate(rand(1..3) * 15)
     x = rand(-3..2) * 100
     y = rand(-3..2) * 100
-    rect(x, y, rounded_rect_size, rounded_rect_size, corner_radius)
-    rect(x + rounded_rect_size, y, rounded_rect_size, rounded_rect_size, corner_radius)
-    rect(x, y + rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
-    rect(x + rounded_rect_size, y + rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
+    push
+    translate(width / 2, height / 2)
+    rotate(rotate_numbers[i])
+    rect(x, y, rounded_rect_size, rounded_rect_size, corner_radius) #rect(x, y, w, [h], [tl], [tr], [br], [bl])
+    rect(x+rounded_rect_size, y, rounded_rect_size, rounded_rect_size, corner_radius)
+    rect(x, y+rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
+    rect(x+rounded_rect_size, y+rounded_rect_size, rounded_rect_size, rounded_rect_size, corner_radius)
     pop
   end
 end
