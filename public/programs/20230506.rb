@@ -7,7 +7,7 @@ end
 
 def draw
   noLoop
-  (1..1500).each do | i |
+  1500.times do | i |
     if i.even?
       noStroke
       fill(170, 200, 255)
