@@ -17,8 +17,8 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       <meta name='description' content='sketch stock with creative coding by chobishiba' key='desc' />
       <meta name='twitter:card' content='summary' />
-      <meta property='og:title' content='top' />
-      <meta property='og:site_name' content='Sketch' />
+      <meta property='og:title' content='chobishiba sketch' />
+      <meta property='og:site_name' content='chobishiba sketch' />
       <meta property='og:description' content='sketch stock with creative coding by chobishiba' />
       <meta property='og:url' content='https://ksbmyk.github.io/sketch' />
       <meta property='og:image' content='https://ksbmyk.github.io/sketch/images/20230614.png' />
