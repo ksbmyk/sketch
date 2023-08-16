@@ -23,14 +23,14 @@ def draw_leaf(x, y)
   c.setAlpha(200)
   fill(c)
   noStroke
-  arc(x*80 , - y*80, 160, 160, 0, 330)
+  arc(x * 80 , -y * 80, 160, 160, 0, 330)
   pop
 end
 
 def draw_lotus_flower(x, y)
   push
-  translate(x*100, y*100)
-  rotate(rand(1..9)*20)
+  translate(x * 100, y * 100)
+  rotate(rand(1..9) * 20)
   c = color('#fef3ff')
   c.setAlpha(210)
   fill(c)
@@ -38,7 +38,7 @@ def draw_lotus_flower(x, y)
   n = 12
   n.times do
     ellipse(0, 20, 10, 40)
-    rotate(360/n)
+    rotate(360 / n)
   end
   pop
 end
