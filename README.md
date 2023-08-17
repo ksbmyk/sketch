@@ -18,5 +18,7 @@ https://ksbmyk.github.io/sketch/
 
 ## 参考
 - p5.js
+  - [リファレンス](https://p5js.org/)
+- p5.rb
   - [オンラインエディタ](https://p5rb.ongaeshi.me/editor/)
   - [詳しい仕組み](https://ongaeshi.hatenablog.com/entry/2023/03/10/021113)
