@@ -1,8 +1,5 @@
-$base = 80
-# $split = 9
-$colors = ["#ba083d", "#444444", "#a9a7ad"]
 def setup
-  createCanvas($base * 3, $base * 3)
+  createCanvas(400, 400)
   angleMode(DEGREES)
   rectMode(CENTER)
   noStroke
@@ -11,20 +8,17 @@ end
 
 def draw
   background(255)
+  n = 80
+  fill("#ba083d")
+  ellipse(n + n / 2, n + n / 2, n, n)
+  ellipse(n / 2, n * 2 + n / 2, n, n)
 
-  fill($colors[0])
-  x = width / 2
-  y = width / 2
-  d = $base
-  ellipse(x, y, d, d)
-  ellipse(x - $base, y + $base, d, d)
+  fill("#444444")
+  arc(n, n, n * 2, n * 2, 90, 270)
+  arc(n * 2, n * 2, n * 2, n * 2, 270, 90)
 
-  fill($colors[1])
-  arc(x - $base / 2, y -  $base / 2, $base * 2, $base * 2, 90, 270)
-  arc(x + $base / 2, y +  $base / 2, $base * 2, $base * 2, 270, 90)
-
-  fill($colors[2])
-  arc(x - $base / 2 + $base, y - $base / 2 - $base, $base * 2, $base * 2, 90, 180)
-  arc(x + $base / 2, y - $base / 2, $base * 2, $base * 2, 270, 360)
-  arc(x - $base / 2, y + $base / 2 + $base, $base * 2, $base * 2, 270, 360)
+  fill("#a9a7ad")
+  arc(n * 2, 0, n * 2, n * 2, 90, 180)
+  arc(n * 2, n, n * 2, n * 2, 270, 360)
+  arc(n, n * 3, n * 2, n * 2, 270, 360)
 end

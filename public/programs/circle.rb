@@ -8,15 +8,13 @@ end
 
 def draw
   noLoop  # draw()を1回だけ実行する
-  noStroke  # 輪郭線を描かない
-
-  fill('#ba083d') # 円の赤
+  # fill('#ba083d') # 円の赤
   ellipse(50, 50, 100, 100) # ellipse(x, y, w, h)
 
-  fill('#a9a7ad') # 円弧のグレー
-  arc(150, 50 , 100, 100,  90,  180)   # arc(x, y, w, h, start, stop)
-  arc(200, 50 , 100, 100,  180,  270)
+  # fill('#a9a7ad') # 円弧のグレー
+  arc(150, 50 , 100, 100,  90,  180, PIE)   # arc(x, y, w, h, start, stop)
+  arc(200, 50 , 100, 100,  180,  270, PIE)
 
-  fill('#444444') # 半円の濃いグレー
-  arc(250, 50 , 100, 100,  0,  180)
+  # fill('#444444') # 半円の濃いグレー
+  arc(250, 50 , 100, 100,  0,  180, PIE)
 end
