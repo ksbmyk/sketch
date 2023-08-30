@@ -1,13 +1,12 @@
 def setup
   createCanvas(400, 400)
   angleMode(DEGREES)
-  rectMode(CENTER)
-  noStroke
-  noLoop
+  background(255)
 end
 
 def draw
-  background(255)
+  noLoop
+  noStroke
   n = 80
   fill("#ba083d")
   ellipse(n + n / 2, n + n / 2, n, n)
