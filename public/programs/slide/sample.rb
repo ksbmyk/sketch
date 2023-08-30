@@ -15,6 +15,6 @@ def draw
       stroke(170, 200, 255)
       fill(255, 255, 255, 100)
     end
-    ellipse(rand(0..900), rand(0..900), 30)
+    ellipse(random(0, 900), random(0, 900), 30)
   end
 end
