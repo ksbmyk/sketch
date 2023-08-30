@@ -3,10 +3,10 @@ function setup() {
     colorMode(RGB);
     background(0, 30, 70);
     blendMode(OVERLAY);
-    noLoop();
 }
 
 function draw() {
+    noLoop();
     for (let i = 1; i <= 1500; i++) {
         if (i % 2 === 0) {
             noStroke();
