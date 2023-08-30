@@ -1,5 +1,6 @@
 $base = 80
 $split = 9
+$colors = ["#ba083d", "#444444", "#a9a7ad"]
 def setup
   createCanvas($base * $split, $base * $split)
   angleMode(DEGREES)
@@ -13,7 +14,7 @@ def draw
   while x < width do
     y = 0
     while y < width do
-      fill('#444444')
+      fill($colors[rand(0..2)])
       arc(x, y, $base * 2, $base * 2, 0, 90)
       y += $base
     end
