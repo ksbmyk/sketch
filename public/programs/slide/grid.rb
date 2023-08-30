@@ -1,7 +1,7 @@
-$base = 80
+$side = 80
 $split = 9
 def setup
-  createCanvas($base * $split, $base * $split)
+  createCanvas($side * $split, $side * $split)
   angleMode(DEGREES)
   background(255)
 end
@@ -14,9 +14,9 @@ def draw
     y = 0
     while y < width do
       fill('#444444')
-      arc(x, y, $base * 2, $base * 2, 0, 90)
-      y += $base
+      arc(x, y, $side * 2, $side * 2, 0, 90)
+      y += $side
     end
-    x += $base
+    x += $side
   end
 end
