@@ -12,7 +12,7 @@ def draw
   x = 0
   while x < width do
     y = 0
-    while y < width do
+    while y < height do
       fill('#444444')
       arc(x, y, $side * 2, $side * 2, 0, 90)
       y += $side

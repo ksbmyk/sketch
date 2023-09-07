@@ -14,7 +14,7 @@ def draw
   x = 0
   while x < width do
     y = 0
-    while y < width do
+    while y < height do
       r = rand(0..4)
       case r
       when 0
