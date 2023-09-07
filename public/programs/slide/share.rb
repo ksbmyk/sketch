@@ -28,9 +28,9 @@ def draw
   while x < width do
     y = 0
     while y < width do
-      coler_index = rand(0..$colors.length - 1) #色を決める
+      coler_index = rand(0..$colors.length - 1) # 色を決める
       fill($colors[coler_index])
-      shape_type = rand(0..4) #形を決める
+      shape_type = rand(0..4) # 形を決める
       noStroke
       case shape_type
       when 0
@@ -55,12 +55,12 @@ def draw
         # 3点
         stroke($colors[coler_index])
         strokeWeight(10)
-        point(x + 10,  y + $side /2)
-        point(x + $side /2,  y + $side /2)
-        point(x  + $side - 10,  y + $side /2)
+        point(x + 10,  y + $side / 2)
+        point(x + $side /2,  y + $side / 2)
+        point(x + $side - 10,  y + $side / 2)
 
         # 菱形
-        # quad(x + $side /2, y, x,  y + $side /2, x + $side /2, y+$side, x+$side,  y + $side /2)
+        # quad(x + $side / 2, y, x,  y + $side / 2, x + $side / 2, y+$side, x+$side,  y + $side / 2)
       end
       y += $side
     end
