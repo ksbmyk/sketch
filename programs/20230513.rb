@@ -1,8 +1,8 @@
-$base = 80
+$side = 80
 $split = 9
 $colors = %w(#ba083d #444444 #a9a7ad)
 def setup
-  createCanvas($base * $split, $base * $split)
+  createCanvas($side * $split, $side * $split)
   angleMode(DEGREES)
   rectMode(CENTER)
   noStroke
@@ -11,45 +11,43 @@ end
 
 def draw
   background(255)
-  d = width / $split
-  x = d / 2
+  x = 0
   while x < width do
-    y = d / 2
+    y = 0
     while y < width do
       r = rand(0..4)
-
       case r
       when 0
         fill_pale_color($colors[0])
-        ellipse(x, y, d, d)
+        ellipse(x + $side / 2 , y + $side / 2, $side, $side)
       when 1
-        push
-        translate(0, d)
         fill_pale_color($colors[rand(1..2)])
-        arc(x - d / 2, y - d / 2, d * 2, d * 2, 270, 360)
-        pop
+        arc(x, y, $side * 2, $side * 2, 0, 90)
       when 2
         fill_pale_color($colors[rand(1..2)])
-        arc(x - d / 2, y - d / 2, d * 2, d * 2, 0, 90)
-      when 3
         push
-        translate(d, 0)
+        translate(0, $side)
+        arc(x, y, $side * 2, $side * 2, 270, 360)
+        pop
+      when 3
         fill_pale_color($colors[rand(1..2)])
-        arc(x - d / 2, y - d / 2, d * 2, d * 2, 90, 180)
+        push
+        translate($side, 0)
+        arc(x, y, $side * 2, $side * 2, 90, 180)
         pop
       when 4
-        push
-        translate(d, d)
         fill_pale_color($colors[rand(1..2)])
-        arc(x - d / 2, y - d / 2, d * 2, d * 2, 180, 270)
+        push
+        translate($side, $side)
+        arc(x, y, $side * 2, $side * 2, 180, 270)
         pop
       end
-      y += d
+      y += $side
     end
-    x += d
+    x += $side
   end
   fill(255)
-  rect(width / 2, width / 2, $base * 3, $base * 3)
+  rect(width / 2, width / 2, $side * 3, $side * 3)
   ruby_kaigi_logo
 end
 
@@ -57,18 +55,17 @@ def ruby_kaigi_logo
   fill($colors[0])
   x = width / 2
   y = width / 2
-  d = $base
-  ellipse(x, y, d, d)
-  ellipse(x - $base, y + $base, d, d)
+  ellipse(x, y, $side, $side)
+  ellipse(x - $side, y + $side, $side, $side)
 
   fill($colors[1])
-  arc(x - $base / 2, y -  $base / 2, $base * 2, $base * 2, 90, 270)
-  arc(x + $base / 2, y +  $base / 2, $base * 2, $base * 2, 270, 90)
+  arc(x - $side / 2, y -  $side / 2, $side * 2, $side * 2, 90, 270)
+  arc(x + $side / 2, y +  $side / 2, $side * 2, $side * 2, 270, 90)
 
   fill($colors[2])
-  arc(x - $base / 2 + $base, y - $base / 2 - $base, $base * 2, $base * 2, 90, 180)
-  arc(x + $base / 2, y - $base / 2, $base * 2, $base * 2, 270, 360)
-  arc(x - $base / 2, y + $base / 2 + $base, $base * 2, $base * 2, 270, 360)
+  arc(x - $side / 2 + $side, y - $side / 2 - $side, $side * 2, $side * 2, 90, 180)
+  arc(x + $side / 2, y - $side / 2, $side * 2, $side * 2, 270, 360)
+  arc(x - $side / 2, y + $side / 2 + $side, $side * 2, $side * 2, 270, 360)
 end
 
 def fill_pale_color(color_code)
