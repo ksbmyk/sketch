@@ -4,8 +4,8 @@ def setup
 end
 
 def draw
-  back_color = "red"
-  logo_color = "white"
+  back_color = "#84240f"
+  logo_color = "#ffffff"
   background(back_color)
 
   # 円
