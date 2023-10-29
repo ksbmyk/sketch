@@ -7,11 +7,11 @@ def draw
   back_color = "red"
   logo_color = "white"
   background(back_color)
+
   # 円
   noFill()
   stroke(logo_color)
   strokeWeight(2)
-
   ellipse(200, 200, 200, 200)
 
   # 線
@@ -30,7 +30,7 @@ def draw
   # 四角
   noStroke()
   fill(back_color)
-  rect(130, 170, 140, 15) # もうちょっとこのへん直したい
+  rect(130, 165, 140, 15)
   rect(130, 145, 140, 5)
   rect(130, 135, 140, 3)
 end
