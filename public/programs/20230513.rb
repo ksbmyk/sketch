@@ -1,3 +1,4 @@
+# RubyKaigi 2023 https://rubykaigi.org/2023/ のロゴ design by attsumi
 $side = 80
 $split = 9
 $colors = %w(#ba083d #444444 #a9a7ad)
