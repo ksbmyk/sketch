@@ -1,4 +1,4 @@
-# esa.io のﾄﾘ(\( ⁰⊖⁰)/)
+# esa https://esa.io/ のﾄﾘ(\( ⁰⊖⁰)/) design by ken_c_lo
 def setup
   createCanvas(600, 600)
   angleMode(DEGREES)
