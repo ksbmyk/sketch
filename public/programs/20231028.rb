@@ -1,4 +1,4 @@
-# Kaigi on Rails 2023 の ロゴ
+# Kaigi on Rails 2023 https://kaigionrails.org/2023 のロゴ design by hiromisugie
 def setup
   createCanvas(400, 400)
 end
