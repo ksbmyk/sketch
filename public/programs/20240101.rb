@@ -15,15 +15,15 @@ def draw
   b = 2
 
   translate(width/2, height/2)
-  stroke(255, 255, 255, 80)
+  stroke(255, 255, 255, 50)
 
-  (1..1000).each do | i |
-    xx = Math.sin(a * $y) - Math.tan(a * $x)
-    yy = Math.sin(b * $x) - Math.cos(b * $y)
+  1000.times do
+    c = Math.sin(a * $y) - Math.tan(a * $x)
+    d = Math.sin(b * $x) - Math.cos(b * $y)
     
-    point(xx * scale, yy * scale)
-    $x = xx
-    $y = yy
+    point(c * scale, d * scale)
+    $x = c
+    $y = d
   end
   
   if(frameCount > 1000)
