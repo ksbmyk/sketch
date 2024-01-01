@@ -5,7 +5,7 @@ $x = 0.1
 $y = 0.3
 
 def setup
-  createCanvas(800, 800)
+  createCanvas(700, 700)
   background(0)
 end
 
