@@ -1,4 +1,4 @@
-# GENUARY 2024 jan1 Particles, lots of them.
+# GENUARY 2024 jan1 "Particles, lots of them."
 # https://genuary.art/prompts
 
 $x = 0.1
