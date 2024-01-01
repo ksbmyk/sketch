@@ -6,23 +6,22 @@ $y = 0.3
 def setup
   createCanvas(800, 800)
   background(0)
+
 end
 
 def draw
   scale = 120
-  a = 3
+  a = 4
   b = 2
-  c = 2
-  d = 1
   
   translate(width/2, height/2)
-  stroke(30, 150, 160, 80)
-
+  stroke(255, 255, 255, 80)
+ 
   (1..1000).each do | i |
-    xx = Math.sin(a * $y) - Math.cos(a * $x) * c
-    yy = Math.sin(b * $x) - Math.cos(b * $y) * d
-
-    point(-xx * scale, yy * scale)
+    xx = Math.sin(a * $y) - Math.tan(a * $x)
+    yy = Math.sin(b * $x) - Math.cos(b * $y)
+    
+    point(xx * scale, yy * scale)
     $x = xx
     $y = yy
   end
