@@ -32,13 +32,13 @@ def draw
     blendMode(HARD_LIGHT)
     fill(255)
     noStroke()
-    translate(-width/2, -height/2)
+    translate(-width / 2, -height / 2)
 
     ctx = drawingContext
-    rg = ctx.createRadialGradient(width/2, height/2, 100, width/2, height/2, 300)
+    rg = ctx.createRadialGradient(width / 2, height / 2, 100, width / 2, height / 2, 300)
     rg.addColorStop(0, '#e2a872')
     rg.addColorStop(1, '#527e99')
     ctx.fillStyle = rg
-    circle(width/2, height/2, width*2)
+    circle(width / 2, height / 2, width * 2)
   end
 end
