@@ -3,16 +3,25 @@
 
 $side = 80
 $split = 9
+$count = 0
 def setup
   createCanvas($side * $split, $side * $split)
   rectMode(CENTER)
-  background(255)
-  noLoop
+  background(0)
+  frameRate(3)
 end
 
 def draw
-  noFill
-  (1...$split).each do |i|
-  	square(($side * $split) /2, ($side * $split) /2, $side * i)
+	stroke(255)
+    noFill
+	square(($side * $split) / 2, ($side * $split) / 2, $side * $count)
+	
+  if $count == $split -1
+  	$count = 0
+    noStroke
+    fill(0)
+    square(($side * $split) /2, ($side * $split) /2, $side * $split)
+  else
+    $count += 1
   end
 end
