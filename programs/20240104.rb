@@ -3,62 +3,36 @@
 
 $base = 10
 $split = 20
-$colors = %w(#ffee4a #ffc501 #fe9600 #77477e)
+$colors = %w(#ffee4a #ffc501 #fe9600)
 def setup
   createCanvas($base * $split * 3, $base * $split * 3)
   angleMode(DEGREES)
   background(255)
-  frameRate(1)
+  frameRate(2)
 end
 
 def draw
-  if frameCount.to_i.odd?
-    background(255)
+  pixel_box
 
-    pixel_box
-    
-    push
-    translate($base * $split, $base * $split)
-    pixel_box
-    pop
-    
-    push
-    translate($base * $split * 2, 0)
-    pixel_box
-    pop
+  push
+  translate($base * $split, $base * $split)
+  pixel_box
+  pop
 
-    push
-    translate(0, $base * $split * 2)
-    pixel_box
-    pop
-    
-    push
-    translate($base * $split * 2, $base * $split * 2)
-    pixel_box
-    pop
-    
-  else
-    background(255)
-    push
-    translate($base * $split, 0)
-    pixel_box
-    pop
+  push
+  translate($base * $split * 2, 0)
+  pixel_box
+  pop
 
-    push
-    translate(0, $base * $split)
-    pixel_box
-    pop
+  push
+  translate(0, $base * $split * 2)
+  pixel_box
+  pop
 
-    push
-    translate($base * $split * 2, $base * $split)
-    pixel_box
-    pop
-    
-    push
-    translate($base * $split, $base * $split * 2)
-    pixel_box
-    pop
-  end
+  push
+  translate($base * $split * 2, $base * $split * 2)
+  pixel_box
+  pop
 end
 
 def pixel_box
@@ -67,7 +41,7 @@ def pixel_box
     y = 0
     while y < $base * $split do
       noStroke
-      c = rand(0..3)
+      c = rand(0..$colors.length - 1)
       fill($colors[c])
       rect(x, y , $base, $base)
       y += $base
