@@ -6,7 +6,7 @@ $split = 12
 
 def setup
   createCanvas($side * $split + 20 , $side * $split + 20)
-  colorMode(HSB, 360, 100, 100, 100);
+  colorMode(HSB, 360, 100, 100, 100)
   background(0,0,100)
 end
 

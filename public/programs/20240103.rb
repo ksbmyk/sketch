@@ -8,7 +8,7 @@ $count = 0
 def setup
   createCanvas($side * $split, $side * $split)
   # HSBモード。色相の範囲を 0～360、彩度・明度・α値 の範囲を 0～100 に設定
-  colorMode(HSB, 360, 100, 100, 100);
+  colorMode(HSB, 360, 100, 100, 100)
   rectMode(CENTER)
   background(0)
   frameRate(2)
