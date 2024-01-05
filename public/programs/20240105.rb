@@ -17,7 +17,8 @@ def draw
     y = 0
     while y < width - $side do
       fill("#54AEFF")
-      rect(x, y, $side - 10)
+      #noise(x_noise, y_noise) * 255
+      rect(noise(x), noise(y), $side - 10)
       y += $side
     end
     x += $side
