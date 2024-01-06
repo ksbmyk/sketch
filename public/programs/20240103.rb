@@ -2,11 +2,11 @@
 # https://genuary.art/prompts
 # ref: https://note.com/deconbatch/n/nadd699e04580
 
-$side = 80
-$split = 9
-$count = 0
 def setup
-  createCanvas($side * $split, $side * $split)
+  @side = 80
+  @split = 9
+  @count = 0
+  createCanvas(@side * @split, @side * @split)
   # HSBモード。色相の範囲を 0～360、彩度・明度・α値 の範囲を 0～100 に設定
   colorMode(HSB, 360, 100, 100, 100)
   rectMode(CENTER)
@@ -29,16 +29,16 @@ def draw
       map(i, 1, 50, 15, 1),     # 明度
       100                       # α値
     )
-    square(($side * $split) / 2, ($side * $split) / 2, $side * $count)
+    square((@side * @split) / 2, (@side * @split) / 2, @side * @count)
   end
 
-  if $count == $split
-  	$count = 0
+  if @count == @split
+  	@count = 0
   	blendMode(BLEND)
     noStroke
     fill(0)
-    square(($side * $split) /2, ($side * $split) /2, $side * $split)
+    square((@side * @split) /2, (@side * @split) /2, @side * @split)
   else
-    $count += 1
+    @count += 1
   end
 end
