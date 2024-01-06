@@ -1,11 +1,10 @@
 # GENUARY 2024 jan5 In the style of Vera Molnár (1924-2023).
 # https://genuary.art/prompts
 
-@side = 60
-@split = 12
-
 def setup
-  createCanvas(@side * @split + 20 , @side * @split + 20)
+  @base = 60
+  split = 12
+  createCanvas(@base * split + 20 , @base * split + 20)
   colorMode(HSB, 360, 100, 100, 100)
   background(0,0,100)
 end
@@ -16,18 +15,18 @@ def draw
   noStroke
   count = 0
   x = 0
-  while x < width - @side do
+  while x < width - @base do
     y = 0
-    while y < height - @side do
+    while y < height - @base do
       if count.odd?
         fill(270, 55, 100, 70)
       else
         fill(208, 67, 100, 70)
       end
-      rect(x + rand(-4..5), y + rand(-5..10), @side - 10, @side - 3)
-      y += @side
+      rect(x + rand(-4..5), y + rand(-5..10), @base - 10, @base - 3)
+      y += @base
     end
-    x += @side
+    x += @base
     count += 1
   end
 end
