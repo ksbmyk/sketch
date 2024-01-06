@@ -1,5 +1,5 @@
-$colors = %w(#9be9a8 #40c463 #30a14e #216e39)
 def setup
+  @colors = %w(#9be9a8 #40c463 #30a14e #216e39)
   createCanvas(800, 800)
   angleMode(DEGREES)
   background('#a9ceec')
@@ -19,7 +19,7 @@ end
 def draw_leaf(x, y)
   push
   rotate(rand(1..9)*20)
-  c = color($colors[rand(0..3)])
+  c = color(@colors[rand(0..3)])
   c.setAlpha(200)
   fill(c)
   noStroke

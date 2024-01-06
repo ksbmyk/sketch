@@ -1,10 +1,9 @@
 # GENUARY 2024 jan1 "Particles, lots of them."
 # https://genuary.art/prompts
 
-$x = 0.1
-$y = 0.3
-
 def setup
+  @x = 0.1
+  @y = 0.3
   createCanvas(700, 700)
   background(0)
 end
@@ -18,12 +17,12 @@ def draw
   stroke(255, 255, 255, 50)
 
   1000.times do
-    c = Math.sin(a * $y) - Math.tan(a * $x)
-    d = Math.sin(b * $x) - Math.cos(b * $y)
+    c = Math.sin(a * @y) - Math.tan(a * @x)
+    d = Math.sin(b * @x) - Math.cos(b * @y)
     
     point(c * scale, d * scale)
-    $x = c
-    $y = d
+    @x = c
+    @y = d
   end
   
   if(frameCount > 1000)
