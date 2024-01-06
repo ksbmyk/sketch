@@ -1,4 +1,4 @@
-# クラスをを使うなら rbCanvasなら動く
+# rbCanvasなら動く https://rbcanvas.net/p5/0.4.0/editor/rbcanvasp5_editor.html
 # attr_reader :particles
 
 # def setup
