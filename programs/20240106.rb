@@ -1,3 +1,5 @@
+# GENUARY 2024 jan6 "Screensaver."
+# https://genuary.art/prompts
 # rbCanvasなら動く https://rbcanvas.net/p5/0.4.0/editor/rbcanvasp5_editor.html
 # attr_reader :particles
 
@@ -5,7 +7,7 @@
 #   createCanvas(720, 720)
 #   @particles = Array.new(50) { Particle.new(rand(width), rand(height)) }
 # end
-
+#
 # def draw
 #   background(0)
 #   particles.each do |particle|
@@ -13,10 +15,10 @@
 #     particle.show
 #   end
 # end
-
+#
 # class Particle
 #   attr_accessor :pos, :vel, :acc, :maxspeed, :prev_pos, :size, :r, :g, :b
-
+#
 #   def initialize(x, y)
 #     @pos = createVector(x, y) # 位置
 #     @vel = createVector(rand(0.1..3.0), rand(-2.0..3.0)) # 速度
@@ -28,21 +30,21 @@
 #     @b = rand(100..200)
 #     @size = rand(10..20)
 #   end
-
+#
 #   def update
 #     vel.add(acc)
 #     vel.limit(maxspeed)
 #     pos.add(vel)
 #     acc.mult(0)
-    
+#
 #     prev_pos = pos.copy
-    
+#
 #     if pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0
 #       @pos = createVector(rand(width), rand(height))
 #       @prev_pos = pos.copy
 #     end
 #   end
-
+#
 #   def show
 #     strokeWeight(2)
 #     stroke(255, 255, 255, 80)
