@@ -1,10 +1,10 @@
 # GENUARY 2024 jan2 "No palettes."
 # https://genuary.art/prompts
 
-$side = 80
-$split = 9
 def setup
-  createCanvas($side * $split, $side * $split)
+  @side = 80
+  split = 9
+  createCanvas(@side * split, @side * split)
   background(0)
   blendMode(ADD)
 end
@@ -21,10 +21,10 @@ def draw
       b = random(255)
       a = random(100, 200)
       fill(r, g, b, a)
-      diamond_shape($side/2, $side, x, y)
-      y += $side
+      diamond_shape(@side/2, @side, x, y)
+      y += @side
     end
-    x += $side / 2
+    x += @side / 2
   end
 end
 

@@ -73,6 +73,7 @@ def center_point(x, y, stroke_w)
   strokeWeight(stroke_w)
   point(x, y)
 end
+
 def raund_poit(x, y, size, increase, stroke_w)
   strokeWeight(stroke_w)
   (0..359).step(increase) do |a|
