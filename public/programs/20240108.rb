@@ -1,4 +1,4 @@
-# GENUARY 2024 jan8 Chaotic system.
+# GENUARY 2024 jan8 "Chaotic system."
 # https://genuary.art/prompts
 # https://wagtail.cds.tohoku.ac.jp/coda/python/misc/p-misc-lorenz-model.html
 # https://www.isc.meiji.ac.jp/~random/lecture/2017-comp2/miyake.html
