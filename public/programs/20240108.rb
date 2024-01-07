@@ -1,4 +1,4 @@
-# GENUARY 2024 jan8
+# GENUARY 2024 jan8 Chaotic system.
 # https://genuary.art/prompts
 # https://wagtail.cds.tohoku.ac.jp/coda/python/misc/p-misc-lorenz-model.html
 # https://www.isc.meiji.ac.jp/~random/lecture/2017-comp2/miyake.html
@@ -42,14 +42,14 @@ def draw
 
   from = color(255, 0, 0) # 色の開始点
   to = color(0, 0, 255) # 色の終了点
-  interColor = lerpColor(from, to, map(pz, -200, 200, 0, 1))
+  # lerpColor(補間を開始する色, 補間を終了する色, 0と1の間の数) 中間色を返す
+  interColor = lerpColor(from, to, map(pz, -90, 250, 0, 1))
 
   stroke(interColor)
-  strokeWeight(5)
+  strokeWeight(3)
   point(px, py, pz)
 
   if(frameCount > 5000)
     noLoop()
   end
 end
- 
