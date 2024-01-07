@@ -1,4 +1,4 @@
-# GENUARY 2024 jan5 In the style of Vera Molnár (1924-2023).
+# GENUARY 2024 jan5 "In the style of Vera Molnár (1924-2023)."
 # https://genuary.art/prompts
 
 def setup
