@@ -25,9 +25,9 @@ class Bubble
   end
 
   def fall
-    @y += speed
-    if (@y > height + 20) 
-      @y = rand(-200.0..-100.0)
+    self.y += speed
+    if (y > height + 20) 
+      self.y = rand(-200.0..-100.0)
     end
   end
 
