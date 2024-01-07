@@ -6,6 +6,7 @@ def setup
   angleMode(DEGREES) # ０°-３６０°で扱う
   @num_circles = 10
   @angle = 0
+  @rotation_speed = 4
   @max_alpha = 0
 end
 
@@ -13,7 +14,7 @@ def draw
   background("#2EAADC")
   translate(width / 2, height / 2)
 
-  @angle += 2
+  @angle += @rotation_speed
   rotate(@angle)
 
   radius = 80
