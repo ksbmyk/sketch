@@ -1,4 +1,4 @@
-# GENUARY 2024 jan6 "ASCII."
+# GENUARY 2024 jan9 "ASCII."
 # https://genuary.art/prompts
 # rbCanvasなら動く https://rbcanvas.net/p5/0.4.0/editor/rbcanvasp5_editor.html
 
