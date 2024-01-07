@@ -4,7 +4,7 @@
 
 def setup
   createCanvas(720, 720)
-  @particles = Array.new(50) { Particle.new(rand(width), rand(height)) }
+  @particles = Array.new(50) { Particle.new(rand(0..width), rand(0..height)) }
 end
 
 def draw
@@ -39,7 +39,7 @@ class Particle
     prev_pos = pos.copy
 
     if pos.x > width || pos.x < 0 || pos.y > height || pos.y < 0
-      @pos = createVector(rand(width), rand(height))
+      @pos = createVector(rand(0..width), rand(0..height))
       @prev_pos = pos.copy
     end
   end
