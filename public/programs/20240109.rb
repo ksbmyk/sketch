@@ -1,14 +1,11 @@
 # GENUARY 2024 jan9 "ASCII."
 # https://genuary.art/prompts
-# rbCanvasなら動く https://rbcanvas.net/p5/0.4.0/editor/rbcanvasp5_editor.html
-
-attr_reader :bubbles
 
 def setup
   createCanvas(600, 600)
   textSize(30)
   # xは画面横のランダムな位置、 yは画面外側(上)のランダムな位置にしてばらばら落ちる風に
-  @drops = Array.new(30) { Drop.new(rand(width), rand(-200.0..-100.0)) }
+  @drops = Array.new(30) { Drop.new(rand(0..width), rand(-200.0..-100.0)) }
 end
 
 def draw
