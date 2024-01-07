@@ -7,11 +7,12 @@ attr_reader :bubbles
 def setup
   createCanvas(600, 600)
   textSize(30)
+  # xは画面横のランダムな位置、 yは画面外側(上)のランダムな位置にしてばらばら落ちる風に
   @drops = Array.new(30) { Drop.new(rand(width), rand(-200.0..-100.0)) }
 end
 
 def draw
-  background("blue")
+  background("#a9ceec")
   @drops.each do |drop|
     drop.fall
     drop.display
@@ -31,7 +32,7 @@ class Drop
   def fall
     self.y += speed
     if (y > height + 20) 
-      self.y = rand(-200.0..-100.0)
+      self.y = rand(-200.0..-100.0) # 画面の外までいったら初期化
     end
   end
 
