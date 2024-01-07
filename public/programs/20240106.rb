@@ -2,7 +2,6 @@
 # https://genuary.art/prompts
 # rbCanvasなら動く https://rbcanvas.net/p5/0.4.0/editor/rbcanvasp5_editor.html
 
-attr_reader :particles
 def setup
   createCanvas(720, 720)
   @particles = Array.new(50) { Particle.new(rand(width), rand(height)) }
@@ -10,7 +9,7 @@ end
 
 def draw
   background(0)
-  particles.each do |particle|
+  @particles.each do |particle|
     particle.update
     particle.show
   end
