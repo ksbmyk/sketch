@@ -7,18 +7,18 @@ attr_reader :bubbles
 def setup
   createCanvas(600, 600)
   textSize(30)
-  @bubbles = Array.new(30) { Bubble.new(rand(width), rand(-200.0..-100.0)) }
+  @drops = Array.new(30) { Drop.new(rand(width), rand(-200.0..-100.0)) }
 end
 
 def draw
   background("blue")
-  @bubbles.each do |bubble|
-    bubble.fall
-    bubble.display
+  @drops.each do |drop|
+    drop.fall
+    drop.display
   end
 end
 
-class Bubble 
+class Drop 
   attr_accessor :x, :y, :speed, :ascii_character
 
   def initialize(x, y)
