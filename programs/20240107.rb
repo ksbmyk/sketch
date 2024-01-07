@@ -1,4 +1,4 @@
-# GENUARY 2024 jan7 Progress bar / indicator / loading animation.
+# GENUARY 2024 jan7 "Progress bar / indicator / loading animation."
 # https://genuary.art/prompts
 
 def setup
