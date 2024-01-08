@@ -34,13 +34,13 @@ def draw
         dy = circle[:y] - other[:y]
         distance = sqrt(dx * dx + dy * dy)
 
-        minDist = circle[:diameter] / 2 + other[:diameter] / 2
+        min_dist = circle[:diameter] / 2 + other[:diameter] / 2
 
-        if (distance < minDist)
+        if (distance < min_dist)
           angle = atan2(dy, dx)
 
-          targetX = other[:x] + cos(angle) * minDist
-          targetY = other[:y] + sin(angle) * minDist
+          targetX = other[:x] + cos(angle) * min_dist
+          targetY = other[:y] + sin(angle) * min_dist
           ax = (targetX - circle[:x]) * 0.1
           ay = (targetY - circle[:y]) * 0.1
           circle[:speed_x] += ax
