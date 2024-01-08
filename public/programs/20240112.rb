@@ -70,7 +70,7 @@ def draw
       circle[:speed_y] *= ratio
     end
 
-    fill(255)
+    fill("#32f8fd")
     noStroke
     ellipse(circle[:x], circle[:y], circle[:diameter])
   end
