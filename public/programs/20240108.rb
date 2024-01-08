@@ -12,7 +12,7 @@ def setup
   @rho = 28
   @beta = 8/3
 
-  createCanvas(800, 600, WEBGL) # 三次元描画
+  createCanvas(720, 720, WEBGL) # 三次元描画
   background(0)
   blendMode(SCREEN)
 end
