@@ -65,7 +65,7 @@ def draw
     end
 
     fill(255)
-    noStroke()
+    noStroke
     ellipse(circle[:x], circle[:y], circle[:diameter])
   end
 end
