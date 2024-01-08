@@ -50,6 +50,6 @@ def draw
   point(px, py, pz)
 
   if(frameCount > 5000)
-    noLoop()
+    noLoop
   end
 end
