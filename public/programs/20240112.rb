@@ -25,6 +25,9 @@ def draw
     circle[:x] += circle[:speed_x]
     circle[:y] += circle[:speed_y]
 
+    # ぶつかり判定
+    collided = true
+
     (0...@circles.length).each do |j| # 他の円すべて
       if (i != j)
         other = @circles[j] # 他の円
@@ -37,6 +40,7 @@ def draw
 
         # 円同士がぶつかったとき
         if (distance < min_dist)
+          collided = true
           # atan2 直角三角形の、斜辺でない2辺の長さから、x軸との角度をとる
           angle = atan2(dy, dx) # ぶつかった方向を計算
 
@@ -59,7 +63,13 @@ def draw
       circle[:speed_y] *= -1 # 速度を反転
     end
 
-    # 速度上限を設けて超えないようにする
+    # ぶつからなかったらゆっくりにする
+    unless collided
+      circle[:speed_x] *= 0.99
+      circle[:speed_y] *= 0.99
+    end
+
+    # 速度上限を設けてどんどん速くならないようにする
     max_speed = 2
     # 円の現在の速度の大きさを計算
     # sqrt 平方根 速度の大きさ（ベクトルの長さ）をとる
