@@ -56,10 +56,10 @@ def draw
       circle[:speed_y] *= -1
     end
 
-    maxSpeed = 2 # 上限速度
-    speedMagnitude = sqrt(circle[:speed_x] ** 2 + circle[:speed_y] ** 2)
-    if (speedMagnitude > maxSpeed)
-      ratio = maxSpeed / speedMagnitude
+    max_speed = 2 # 上限速度
+    speed_magnitude = sqrt(circle[:speed_x] ** 2 + circle[:speed_y] ** 2)
+    if (speed_magnitude > max_speed)
+      ratio = max_speed / speed_magnitude
       circle[:speed_x] *= ratio
       circle[:speed_y] *= ratio
     end
