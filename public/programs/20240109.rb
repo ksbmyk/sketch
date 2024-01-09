@@ -22,7 +22,7 @@ def draw
 end
 
 class Drop 
-  attr_accessor :x, :y, :speed, :ascii_character #, :frame_count
+  attr_accessor :x, :y, :speed, :ascii_character
 
   def initialize(x, y)
     @x = x
