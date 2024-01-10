@@ -11,9 +11,8 @@ end
 
 def draw
   (1..1200).each do |i|
-    x = rand(10..width - 35)
-    y = rand(10..height - 35)
-
+    x = rand(0..width)
+    y = rand(0..height)
     if(x < 350)
    	  fill(180, 80, i / 12, 75)
     else 
@@ -21,6 +20,12 @@ def draw
     end
     hexagon(x, y)
   end
+  
+  fill(255)
+  triangle(0, 0, 0, height / 2, 150, 0)
+  triangle(width - 150, 0, width, 0, width, height / 2)
+  triangle(0, height / 2, 0, height, 150, height)
+  triangle(width - 150, height, width, height, width, height / 2)
 end
 
 def hexagon(x, y)
