@@ -12,7 +12,7 @@ end
 def draw
   (1..1200).each do |i|
     x = rand(0..width)
-    y = rand(0..height)
+    y = rand(-10..height)
     if(x < 350)
    	  fill(180, 80, i / 12, 75)
     else 
