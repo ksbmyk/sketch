@@ -27,8 +27,8 @@ def draw
         r = rand(0..1)
         if r == 1
           fill(0)
-          rect(x, y+20, @side, 10)
-          rect(x, y+50, @side, 10)
+          rect(x, y + 20, @side, 10)
+          rect(x, y + 50, @side, 10)
         end
       when 2
         fill(@colors[2])
@@ -36,8 +36,8 @@ def draw
         r = rand(0..1)
         if r == 1
           fill(@colors[1])
-          rect(x, y+20, @side, 10)
-          rect(x, y+50, @side, 10)
+          rect(x, y + 20, @side, 10)
+          rect(x, y + 50, @side, 10)
         end
       when 3
         fill(@colors[3])
@@ -47,8 +47,8 @@ def draw
         rect(x, y, @side)
 ​
         fill(0)
-        rect(x, y+20, @side, 10)
-        rect(x, y+50, @side, 10)
+        rect(x, y + 20, @side, 10)
+        rect(x, y + 50, @side, 10)
       when 5
         fill(@colors[5])
         rect(x, y, @side)
