@@ -1,6 +1,7 @@
 # GENUARY 2024 jan11 "In the style of Anni Albers (1899-1994)."
 # https://genuary.art/prompts
 
+
 def setup
   @side = 80
   @colors = %w(#f8efce #827e27 #797f8b #f6ed6a #79837b #676f71)
@@ -24,6 +25,7 @@ def draw
       when 1
         fill(@colors[1])
         rect(x, y, @side)
+
         r = rand(0..1)
         if r == 1
           fill(0)
@@ -33,6 +35,7 @@ def draw
       when 2
         fill(@colors[2])
         rect(x, y, @side)
+
         r = rand(0..1)
         if r == 1
           fill(@colors[1])
@@ -45,7 +48,7 @@ def draw
       when 4
         fill(@colors[4])
         rect(x, y, @side)
-​
+
         fill(0)
         rect(x, y + 20, @side, 10)
         rect(x, y + 50, @side, 10)
@@ -58,4 +61,3 @@ def draw
     x += @side
   end
 end
-​
