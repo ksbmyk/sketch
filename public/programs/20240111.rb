@@ -3,9 +3,9 @@
 
 def setup
   @side = 80
-  @split = 9
   @colors = %w(#f8efce #827e27 #797f8b #f6ed6a #79837b #676f71)
-  createCanvas(@side * @split, @side * @split)
+  split = 9
+  createCanvas(@side * split, @side * split)
   noStroke
   noLoop
 end
