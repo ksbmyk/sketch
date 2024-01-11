@@ -25,21 +25,27 @@ def draw
       when 1
         fill(@colors[1])
         rect(x, y, @side)
+
         fill(0)
-        rect(x, y+30, @side, 20)
+        rect(x, y+20, @side, 10)
+        rect(x, y+50, @side, 10)
       when 2
         fill(@colors[2])
         rect(x, y, @side)
+
         fill(@colors[1])
-        rect(x, y+30, @side, 20)
+        rect(x, y+20, @side, 10)
+        rect(x, y+50, @side, 10)
       when 3
         fill(@colors[3])
         rect(x, y, @side)
       when 4
         fill(@colors[4])
         rect(x, y, @side)
+
         fill(0)
-        rect(x, y+30, @side, 20)
+        rect(x, y+20, @side, 10)
+        rect(x, y+50, @side, 10)
       when 5
         fill(@colors[5])
         rect(x, y, @side)
