@@ -13,11 +13,11 @@ end
 def draw
   background("blue")
   scale(1.5)
-  box(@t)
+  tile(@t)
   @t += 0.01
 end
 
-def box(f)
+def tile(f)
   	t = f
     x = 0
   while x < width do
