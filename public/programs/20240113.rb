@@ -1,6 +1,7 @@
 # GENUARY 2024 jan13 "Wobbly function day."
 # https://genuary.art/prompts
 # https://piterpasma.nl/articles/wobbly
+# color #DIGSHIBUYA https://digshibuya.com/
 
 def setup
   @base = 80
