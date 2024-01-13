@@ -8,25 +8,28 @@ def setup
   split = 9
   createCanvas(@base * split, @base * split)
   #rectMode(CENTER)
+  
   background(255)
-  @t = 1
+  @t = 0
 end
 
 def draw
-  background(255)
+  background("blue")
+  scale(1.5)
   box(@t)
   @t += 0.01
 end
 
 def box(f)
-  t = f
+  	t = f
     x = 0
   while x < width do
     y = 0
     while y < width do
       fill(0)
       push
-	    translate(@base / 2, @base / 2)
+	    translate(250, -130)
+      rotate(0.8)
       rect(x, y, (wobbly_function(x, y, t) * 10))
       circle(x, y, (wobbly_function(x, y, t) * 20))
       pop
