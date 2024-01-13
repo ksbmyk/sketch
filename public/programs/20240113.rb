@@ -6,30 +6,34 @@ def setup
   @base = 80
   split = 9
   createCanvas(@base * split, @base * split)
-  colorMode(HSB, 360, 100, 100, 100)
-  @t = 0
+  @time = 0
 end
 
 def draw
-  background("blue")
+  background("#0055b2")
   scale(1.5)
-  tile(@t)
-  @t += 0.01
+  tile(@time)
+  @time += 0.02
 end
 
-def tile(f)
-  	t = f
+def tile(t)
     x = 0
   while x < width do
     y = 0
     while y < width do
-      noStroke
-      fill(t*100, 50, 100)
+
       push
-	    translate(250, -130)
+	    translate(250, -250)
       rotate(0.8)
+
+      noStroke
+      fill("#28ef30")
       rect(x, y, (wobbly_function(x, y, t) * 10))
       circle(x, y, (wobbly_function(x, y, t) * 20))
+
+      fill(255)
+      circle(x, y, (wobbly_function(x, y, t)*10))
+
       pop
       y += @base
     end
