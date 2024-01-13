@@ -2,14 +2,11 @@
 # https://genuary.art/prompts
 # https://piterpasma.nl/articles/wobbly
 
-
 def setup
   @base = 80
   split = 9
   createCanvas(@base * split, @base * split)
-  #rectMode(CENTER)
-  
-  background(255)
+  colorMode(HSB, 360, 100, 100, 100)
   @t = 0
 end
 
@@ -26,7 +23,8 @@ def box(f)
   while x < width do
     y = 0
     while y < width do
-      fill(0)
+      noStroke
+      fill(t*100, 50, 100)
       push
 	    translate(250, -130)
       rotate(0.8)
