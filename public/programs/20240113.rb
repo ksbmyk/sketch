@@ -1,7 +1,6 @@
 # GENUARY 2024 jan13 "Wobbly function day."
 # https://genuary.art/prompts
 # https://piterpasma.nl/articles/wobbly
-# color #DIGSHIBUYA https://digshibuya.com/
 
 def setup
   @base = 80
@@ -11,7 +10,7 @@ def setup
 end
 
 def draw
-  background("#0055b2")
+  background("#3B27BA")
   scale(1.5)
   tile(@time)
   @time += 0.02
@@ -28,7 +27,7 @@ def tile(t)
       rotate(0.8)
 
       noStroke
-      fill("#28ef30")
+      fill("#E847AE")
       rect(x, y, (wobbly_function(x, y, t) * 10))
       circle(x, y, (wobbly_function(x, y, t) * 20))
 
