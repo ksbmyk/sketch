@@ -4,15 +4,16 @@
 
 
 def setup
-  @side = 80
+  @base = 80
   split = 9
-  createCanvas(@side * split, @side * split)
+  createCanvas(@base * split, @base * split)
+  #rectMode(CENTER)
   background(255)
   @t = 1
 end
 
 def draw
-  background(0)
+  background(255)
   box(@t)
   @t += 0.01
 end
@@ -23,11 +24,15 @@ def box(f)
   while x < width do
     y = 0
     while y < width do
-      fill(255)
-        circle(x, y, abs(wobbly_function(x, y, t) * 20))
-      y += @side
+      fill(0)
+      push
+	    translate(@base / 2, @base / 2)
+      rect(x, y, (wobbly_function(x, y, t) * 10))
+      circle(x, y, (wobbly_function(x, y, t) * 20))
+      pop
+      y += @base
     end
-    x += @side
+    x += @base
   end
   
 end
