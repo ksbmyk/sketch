@@ -2,9 +2,43 @@
   <head>
     <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
-    <script type="text/ruby" src="p5.rb"></script>
-    <script type="text/ruby" src="20230614.rb"></script>
-    <script type="text/ruby">P5::init()</script>
+    <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
+    <script type="text/ruby">
+def setup
+  createCanvas(600, 600)
+end
+
+def draw
+  background(255)
+  noStroke()
+  s = 15
+  x = 0
+  while x <= width do
+    if(x % (s*2) == 0)
+      y = 0
+      while y <= height do
+        if y % (s*2) == 0
+          fill(0)
+          rect(x, y, s)
+        else
+          fill('#888')
+          rect(x, y, s)
+        end
+        y +=s
+      end
+    else
+      y = 0
+      while y <= height do
+        fill("#888")
+        rect(x, y, s)    
+        y += s*2
+      end
+    end
+    x +=s
+  end
+end
+P5::init()
+    </script>
   </head>
   <body>
     <main>
