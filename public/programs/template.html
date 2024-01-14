@@ -5,37 +5,30 @@
     <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
     <script type="text/ruby">
 def setup
-  createCanvas(600, 600)
+@w=615
+@t=1
+createCanvas(@w,@w)
+noStroke
+colorMode(HSB)
 end
 
 def draw
-  background(255)
-  noStroke()
-  s = 15
-  x = 0
-  while x <= width do
-    if(x % (s*2) == 0)
-      y = 0
-      while y <= height do
-        if y % (s*2) == 0
-          fill(0)
-          rect(x, y, s)
-        else
-          fill('#888')
-          rect(x, y, s)
-        end
-        y +=s
-      end
-    else
-      y = 0
-      while y <= height do
-        fill("#888")
-        rect(x, y, s)    
-        y += s*2
-      end
-    end
-    x +=s
-  end
+background(255)
+check_pattern(@t)
+@t=@t<360?@t+0.25:0 
+end
+
+def check_pattern(t)
+s=15
+x=0
+y=0
+while x<=width do
+fill(t,80,80,0.5)
+rect(x,0,s,@w) 
+rect(0,y,@w,s)  
+x+=s*2
+y+=s*2
+end
 end
 P5::init()
     </script>
