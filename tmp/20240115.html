@@ -19,7 +19,7 @@
         let floor;
 
         function setup() {
-            createCanvas(720, 720);
+            createCanvas(600, 600);
 
             // Matter.jsエンジンの作成
             engine = Engine.create();
@@ -58,7 +58,9 @@
                 const pos = circle.position;
                 const radius = circle.circleRadius;
 
-                fill(255);
+                fill("#7FFF00");
+                //fill("#B8FB3C");
+                //fill("#5CE5D5");
                 noStroke();
                 ellipse(pos.x, pos.y, radius * 2, radius * 2);
             }
