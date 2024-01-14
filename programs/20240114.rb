@@ -12,7 +12,7 @@ end
 def draw
   background(255)
   check_pattern(@t)
-  @t = @ t < 360 ? @t + 0.25 : 0 
+  @t = @t < 360 ? @t + 0.25 : 0 
 end
   
 def check_pattern(t)
