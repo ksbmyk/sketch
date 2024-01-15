@@ -4,100 +4,109 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.18.0/matter.min.js"></script>
     <meta charset="utf-8" />
+    <title>20240115</title>
   </head>
   <body>
+    <div>
+        <div>
+            <div>
+                <script>
+                    const Engine = Matter.Engine;
+                    const World = Matter.World;
+                    const Bodies = Matter.Bodies;
+                    const Events = Matter.Events;
 
-    <script>
-        const Engine = Matter.Engine;
-        const World = Matter.World;
-        const Bodies = Matter.Bodies;
-        const Events = Matter.Events;
+                    let engine;
+                    let world;
+                    let circles = [];
+                    let floor;
 
-        let engine;
-        let world;
-        let circles = [];
-        let floor;
+                    function setup() {
+                        createCanvas(600, 600);
 
-        function setup() {
-            createCanvas(600, 600);
+                        // Matter.jsエンジンの作成
+                        engine = Engine.create();
+                        world = engine.world;
 
-            // Matter.jsエンジンの作成
-            engine = Engine.create();
-            world = engine.world;
+                        // 床を作成
+                        floor = Bodies.rectangle(width / 2, height - 10, width, 20, { isStatic: true });
+                        World.add(world, floor);
 
-            // 床を作成
-            floor = Bodies.rectangle(width / 2, height - 10, width, 20, { isStatic: true });
-            World.add(world, floor);
+                        // 初期の円を追加
+                        setInterval(addCircle, 500); // 0.5秒ごとに円を追加
 
-            // 初期の円を追加
-            setInterval(addCircle, 500); // 0.5秒ごとに円を追加
+                        // 衝突イベントのリスナーを追加
+                        Events.on(engine, 'collisionStart', function(event) {
+                            let pairs = event.pairs;
+                            for (let i = 0; i < pairs.length; i++) {
+                            let pair = pairs[i];
+                            handleCollision(pair.bodyA, pair.bodyB);
+                            }
+                        });
+                    }
 
-            // 衝突イベントのリスナーを追加
-            Events.on(engine, 'collisionStart', function(event) {
-                let pairs = event.pairs;
-                for (let i = 0; i < pairs.length; i++) {
-                let pair = pairs[i];
-                handleCollision(pair.bodyA, pair.bodyB);
-                }
-            });
-        }
+                    function draw() {
+                        background(0);
 
-        function draw() {
-            background(0);
+                        // Matter.jsエンジンの更新
+                        Engine.update(engine);
 
-            // Matter.jsエンジンの更新
-            Engine.update(engine);
+                        // 床を描画
+                        fill(128);
+                        noStroke();
+                        rect(floor.position.x - floor.width / 2, floor.position.y - floor.height / 2, floor.width, floor.height);
 
-            // 床を描画
-            fill(128);
-            noStroke();
-            rect(floor.position.x - floor.width / 2, floor.position.y - floor.height / 2, floor.width, floor.height);
+                        // すべての円を描画
+                        for (let circle of circles) {
+                            const pos = circle.position;
+                            const radius = circle.circleRadius;
 
-            // すべての円を描画
-            for (let circle of circles) {
-                const pos = circle.position;
-                const radius = circle.circleRadius;
+                            fill("#7FFF00");
+                            //fill("#B8FB3C");
+                            //fill("#5CE5D5");
+                            noStroke();
+                            ellipse(pos.x, pos.y, radius * 2, radius * 2);
+                        }
+                    }
 
-                fill("#7FFF00");
-                //fill("#B8FB3C");
-                //fill("#5CE5D5");
-                noStroke();
-                ellipse(pos.x, pos.y, radius * 2, radius * 2);
-            }
-        }
+                    function addCircle() {
+                        // ランダムな位置に円を追加
+                        const circle = Bodies.circle(random(width/2-50, width/2+50), -50, 20, { restitution: 0.8 });
+                        // ボックスの初速度を大きくする
+                        circle.velocity.y = 5; // Y軸方向への初速度
+                        World.add(world, circle);
+                        circles.push(circle);
+                    }
 
-        function addCircle() {
-            // ランダムな位置に円を追加
-            const circle = Bodies.circle(random(width/2-50, width/2+50), -50, 20, { restitution: 0.8 });
-            // ボックスの初速度を大きくする
-            circle.velocity.y = 5; // Y軸方向への初速度
-            World.add(world, circle);
-            circles.push(circle);
-        }
+                    function handleCollision(bodyA, bodyB) {
+                        // 衝突した二つの物体が円であれば反発係数を考慮して速度を調整
+                        if (bodyA.circleRadius && bodyB.circleRadius) {
+                            let restitution = 0.8; // 反発係数
+                            let normal = { x: bodyB.position.x - bodyA.position.x, y: bodyB.position.y - bodyA.position.y };
+                            let magnitude = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+                            normal.x /= magnitude;
+                            normal.y /= magnitude;
 
-        function handleCollision(bodyA, bodyB) {
-            // 衝突した二つの物体が円であれば反発係数を考慮して速度を調整
-            if (bodyA.circleRadius && bodyB.circleRadius) {
-                let restitution = 0.8; // 反発係数
-                let normal = { x: bodyB.position.x - bodyA.position.x, y: bodyB.position.y - bodyA.position.y };
-                let magnitude = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
-                normal.x /= magnitude;
-                normal.y /= magnitude;
+                            let relativeVelocity = { x: bodyB.velocity.x - bodyA.velocity.x, y: bodyB.velocity.y - bodyA.velocity.y };
+                            let speedAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
 
-                let relativeVelocity = { x: bodyB.velocity.x - bodyA.velocity.x, y: bodyB.velocity.y - bodyA.velocity.y };
-                let speedAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
+                            let impulse = (2 * speedAlongNormal) / (1 / bodyA.circleRadius + 1 / bodyB.circleRadius);
+                            impulse *= restitution;
 
-                let impulse = (2 * speedAlongNormal) / (1 / bodyA.circleRadius + 1 / bodyB.circleRadius);
-                impulse *= restitution;
+                            bodyA.velocity.x -= impulse * normal.x / bodyA.circleRadius;
+                            bodyA.velocity.y -= impulse * normal.y / bodyA.circleRadius;
 
-                bodyA.velocity.x -= impulse * normal.x / bodyA.circleRadius;
-                bodyA.velocity.y -= impulse * normal.y / bodyA.circleRadius;
-
-                bodyB.velocity.x += impulse * normal.x / bodyB.circleRadius;
-                bodyB.velocity.y += impulse * normal.y / bodyB.circleRadius;
-            }
-        }
-    </script>
+                            bodyB.velocity.x += impulse * normal.x / bodyB.circleRadius;
+                            bodyB.velocity.y += impulse * normal.y / bodyB.circleRadius;
+                        }
+                    }
+                </script>        
+            </div>
+            <div>
+                <a href="https://github.com/ksbmyk/sketch/blob/main/public/js/20240115.html">< / ></a>
+            </div>
+        </div>    
+    </div>
   </body>
 </html>
 
