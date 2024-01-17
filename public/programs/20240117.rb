@@ -50,7 +50,7 @@ def arabesque(x, y, radius, sides, depth)
     next_x = x + cos(angle) * next_radius
     next_y = y + sin(angle) * next_radius
     # p5.rbだと重いのでrbCanvasで動かすなら外してよい
-    arabesque(next_x, next_y, next_radius, sides, depth - 1)
+    #arabesque(next_x, next_y, next_radius, sides, depth - 1)
   end
   endShape(CLOSE)
 end
