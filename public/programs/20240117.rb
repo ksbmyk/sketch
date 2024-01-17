@@ -1,3 +1,6 @@
+# GENUARY 2024 jan16 "Draw 10 000 of something."
+# https://genuary.art/prompts
+
 def setup
     createCanvas(600, 600)
     background("#335fa6")
@@ -64,7 +67,8 @@ def arabesque(x, y, radius, sides, depth)
     next_radius = radius * 0.3 # 反復サイズ
     next_x = x + cos(angle) * next_radius
     next_y = y + sin(angle) * next_radius
-    arabesque(next_x, next_y, next_radius, sides, depth - 1)
+    # p5.rbだと重いのでrbCanvasで動かすなら外してよい
+    # arabesque(next_x, next_y, next_radius, sides, depth - 1)
   end
   endShape(CLOSE)
 end
