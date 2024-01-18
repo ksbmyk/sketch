@@ -1,3 +1,6 @@
+# GENUARY 2024 jan18 "Bauhaus.."
+# https://genuary.art/prompts
+
 
 def setup
   @side = 80
