@@ -1,4 +1,4 @@
-# GENUARY 2024 jan16 "Draw 10 000 of something."
+# GENUARY 2024 jan17 "Inspired by Islamic art."
 # https://genuary.art/prompts
 
 def setup
