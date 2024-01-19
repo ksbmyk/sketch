@@ -5,7 +5,7 @@
 def setup
   createCanvas(720, 720)
   @flock = []
-  100.times do
+  80.times do
     # ランダムな座標の範囲を円にする
     angle = random(0, TWO_PI) # 円周上のランダムな角度
     distance = random(0, 100) # 原点から許容する距離
@@ -17,14 +17,13 @@ def setup
 end
 
 def draw
-  #noLoop
   background(0)
   translate(width / 2, height / 2)
   
   @flock.each do |flock|
     fill(127, 127)
     stroke(200)
-    ellipse(flock.x, flock.y, 15, 15)
+    rect(flock.x, flock.y, 30, 30)
 
     # ランダムな方向に動かす
     angle = random(0, TWO_PI)
