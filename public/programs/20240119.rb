@@ -1,7 +1,6 @@
 # GENUARY 2024 jan19 "Flocking."
 # https://genuary.art/prompts
 
-
 def setup
   createCanvas(720, 720)
   @flock = []
