@@ -1,4 +1,4 @@
-# GENUARY 2024 jan18 "Bauhaus.."
+# GENUARY 2024 jan18 "Bauhaus."
 # https://genuary.art/prompts
 
 

@@ -23,7 +23,7 @@ def tile(t)
     while y < width do
 
       push
-	    translate(250, -250)
+      translate(250, -250)
       rotate(0.8)
 
       noStroke
