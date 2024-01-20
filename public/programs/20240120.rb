@@ -11,7 +11,7 @@ def setup
   @textGraphic.textSize(48)
   @textGraphic.textFont(@font)
   @textGraphic.textAlign(CENTER, CENTER)
-  @textGraphic.text(@text, width / 2, height / 2)
+  @textGraphic.text(@text, width / 2, height / 2 - 20)
 end
 
 def draw
@@ -28,7 +28,7 @@ def main_text
   textSize(48)
   textFont(@font)
   textAlign(CENTER, CENTER)
-  text(@text, width / 2, height / 2)
+  text(@text, width / 2, height / 2 - 20)
 end
 
 def draw_background
