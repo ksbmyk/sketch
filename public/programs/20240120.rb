@@ -55,5 +55,5 @@ def drawReflection(graphic, alpha, y_offset)
   push()
   tint(255, alpha * 255) # 透明度を適用
   cg.filter(BLUR, 5) # ぼかしを適用（10はぼかしの強さ）
-  image(cg, 0, 0, width, height) ぼかしたものを描画
+  image(cg, 0, 0, width, height) # ぼかしたものを描画
 end
