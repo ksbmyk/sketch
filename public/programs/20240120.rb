@@ -4,10 +4,10 @@
 
 def setup() 
   createCanvas(720, 720)
-  @text = "Hello World"
+  @text = "GENUARY 2024"
   @font = "Optima"
   @textGraphic = createGraphics(width, height)
-  @textGraphic.clear()
+  @textGraphic.clear
   @textGraphic.fill(0)
   @textGraphic.textSize(48)
   @textGraphic.textFont(@font)
@@ -16,8 +16,8 @@ def setup()
 end
 
 def draw() 
-  noLoop()
-  draw_background() # 背景を描画
+  noLoop
+  draw_background
 
   #image(@textGraphic, 0, 0)
 
