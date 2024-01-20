@@ -4,38 +4,40 @@
 
 def setup() 
   createCanvas(720, 720)
+  @text = "Hello World"
+  @font = "Optima"
   @textGraphic = createGraphics(width, height)
-  @textGraphic.pixelDensity(1)
-  #@textGraphic.background(255)
   @textGraphic.clear()
   @textGraphic.fill(0)
   @textGraphic.textSize(48)
-  @textGraphic.textFont("Optima")
+  @textGraphic.textFont(@font)
   @textGraphic.textAlign(CENTER, CENTER)
-  @textGraphic.text("Hello World", width / 2, height / 2)
+  @textGraphic.text(@text, width / 2, height / 2)
 end
 
 def draw() 
   noLoop()
-  #background(200) #背景色
   draw_background() # 背景を描画
 
-  #オリジナルのテキストを描画
-  image(@textGraphic, 0, 0)
+  #image(@textGraphic, 0, 0)
 
-  # テキストの下に反転したコピーを描画（位置をより下に移動）
-  drawReflection(@textGraphic, 0.5, 25) # 透明度を0.5にして反転コピーを描画
+  # 反転
+  drawReflection(@textGraphic, 0.5, 25)
+
+  main_text
+end
+
+def main_text 
   stroke(255)
-  strokeWeight(1)
-  fill(255, 100)
+  strokeWeight(3)
+  noFill
   textSize(48)
-  textFont("Optima")
+  textFont(@font)
   textAlign(CENTER, CENTER)
-  text("Hello World", width / 2, height / 2)
+  text(@text, width / 2, height / 2)
 end
 
 def draw_background()
-# 青系統のグラデーションを描画
 (0..height).each do |y|
     gradient = map(abs(y - height / 2), 0, height / 2, 255, 0)
     stroke(lerpColor(color(0, 120, 255), color(0, 0, 255), gradient.to_f / 255))
@@ -43,15 +45,15 @@ def draw_background()
 end
 end
 
-def drawReflection(graphic, alpha, yOffset) 
-  pg = createGraphics(width, height)# 新しいPGを作成
-  pg.background(255)
-  pg.translate(0, height + yOffset) # y軸を反転し、yOffset分下に移動
-  pg.scale(1, -1) # y軸を反転
-  pg.image(graphic, 0, 0, width, height)# 反転コピーを描画
-
+def drawReflection(graphic, alpha, y_offset) 
+  cg = createGraphics(width, height)
+  cg.background(255)
+  cg.translate(0, height + y_offset) # y_offset分下に移動
+  cg.scale(1, -1) # y軸を反転
+  cg.image(graphic, 0, 0, width, height)
+    
   push()
-  tint(255, alpha * 255)# 透明度を適用
-  image(pg, 0, 0, width, height)# PGを描画
-  pop()
+  tint(255, alpha * 255) # 透明度を適用
+  cg.filter(BLUR, 5) # ぼかしを適用（10はぼかしの強さ）
+  image(cg, 0, 0, width, height) ぼかしたものを描画
 end
