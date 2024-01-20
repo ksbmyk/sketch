@@ -19,11 +19,7 @@ def draw()
   noLoop
   draw_background
 
-  #image(@textGraphic, 0, 0)
-
-  # 反転
   drawReflection(@textGraphic, 0.5, 25)
-
   main_text
 end
 
@@ -48,12 +44,12 @@ end
 def drawReflection(graphic, alpha, y_offset) 
   cg = createGraphics(width, height)
   cg.background(255)
-  cg.translate(0, height + y_offset) # y_offset分下に移動
+  cg.translate(0, height + y_offset)
   cg.scale(1, -1) # y軸を反転
   cg.image(graphic, 0, 0, width, height)
     
   push()
-  tint(255, alpha * 255) # 透明度を適用
-  cg.filter(BLUR, 5) # ぼかしを適用（10はぼかしの強さ）
-  image(cg, 0, 0, width, height) # ぼかしたものを描画
+  tint(255, alpha * 255) 
+  cg.filter(BLUR, 5) # ぼかし
+  image(cg, 0, 0, width, height)
 end
