@@ -38,6 +38,7 @@ def draw_background
     stroke(lerpColor(color(0, 120, 255), color(0, 0, 255), gradient.to_f / 255))
     line(0, y, width, y)
   end
+  noStroke
   fill(255, 255, 255, 100)
   rect(0, 0, width, height)
 end
