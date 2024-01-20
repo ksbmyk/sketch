@@ -1,7 +1,6 @@
 # GENUARY 2024 jan20 "Generative typography."
 # https://genuary.art/prompts
 
-
 def setup
   createCanvas(720, 720)
   @text = "GENUARY 2024"
