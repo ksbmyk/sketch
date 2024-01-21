@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="./p5.brush.min.js"></script>
+    <meta charset="utf-8" />
+    <title>20240115</title>
+  </head>
+  <body>
+    <div>
+        <div>
+            <div>
+                <script>
+let side = 80; // 円の直径
+let split = 9;
+let colors = ["#eb6100"," #004c97", " #15722c", "#fccc00"]; // ランダムな色の配列
+
+
+function setup () {
+  createCanvas(side * split, side * split, WEBGL)
+
+  background("#ffffff")
+  noLoop();
+  
+  
+}
+
+function draw () {
+translate(-width/2,-height/2)
+
+  for (let x = 0; x < width; x+=side) {
+    
+    for (let y = 0; y < height; y+=side) {
+      brush.push()
+      brush.noStroke()
+      brush.fill(random(colors), random(30,140));
+      brush.rect(x, y, side*0.9, side*0.9);
+      brush.pop()
+    }
+  }
+}
+
+                </script>        
+            </div>
+            <div>
+                <a href="https://github.com/ksbmyk/sketch/blob/main/public/js/20240121.html">< / ></a>
+            </div>
+        </div>    
+    </div>
+  </body>
+</html>
+
