@@ -11,35 +11,34 @@
         <div>
             <div>
                 <script>
-let side = 80; // 円の直径
-let split = 9;
-let colors = ["#eb6100"," #004c97", " #15722c", "#fccc00"]; // ランダムな色の配列
+                    let size = 80;
+                    let split = 9;
+                    let colors = ["#B6E3FF", "#54AEFF", " #0969DA", "#0A3069"]
 
+                    function setup () {
+                        createCanvas(size * split, size * split, WEBGL)
+                        background("#ffffff")
+                        noLoop();
+                        brush.field("waves");
+                    }
 
-function setup () {
-  createCanvas(side * split, side * split, WEBGL)
+                    function draw () {
+                        translate(-width/2,-height/2)
+                        brush.noStroke()
+                        for (let x = 0; x < width; x+=size) {
+                            
+                            for (let y = 0; y < height; y+=size) {
+                            brush.push()
+                            brush.set("HB", "#ffffff", 5);
 
-  background("#ffffff")
-  noLoop();
-  
-  
-}
-
-function draw () {
-translate(-width/2,-height/2)
-
-  for (let x = 0; x < width; x+=side) {
-    
-    for (let y = 0; y < height; y+=side) {
-      brush.push()
-      brush.noStroke()
-      brush.fill(random(colors), random(30,140));
-      brush.rect(x, y, side*0.9, side*0.9);
-      brush.pop()
-    }
-  }
-}
-
+                            brush.fill(random(colors), random(80, 110));
+                            brush.bleed(0.15,"in", 1);
+                            brush.fillTexture(0.8, 0.5);
+                            brush.rect(x, y, size, size);
+                            brush.pop()
+                            }
+                        }
+                    }
                 </script>        
             </div>
             <div>
