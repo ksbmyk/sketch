@@ -4,14 +4,16 @@
 
 def setup
   createCanvas(600, 600)
-  @c1 = color(random(255), random(255), random(255))
-  @c2 = color(random(255), random(255), random(255))
-  @c3 = color(random(255), random(255), random(255))
+  colors1 = %w(#559fb5 #abd7c9 #bf6d7d)
+  colors2 = %w(#e7df73 #bad545 #c39f39)
+  colors3 = %w(#8da7b6 #895747 #d9bdd4)
+  colors4 = %w(#5abad5 #67283f #96d1e6)
+  @color = eval("colors#{rand(1..4)}")
   noLoop
 end
 
 def draw
-    background(170)
+    background("#efeddb")
     noStroke
     
     (0..5).each do |i|
@@ -24,14 +26,15 @@ def draw
     end
   end
 
+# ペンローズの三角形
 def impossible_object
-  fill(@c1)
+  fill(@color[0])
   side_object
   rotate(TWO_PI / 3)
-  fill(@c2)
+  fill(@color[1])
   side_object
   rotate(TWO_PI / 3)
-  fill(@c3)
+  fill(@color[2])
   side_object
 end
 
