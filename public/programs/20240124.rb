@@ -1,5 +1,6 @@
 # GENUARY 2024 jan24 "Impossible objects (undecided geometry)."
 # https://genuary.art/prompts
+# refs https://30min-processing.hatenablog.com/entry/2016/06/27/000000
 
 def setup
   createCanvas(500, 500)
@@ -12,20 +13,26 @@ end
 def draw
   background(255)
   noStroke
-  translate(width / 2, height * 3 / 5)
-  fill(@c1)
-  draw_object
-  rotate(TWO_PI / 3)
-  fill(@c2)
-  draw_object
-  rotate(TWO_PI / 3)
-  fill(@c3)
-  draw_object()
+  push
+    translate(width / 2, height * 3 / 5)
+    impossible_object
+  pop
 end
 
-def draw_object
+def impossible_object
+    fill(@c1)
+    side_object
+    rotate(TWO_PI / 3)
+    fill(@c2)
+    side_object
+    rotate(TWO_PI / 3)
+    fill(@c3)
+    side_object
+end
+
+def side_object
   e = 110 
-  w = 60
+  w = 50
   sin30 = sin(PI / 6)
   cos30 = cos(PI / 6)
   sin60 = sin(PI / 3)
