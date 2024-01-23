@@ -3,7 +3,7 @@
 # refs https://30min-processing.hatenablog.com/entry/2016/06/27/000000
 
 def setup
-  createCanvas(500, 500)
+  createCanvas(600, 600)
   @c1 = color(random(255), random(255), random(255))
   @c2 = color(random(255), random(255), random(255))
   @c3 = color(random(255), random(255), random(255))
@@ -11,28 +11,33 @@ def setup
 end
 
 def draw
-  background(255)
-  noStroke
-  push
-    translate(width / 2, height * 3 / 5)
-    impossible_object
-  pop
-end
+    background(170)
+    noStroke
+    
+    (0..5).each do |i|
+      (0..3).each do |j|
+        push
+        translate(150*i, 85+150*j)
+        impossible_object
+        pop
+      end
+    end
+  end
 
 def impossible_object
-    fill(@c1)
-    side_object
-    rotate(TWO_PI / 3)
-    fill(@c2)
-    side_object
-    rotate(TWO_PI / 3)
-    fill(@c3)
-    side_object
+  fill(@c1)
+  side_object
+  rotate(TWO_PI / 3)
+  fill(@c2)
+  side_object
+  rotate(TWO_PI / 3)
+  fill(@c3)
+  side_object
 end
 
 def side_object
-  e = 110 
-  w = 50
+  e = 20 
+  w = 20
   sin30 = sin(PI / 6)
   cos30 = cos(PI / 6)
   sin60 = sin(PI / 3)
