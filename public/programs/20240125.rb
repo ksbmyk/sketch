@@ -8,7 +8,7 @@ def setup
   @margin = 10
 
   # 0茶  1 黄土  2ベージュ  3白 
-  @colors = ["#983a29", "#666762", "#918577", "#ffffff"]
+  @colors = ["#983a29", "#757062", "#9b8d7a", "#ffffff"]
 
   createCanvas(@side * @split + @margin * (@split+1) , @side * @split + @margin * (@split+1))
   angleMode(DEGREES)
@@ -17,22 +17,12 @@ end
   
 def draw
   noLoop
-
+  noStroke
   x = @margin
   while x < width do
     y = @margin
     while y < width do
-      coler_index = rand(0..@colors.length - 1) # 色を決める
-      color_codes = @colors.sample(2)
-
-      fill(@colors[coler_index])
-      shape_type = rand(0..9) # 形を決める
-
-      noStroke
-
-      fill(color_codes[0])
-      rect(x, y, @side, @side)
-      fill(color_codes[1])
+      shape_type = rand(0..9)
       case shape_type
       when 0
         r = rand(0..2)
