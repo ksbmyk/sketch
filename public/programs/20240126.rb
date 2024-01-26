@@ -25,7 +25,7 @@ def setup
 end
         
 def draw
-  seed = rand(1..1000)
+  seed = rand(1..5000)
   # set like seed
   # seed = xxx
   randomSeed(seed)
