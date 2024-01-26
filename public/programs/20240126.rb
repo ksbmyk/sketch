@@ -30,7 +30,8 @@ def draw
   # seed = xxx
   randomSeed(seed)
 
-  p = eval("@palette#{(floor(random() * 17) + 1).to_i}")
+  r = (floor(random() * 17) + 1).to_i
+  p = eval("@palette#{r}")
   sky(p[0], p[1])
 
   c = color(random(255), random(255), random(255))
