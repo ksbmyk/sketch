@@ -27,7 +27,7 @@ end
 def draw
   seed = rand(1..5000)
   # set like seed
-  # seed = xxx
+  # seed = 822
   randomSeed(seed)
 
   r = (floor(random() * 17) + 1).to_i
