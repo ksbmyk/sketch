@@ -15,22 +15,22 @@ def draw
   noStroke
 
   fill("#33363a")
-  rect(10, 10, 240)
+  rect(20, 100, 240)
   
   penrose
-  image(@graphic1, 10+20, 10+20)
+  image(@graphic1, 20+20, 100+20)
 
   fill("#33363a")
-  rect(width-frame_size-10, 10, frame_size)
+  rect(width-frame_size-20, 100, frame_size)
 
   arabesque
-  image(@graphic2, width-frame_size-10+20, 10+20)
+  image(@graphic2, width-frame_size-20+20, 100+20)
 
   fill("#33363a")
-  rect(width/2 - frame_size/2, 300, frame_size)
+  rect(width/2 - frame_size/2, height - frame_size- 100, frame_size)
 
   bauhaus
-  image(@graphic3, width/2 - frame_size/2 + 20, 300 + 20)
+  image(@graphic3, width/2 - frame_size/2 + 20, height - frame_size- 100 + 20)
 end
 
 def penrose
@@ -77,7 +77,6 @@ def penrose_object
   @graphic1.endShape(CLOSE)
 end
 
-
 def arabesque
   @graphic2.background("#335fa6")
 
@@ -113,7 +112,6 @@ def arabesque_object(x, y, radius, sides, depth)
   end
   @graphic2.endShape(CLOSE)
 end
-
 
 def bauhaus
   angleMode(DEGREES)
