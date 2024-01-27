@@ -34,18 +34,18 @@ def penrose
   @graphic1.translate(@graphic1.width / 2, @graphic1.height * 3 / 5);
   @graphic1.noStroke
   @graphic1.fill("#559fb5")
-  side_object
+  penrose_object
   @graphic1.rotate(TWO_PI / 3)
   @graphic1.fill("#abd7c9")
-  side_object
+  penrose_object
   @graphic1.rotate(TWO_PI / 3)
   @graphic1.fill("#bf6d7d")
-  side_object
+  penrose_object
 end
 
-def side_object
+def penrose_object
   e = 30 
-  w = 20
+  w = 15
   sin30 = sin(PI / 6)
   cos30 = cos(PI / 6)
   sin60 = sin(PI / 3)
@@ -80,19 +80,19 @@ def arabesque
   @graphic2.stroke(255)
   @graphic2.strokeWeight(10)
   @graphic2.noFill
-  pattern(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
   
   @graphic2.stroke("#7eaab7")
   @graphic2.strokeWeight(2)
   @graphic2.noFill
-  pattern(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
 
   @graphic2.noStroke
   @graphic2.fill("#c7a964")
   @graphic2.circle(@graphic2.width / 2, @graphic2.height / 2, 10)
 end
   
-def pattern(x, y, radius, sides, depth)
+def arabesque_object(x, y, radius, sides, depth)
   return if depth == 0
   
   @graphic2.beginShape()
@@ -105,7 +105,7 @@ def pattern(x, y, radius, sides, depth)
     next_radius = radius * 0.3 # 反復サイズ
     next_x = x + cos(angle) * next_radius
     next_y = y + sin(angle) * next_radius
-    pattern(next_x, next_y, next_radius, sides, depth - 1)
+    arabesque_object(next_x, next_y, next_radius, sides, depth - 1)
   end
   @graphic2.endShape(CLOSE)
 end
