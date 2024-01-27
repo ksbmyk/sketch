@@ -7,26 +7,30 @@ def setup
   background("#dddddd")
   @graphic1 = createGraphics(200, 200)
   @graphic2 = createGraphics(200, 200)
- 
+  @graphic3 = createGraphics(200, 200)
 end
 
 def draw
   frame_size = 240
   noStroke
-  # 額 
+
   fill("#33363a")
   rect(10, 10, 240)
   
   penrose
   image(@graphic1, 10+20, 10+20)
 
-  # 額 
   fill("#33363a")
   rect(width-frame_size-10, 10, frame_size)
 
   arabesque
   image(@graphic2, width-frame_size-10+20, 10+20)
 
+  fill("#33363a")
+  rect(width/2 - frame_size/2, 300, frame_size)
+
+  bauhaus
+  image(@graphic3, width/2 - frame_size/2 + 20, 300 + 20)
 end
 
 def penrose
@@ -108,4 +112,50 @@ def arabesque_object(x, y, radius, sides, depth)
     arabesque_object(next_x, next_y, next_radius, sides, depth - 1)
   end
   @graphic2.endShape(CLOSE)
+end
+
+
+def bauhaus
+  angleMode(DEGREES)
+  colors = ["#e15553", "#306fdd", "#f7d05b", "#242536", "#fdf4e7"]
+  side = @graphic3.width / 2
+  x = 0
+  while x < @graphic3.width do
+    y = 0
+    while y < @graphic3.height do
+      coler_index = rand(0..colors.length - 1)
+      color_codes = colors.sample(2)
+      @graphic3.fill(colors[coler_index])
+      
+      shape_type = rand(0..6)
+      @graphic3.noStroke
+
+      @graphic3.fill(color_codes[0])
+      @graphic3.rect(x, y, side, side)
+      @graphic3.fill(color_codes[1])
+      case shape_type
+      when 0
+        @graphic3.ellipse(x + side / 2 , y + side / 2, side)
+      when 1
+        @graphic3.arc(x, y, side * 2, side * 2, 0, PI / 2)
+      when 2
+        @graphic3.triangle(x, y, x, y + side, x + side, y + side)
+      when 3
+        @graphic3.rect(x, y, side/4,  side)
+        @graphic3.rect(x + side/8*3, y, side/4,  side)
+        @graphic3.rect(x + side/8*6, y, side/4,  side)
+      when 4
+        @graphic3.arc(x, y + side, side * 2, side * 2, -PI / 2, 0)
+      when 5
+        @graphic3.rect(x, y, side,  side/4)
+        @graphic3.rect(x, y + side/8*3, side,  side/4)
+        @graphic3.rect(x, y + side/8*6, side,  side/4)
+      when 6
+        @graphic3.triangle(x + side/2, y, x, y + side/2, x + side, y + side/2)
+        @graphic3.triangle(x + side/2, y + side/2, x, y + side, x + side, y + side)
+      end
+      y += side
+    end
+    x += side
+  end
 end
