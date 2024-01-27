@@ -5,6 +5,7 @@ def setup
   createCanvas(720, 720)
   noLoop
   background("#dddddd")
+
   @graphic1 = createGraphics(200, 200)
   @graphic2 = createGraphics(200, 200)
   @graphic3 = createGraphics(200, 200)
@@ -12,21 +13,23 @@ end
 
 def draw
   frame_size = 240
+  frame_colors = ["#33363a", "#405959"]
+  frame_color = frame_colors[rand(0..1)]
   noStroke
 
-  fill("#33363a")
+  fill(frame_color)
   rect(20, 100, 240)
   
   penrose
   image(@graphic1, 20+20, 100+20)
 
-  fill("#33363a")
+  fill(frame_color)
   rect(width-frame_size-20, 100, frame_size)
 
   arabesque
   image(@graphic2, width-frame_size-20+20, 100+20)
 
-  fill("#33363a")
+  fill(frame_color)
   rect(width/2 - frame_size/2, height - frame_size- 100, frame_size)
 
   bauhaus
@@ -79,16 +82,16 @@ end
 
 def arabesque
   @graphic2.background("#335fa6")
-
+  sides = rand(3..8)
   @graphic2.stroke(255)
   @graphic2.strokeWeight(10)
   @graphic2.noFill
-  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, sides, 5)
   
   @graphic2.stroke("#7eaab7")
   @graphic2.strokeWeight(2)
   @graphic2.noFill
-  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+  arabesque_object(@graphic2.width / 2, @graphic2.height / 2, 100, sides, 5)
 
   @graphic2.noStroke
   @graphic2.fill("#c7a964")
