@@ -4,12 +4,14 @@
 def setup
   createCanvas(720, 720)
   noLoop
-background("#dddddd")
+  background("#dddddd")
   @graphic1 = createGraphics(200, 200)
+  @graphic2 = createGraphics(200, 200)
  
 end
 
 def draw
+  frame_size = 240
   noStroke
   # 額 
   fill("#33363a")
@@ -17,6 +19,14 @@ def draw
   
   penrose
   image(@graphic1, 10+20, 10+20)
+
+  # 額 
+  fill("#33363a")
+  rect(width-frame_size-10, 10, frame_size)
+
+  arabesque
+  image(@graphic2, width-frame_size-10+20, 10+20)
+
 end
 
 def penrose
@@ -61,4 +71,41 @@ def side_object
   y6 = y5 - (e + 3 * w) * sin60
   @graphic1.vertex(x6, y6)
   @graphic1.endShape(CLOSE)
+end
+
+
+def arabesque
+  @graphic2.background("#335fa6")
+
+  @graphic2.stroke(255)
+  @graphic2.strokeWeight(10)
+  @graphic2.noFill
+  pattern(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+  
+  @graphic2.stroke("#7eaab7")
+  @graphic2.strokeWeight(2)
+  @graphic2.noFill
+  pattern(@graphic2.width / 2, @graphic2.height / 2, 100, 8, 5)
+
+  @graphic2.noStroke
+  @graphic2.fill("#c7a964")
+  @graphic2.circle(@graphic2.width / 2, @graphic2.height / 2, 10)
+end
+  
+def pattern(x, y, radius, sides, depth)
+  return if depth == 0
+  
+  @graphic2.beginShape()
+  sides.to_i.times do |i|
+    angle = map(i, 0, sides, 0, TWO_PI)
+    new_x = x + cos(angle) * radius
+    new_y = y + sin(angle) * radius
+    @graphic2.vertex(new_x, new_y)
+    
+    next_radius = radius * 0.3 # 反復サイズ
+    next_x = x + cos(angle) * next_radius
+    next_y = y + sin(angle) * next_radius
+    pattern(next_x, next_y, next_radius, sides, depth - 1)
+  end
+  @graphic2.endShape(CLOSE)
 end
