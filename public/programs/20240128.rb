@@ -4,7 +4,7 @@
 def setup
   createCanvas(720, 720)
   noLoop
-  background("#dddddd")
+  background("#8d8b86")
 
   @graphic1 = createGraphics(200, 200)
   @graphic2 = createGraphics(200, 200)
