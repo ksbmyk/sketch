@@ -21,28 +21,28 @@ def draw
   rect(20, 100, 240)
   noFill
   stroke("#a0925f")
-  rect(20+10, 100+10, 240-20)
+  rect(20 + 10, 100 + 10, 240 - 20)
   
   pin
   image(@graphic1, 20+20, 100+20)
 
   fill(frame_color)
-  rect(width-frame_size-20, 100, frame_size)
+  rect(width - frame_size - 20, 100, frame_size)
   noFill
   stroke("#a0925f")
-  rect(width-frame_size-20+10, 100+10, frame_size-20)
+  rect(width - frame_size - 20 + 10, 100 + 10, frame_size - 20)
 
   arabesque
-  image(@graphic2, width-frame_size-20+20, 100+20)
+  image(@graphic2, width - frame_size - 20 + 20, 100 + 20)
 
   fill(frame_color)
-  rect(width/2 - frame_size/2, height - frame_size- 100, frame_size)
+  rect(width / 2 - frame_size / 2, height - frame_size - 100, frame_size)
   noFill
   stroke("#a0925f")
-  rect(width/2 - frame_size/2+10, height - frame_size- 100+10, frame_size-20)
+  rect(width / 2 - frame_size / 2 + 10, height - frame_size - 100+10, frame_size - 20)
   
   bauhaus
-  image(@graphic3, width/2 - frame_size/2 + 20, height - frame_size- 100 + 20)
+  image(@graphic3, width/2 - frame_size / 2 + 20, height - frame_size - 100 + 20)
 end
 
 def pin
