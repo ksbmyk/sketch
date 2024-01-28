@@ -20,7 +20,7 @@ def draw
   fill(frame_color)
   rect(20, 100, 240)
   
-  penrose
+  pin
   image(@graphic1, 20+20, 100+20)
 
   fill(frame_color)
@@ -36,49 +36,129 @@ def draw
   image(@graphic3, width/2 - frame_size/2 + 20, height - frame_size- 100 + 20)
 end
 
-def penrose
-  @graphic1.background("#efeddb")
-  @graphic1.translate(@graphic1.width / 2, @graphic1.height * 3 / 5);
-  @graphic1.noStroke
-  @graphic1.fill("#559fb5")
-  penrose_object
-  @graphic1.rotate(TWO_PI / 3)
-  @graphic1.fill("#abd7c9")
-  penrose_object
-  @graphic1.rotate(TWO_PI / 3)
-  @graphic1.fill("#bf6d7d")
-  penrose_object
+# def penrose
+#   @graphic1.background("#efeddb")
+#   @graphic1.translate(@graphic1.width / 2, @graphic1.height * 3 / 5);
+#   @graphic1.noStroke
+#   @graphic1.fill("#559fb5")
+#   penrose_object
+#   @graphic1.rotate(TWO_PI / 3)
+#   @graphic1.fill("#abd7c9")
+#   penrose_object
+#   @graphic1.rotate(TWO_PI / 3)
+#   @graphic1.fill("#bf6d7d")
+#   penrose_object
+# end
+
+# def penrose_object
+#   e = 30 
+#   w = 15
+#   sin30 = sin(PI / 6)
+#   cos30 = cos(PI / 6)
+#   sin60 = sin(PI / 3)
+#   cos60 = cos(PI / 3)
+
+#   @graphic1.beginShape()
+#   x1 = -e * cos60
+#   y1 = (e * cos60) / sqrt(3)
+#   @graphic1.vertex(x1, y1)
+#   x2 = x1 - w
+#   y2 = y1
+#   @graphic1.vertex(x2, y2)
+#   x3 = x2 + (e + 3.0 * w) * cos60
+#   y3 = y2 - (e + 3.0 * w) * sin60
+#   @graphic1.vertex(x3, y3)
+#   x4 = x3 + (e + 4.0 * w) * sin30
+#   y4 = y3 + (e + 4.0 * w) * cos30
+#   @graphic1.vertex(x4, y4)
+#   x5 = x4 - w * cos60
+#   y5 = y4 + w * sin60
+#   @graphic1.vertex(x5, y5)
+#   x6 = x5 - (e + 3 * w) * cos60
+#   y6 = y5 - (e + 3 * w) * sin60
+#   @graphic1.vertex(x6, y6)
+#   @graphic1.endShape(CLOSE)
+# end
+
+# def pixel
+#   base = 10
+#   split = 20
+#   colors = ["#ffee4a", "#ffc501", "#fe9600"]
+#   x = 0
+#   while x < base * split do
+#     y = 0
+#     while y < base * split do
+#       @graphic1.noStroke
+#       c = rand(0..colors.length - 1)
+#       @graphic1.fill(colors[c])
+#       @graphic1.rect(x, y , base, base)
+#       y += base
+#     end
+#     x += base
+#   end
+# end
+
+# def flower
+#   flower_pattern_sky
+#   #@graphic1.background("#ffffff")
+#   c = @graphic1.color(random(255), random(255), random(255))
+
+#   #flower_pattern(60, 60, c)
+#   #flower_pattern(140, 140, c) 
+# end
+
+def flower_pattern(x, y, c)
+  @graphic1.push
+  @graphic1.translate(x, y)
+  @graphic1.fill(c)
+  @graphic1. stroke(221, 221, 221, 100)
+  n = 12
+  n.times do
+    @graphic1.ellipse(0, 20, 10, 40)
+    @graphic1.rotate(TWO_PI / n)
+  end
+  @graphic1.pop
 end
 
-def penrose_object
-  e = 30 
-  w = 15
-  sin30 = sin(PI / 6)
-  cos30 = cos(PI / 6)
-  sin60 = sin(PI / 3)
-  cos60 = cos(PI / 3)
-
-  @graphic1.beginShape()
-  x1 = -e * cos60
-  y1 = (e * cos60) / sqrt(3)
-  @graphic1.vertex(x1, y1)
-  x2 = x1 - w
-  y2 = y1
-  @graphic1.vertex(x2, y2)
-  x3 = x2 + (e + 3.0 * w) * cos60
-  y3 = y2 - (e + 3.0 * w) * sin60
-  @graphic1.vertex(x3, y3)
-  x4 = x3 + (e + 4.0 * w) * sin30
-  y4 = y3 + (e + 4.0 * w) * cos30
-  @graphic1.vertex(x4, y4)
-  x5 = x4 - w * cos60
-  y5 = y4 + w * sin60
-  @graphic1.vertex(x5, y5)
-  x6 = x5 - (e + 3 * w) * cos60
-  y6 = y5 - (e + 3 * w) * sin60
-  @graphic1.vertex(x6, y6)
-  @graphic1.endShape(CLOSE)
+def flower_pattern_sky
+  palette1 = [color(69, 131, 172), color(246,233,175)]
+  palette2 = [color(54, 116, 178), color(198,168,200)]
+  palette3 = [color(109, 135, 201), color(221,204,232)]
+  palette4 = [color(51, 81, 168), color(218,239,251)]
+  palette5 = [color(61, 79, 101), color(229,207,151)]
+  palette6 = [color(75, 69, 171), color(187,134,192)]
+  palette7 = [color(3, 10, 70), color(163,112,172)]
+  p = eval("palette#{rand(1..7)}")
+  noFill
+  (0..@graphic1.height.to_i).each do |i|
+    inter = @graphic1.map(i, 0, @graphic1.height, 0, 1)
+    c = @graphic1.lerpColor(p[0], p[1], inter)
+    @graphic1.stroke(c)
+    @graphic1.line(0, i, @graphic1.width, i)
+  end
 end
+
+def pin
+  palette1 = [color("#3B27BA"), color("#E847AE")]
+  palette2 = [color("#EF0888"), color("#00A9FE")]
+  palette3 = [color("#FEA0FE"), color("#79FFFE")]
+  p = eval("palette#{rand(1..3)}")
+  
+  @graphic1.background(p[0])
+  @graphic1.push
+    @graphic1.translate(100, -50)
+    @graphic1.rotate(0.8)
+    
+    @graphic1.noStroke
+    @graphic1.fill(p[1])
+    @graphic1.rect(100, 100, 40)
+    @graphic1.circle(100, 100, 80)
+    
+    @graphic1.fill(255)
+    @graphic1.circle(100, 100, 40)
+  @graphic1.pop
+end
+    
 
 def arabesque
   @graphic2.background("#335fa6")
