@@ -48,7 +48,7 @@ let fs = `
    uniform vec3 u_color0;   // 色情報
    uniform vec3 u_color1;
 
-   float pi = 3.14159265358979;
+   float pi = 3.14;
 
    void main() {
 
@@ -57,14 +57,16 @@ let fs = `
 
       // 時間と色情報を使って色を変更
       vec2 uv = vTexCoord;
-      uv.x += 0.2 * cos(uv.y*pi*3.0 + u_time);
+      uv.x += 0.2 * tan(uv.y * pi * 3.0 + u_time);
+      // テクスチャ u_tex から、UV 座標 uv に対応する色情報を取得
       vec4 tex = texture2D(u_tex, uv);
-      // その色を gl_FragColor に設定
-      gl_FragColor = vec4(color, 1.0) * tex;
+      // 色を gl_FragColor に設定
+      // color ベクトルにアルファ値を 1.0 に設定
+      gl_FragColor = vec4(color, 1.0) * tex; テクスチャの色を乗算
     }
 `;
 
-const w = 720;
+const w = 600;
 let theShader ;
 let pg;
 let color0, color1;
@@ -79,8 +81,8 @@ function setup() {
    noStroke();
 
    theShader = createShader(vs, fs);
-   color0 = rand_color();
-   color1 = rand_color();
+   color0 = rand_color_0();
+   color1 = rand_color_1();
 
    pg = createGraphics(w/2, w/2);
    pg.rectMode(CENTER);
@@ -92,7 +94,7 @@ function draw(){
 
    shader(theShader);
    theShader.setUniform(`u_tex`, pg);
-   theShader.setUniform(`u_time`, -frameCount/35);
+   theShader.setUniform(`u_time`, -frameCount/50);
    theShader.setUniform(`u_color0`, color0);
    theShader.setUniform(`u_color1`, color1);
 
@@ -101,7 +103,12 @@ function draw(){
 
 }
 
-function rand_color() {
+function rand_color_0() {
+  let rc = color(random(10,50), random(70, 100), random(200, 300));
+   return [red(rc)/255.0, green(rc)/255.0, blue(rc)/255.0];
+}
+
+function rand_color_1() {
   let rc = color(random(200,280), random(70, 100), random(90, 100));
    return [red(rc)/255.0, green(rc)/255.0, blue(rc)/255.0];
 }
@@ -110,7 +117,7 @@ function set_graphics(){
    const pgw = pg.width/3*2;
    let px, py;
     pg.background(100);
-    pg.noStroke;
+    pg.strokeWeight(0);
     pg.fill(255);
     pg.circle(pgw, pgw, 80);
 
