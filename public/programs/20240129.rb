@@ -3,7 +3,7 @@
 
 def setup
   createCanvas(720, 720)
-  @stepLength = 8
+  @step_length = 8
   @angle = 0
   @radius = 0
   background(0)
@@ -28,7 +28,7 @@ def draw
 
   # 位置の更新
   @angle += radians(10)
-  @radius += @stepLength
+  @radius += @step_length
 
   # エッジに達したらリセット
   if (@radius >= width / 2)
