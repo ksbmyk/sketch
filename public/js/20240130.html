@@ -32,7 +32,7 @@ let vs = `
 
     void main() {
       // 頂点の位置とテクスチャ座標を受け取り、スクリーン座標に変換
-      vec4 positionVec4 = vec4(aPosition, 1.0);
+      vec4 positionVec4 = vec4(aPosition, 1.0); // 1.0 = α
       gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
       vTexCoord = aTexCoord;
    }
@@ -71,6 +71,7 @@ const w = 600;
 let theShader ;
 let pg;
 let color0, color1;
+let rc;
 
 function setup() {
    createCanvas(w, w, WEBGL);
@@ -82,15 +83,17 @@ function setup() {
    noStroke();
 
    theShader = createShader(vs, fs);
-   color0 = rand_color_0();
-   color1 = rand_color_1();
+   rc = color(random(10,50), random(70, 100), random(200, 300));
+   color0 = shaderColor(rc);
+   rc = color(random(200,280), random(70, 100), random(90, 100));
+   color1 = shaderColor(rc);
 
    pg = createGraphics(w/2, w/2);
    pg.rectMode(CENTER);
 }
 
 function draw(){
-   set_graphics();
+   setGraphics();
    background(0);
 
    shader(theShader);
@@ -104,24 +107,16 @@ function draw(){
 
 }
 
-function rand_color_0() {
-  let rc = color(random(10,50), random(70, 100), random(200, 300));
+function shaderColor(rc) {
    return [red(rc)/255.0, green(rc)/255.0, blue(rc)/255.0];
 }
 
-function rand_color_1() {
-  let rc = color(random(200,280), random(70, 100), random(90, 100));
-   return [red(rc)/255.0, green(rc)/255.0, blue(rc)/255.0];
-}
-
-function set_graphics(){
-   const pgw = pg.width/3*2;
-   let px, py;
+function setGraphics(){
+   const w = pg.width/3*2;
     pg.background(100);
     pg.strokeWeight(0);
     pg.fill(255);
-    pg.circle(pgw, pgw, 80);
-
+    pg.circle(w, w, 80);
 }
                 </script>        
             </div>
