@@ -4,7 +4,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
 
     <meta charset="utf-8" />
-    <title>20240130</title>
+    <title>20240115</title>
   </head>
   <body>
     <div>
@@ -62,7 +62,7 @@ let fs = `
       vec4 tex = texture2D(u_tex, uv);
       // 色を gl_FragColor に設定
       // color ベクトルにアルファ値を 1.0 に設定
-      gl_FragColor = vec4(color, 1.0) * tex; テクスチャの色を乗算
+      gl_FragColor = vec4(color, 1.0) * tex; //テクスチャの色を乗算
     }
 `;
 
@@ -131,3 +131,4 @@ function set_graphics(){
     </div>
   </body>
 </html>
+
