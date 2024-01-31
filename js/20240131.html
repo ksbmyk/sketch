@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/addons/p5.sound.min.js"></script>
+    <meta charset="utf-8" />
+    <title>20240131</title>
+  </head>
+  <body>
+    <div>
+        <div>
+            <div>
+                <script>
+// GENUARY 2024 jan31 Generative music / Generative audio / Generative sound..
+// https://genuary.art/prompts
+
+let osc;
+let attackLevel = 1.0;
+let releaseLevel = 0;
+let attackTime = 0.001;
+let decayTime = 0.2;
+let susPercent = 0.2;
+let releaseTime = 0.5;
+
+function setup() {
+  createCanvas(600, 600);
+  osc = new p5.Oscillator();
+  // 波形を三角波に
+  osc.setType('triangle');
+  // 周波数を240Hz
+  osc.freq(240);
+  // 振動子の振幅を0(音量0)
+  osc.amp(0);
+  // 開始
+  osc.start();
+}
+
+function draw() {
+  // 確率3%で音を呼び出す
+  if (random(1) < 0.03) {
+    background(0);
+    playSound();
+    displayCircle();
+  }
+}
+
+function playSound() {
+  let midiValue = random(48, 72);
+  // MIDI値を周波数に変換
+  let freqValue = midiToFreq(midiValue);
+  osc.freq(freqValue);
+  // サウンドのエンベロープを制御
+  envelope(osc, 0.01, 0.1, 0.5);
+}
+
+function envelope(sound, a, b, c) {
+  sound.amp(0);
+  sound.amp(a, 0.01);
+  sound.amp(b, decayTime);
+  sound.amp(c, releaseTime);
+}
+
+function displayCircle() {
+  let x = random(width);
+  let y = random(height);
+  let diameter = random(20, 100);
+  fill(255);
+  ellipse(x, y, diameter);
+}
+                </script>        
+            </div>
+            <div>
+                <a href="https://github.com/ksbmyk/sketch/blob/main/public/js/20240131.html">< / ></a>
+            </div>
+        </div>    
+    </div>
+  </body>
+</html>
+
