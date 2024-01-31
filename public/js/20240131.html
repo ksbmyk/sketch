@@ -38,7 +38,7 @@ function setup() {
 function draw() {
   // 確率3%で音を呼び出す
   if (random(1) < 0.03) {
-    background(255);
+    background(0);
     playSound();
     displayCircle();
   }
@@ -64,7 +64,7 @@ function displayCircle() {
   let x = random(width);
   let y = random(height);
   let diameter = random(20, 100);
-  fill(random(255), random(255), random(255));
+  fill(255);
   ellipse(x, y, diameter);
 }
                 </script>        
