@@ -10,11 +10,13 @@ def setup
 end
 
 def draw
+  h = 206
   s = 28
-  s = s < 100 ? s + frameCount / 10 : 100
   b = 92
+  a = 100
+  s = s < 100 ? s + frameCount / 10 : 100
   b = b > 0 ? b - frameCount / 10 : 0
-  background(206, s, b, 100)
+  background(h, s, b, a)
   @drops.each do |drop|
     drop.fall
     drop.display(frameCount)
