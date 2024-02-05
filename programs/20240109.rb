@@ -6,15 +6,17 @@ def setup
   colorMode(HSB, 360, 100, 100, 100)
   textSize(30)
   # xは画面横のランダムな位置、 yは画面外側(上)のランダムな位置にしてばらばら落ちる風に
-  @drops = Array.new(30) { Drop.new(rand(0..width), rand(-200.0..-100.0)) }
+  @drops = 30.times.map { Drop.new(rand(0..width), rand(-200.0..-100.0)) }
 end
 
 def draw
+  h = 206
   s = 28
-  s = s < 100 ? s + frameCount / 10 : 100
   b = 92
+  a = 100
+  s = s < 100 ? s + frameCount / 10 : 100
   b = b > 0 ? b - frameCount / 10 : 0
-  background(206, s, b, 100)
+  background(h, s, b, a)
   @drops.each do |drop|
     drop.fall
     drop.display(frameCount)
