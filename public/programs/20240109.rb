@@ -6,7 +6,7 @@ def setup
   colorMode(HSB, 360, 100, 100, 100)
   textSize(30)
   # xは画面横のランダムな位置、 yは画面外側(上)のランダムな位置にしてばらばら落ちる風に
-  @drops = Array.new(30) { Drop.new(rand(0..width), rand(-200.0..-100.0)) }
+  @drops = 30.times.map { Drop.new(rand(0..width), rand(-200.0..-100.0)) }
 end
 
 def draw
