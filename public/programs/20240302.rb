@@ -9,13 +9,14 @@ end
 
 def draw
   stroke(0)
-
-  bridge('#eeb3b2', 180)
-  bridge('#d5e8c5', 155)
-  bridge('#bca7c7', 135)
-  bridge('#eeb3b2', 120)
-  bridge('#d5e8c5', 110)
-  bridge('#ffffff', 100)  
+  colors = ['#eeb3b2', '#d5e8c5', '#bca7c7']
+  radius = 210
+  5.times do |i|
+    bridge('#eeb3b2', radius)
+    puts radius.to_s
+    radius = radius - (- 5*i + 30)
+  end
+  bridge('#ffffff', 110)  
 end
 
 def bridge(color, size)
