@@ -8,7 +8,6 @@ def setup
 end
 
 def draw
-
   bridge = Proc.new do |options|
     stroke(0)
     fill(options[:color])
@@ -24,6 +23,7 @@ def draw
     bridge.call(options)
     radius = radius - (- 5*i + 30)
   end
+  
   options = { color: '#ffffff', size: 110 }
   bridge.call(options) 
 end
