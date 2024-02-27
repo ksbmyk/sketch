@@ -10,21 +10,15 @@ end
 def draw
   stroke(0)
 
-  fill('#eeb3b2')
-  arc(width/2, height/2, 180, 180, 180, 360)
+  bridge('#eeb3b2', 180)
+  bridge('#d5e8c5', 155)
+  bridge('#bca7c7', 135)
+  bridge('#eeb3b2', 120)
+  bridge('#d5e8c5', 110)
+  bridge('#ffffff', 100)  
+end
 
-  fill('#d5e8c5')
-  arc(width/2, height/2, 155, 155, 180, 360)
-  
-  fill('#bca7c7')
-  arc(width/2, height/2, 135, 135, 180, 360)
-  
-  fill('#eeb3b2')
-  arc(width/2, height/2, 120, 120, 180, 360)
-  
-  fill('#d5e8c5')
-  arc(width/2, height/2, 110, 110, 180, 360)
-  
-  fill('#ffffff')
-  arc(width/2, height/2, 100, 100, 180, 360)
+def bridge(color, size)
+  fill(color)
+  arc(width/2, height/2, size, size, 180, 360)
 end
