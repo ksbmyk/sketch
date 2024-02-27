@@ -9,10 +9,10 @@ end
 
 def draw
 
-  bridge = Proc.new do |color, size|
+  bridge = Proc.new do |options|
     stroke(0)
-    fill(color)
-    arc(width/2, height/2, size, size, 180, 360)
+    fill(options[:color])
+    arc(width/2, height/2, options[:size], options[:size], 180, 360)
   end
 
   colors = ['#eeb3b2', '#d5e8c5', '#bca7c7']
@@ -20,8 +20,10 @@ def draw
 
   5.times do |i|
     color = colors[i % colors.length]
-    bridge.call(color, radius)
+    options = { color: color, size: radius }
+    bridge.call(options)
     radius = radius - (- 5*i + 30)
   end
-  bridge.call('#ffffff', 110) 
+  options = { color: '#ffffff', size: 110 }
+  bridge.call(options) 
 end
