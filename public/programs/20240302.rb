@@ -14,7 +14,6 @@ def draw
   5.times do |i|
     color = colors[i % colors.length]
     bridge(color, radius)
-    puts radius.to_s
     radius = radius - (- 5*i + 30)
   end
   bridge('#ffffff', 110)  
