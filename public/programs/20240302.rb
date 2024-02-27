@@ -12,7 +12,8 @@ def draw
   colors = ['#eeb3b2', '#d5e8c5', '#bca7c7']
   radius = 210
   5.times do |i|
-    bridge('#eeb3b2', radius)
+    color = colors[i % colors.length]
+    bridge(color, radius)
     puts radius.to_s
     radius = radius - (- 5*i + 30)
   end
