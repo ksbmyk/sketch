@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+    <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
+    <script type="text/ruby">
+      def setup
+        createCanvas(700, 700)
+        angleMode(DEGREES)
+        background(255)
+        noLoop
+      end
+      
+      def draw
+        bridge = Proc.new do |options|
+          stroke(0)
+          fill(options[:color])
+          arc(width / 2, height / 2, options[:size], options[:size], 180, 360)
+        end
+      
+        colors = ['#eeb3b2', '#d5e8c5', '#bca7c7']
+        radius = 210
+      
+        5.times do |i|
+          color = colors[i % colors.length]
+          options = { color: color, size: radius }
+          bridge.call(options)
+          radius = radius - (-5 * i + 30)
+        end
+        
+        options = { color: '#ffffff', size: 110 }
+        bridge.call(options) 
+      end
+P5::init()
+    </script>
+  </head>
+  <body>
+    <main>
+    </main>
+  </body>
+</html>
+
