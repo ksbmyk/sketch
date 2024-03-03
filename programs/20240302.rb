@@ -1,4 +1,5 @@
 ## Rails Girls Tokyo 16th https://kaigionrails.org/2023 のロゴ design by moegi29
+## ワークショップの班名である Array, Hash, Integer, String, Proc を組み込む
 
 def setup
   createCanvas(500, 500)
