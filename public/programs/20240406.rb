@@ -5,7 +5,7 @@ def preload
 end
 
 def setup
-  createCanvas(700, 700, WEBGL);
+  createCanvas(720, 720, WEBGL);
 end
 
 def draw
