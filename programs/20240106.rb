@@ -3,7 +3,7 @@
 
 def setup
   createCanvas(720, 720)
-  @particles = Array.new(50) { Particle.new(rand(0..width), rand(0..height)) }
+  @particles = 50.times.map { Particle.new(rand(0..width), rand(0..height)) }
 end
 
 def draw
