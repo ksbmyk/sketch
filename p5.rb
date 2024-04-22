@@ -1,3 +1,4 @@
+# Copy from https://github.com/ongaeshi/p5rb/blob/abde2f8a3ca7b33c76b4b3e9f225bb4a5365548d/docs/lib/p5.rb
 require 'js'
 
 # --------------------------------------------
