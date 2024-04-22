@@ -1,4 +1,4 @@
-## p5.rbで作った作品置場
+## p5.rb で作った作品置場
 
 https://ksbmyk.github.io/sketch/
 
@@ -11,14 +11,10 @@ https://ksbmyk.github.io/sketch/
   ```
   npm run dev
   ```
-- 静的ページエクスポート
-  ```
-  npm run build
-  ```
 
 ## 参考
 - p5.js
   - [リファレンス](https://p5js.org/)
 - p5.rb
   - [オンラインエディタ](https://p5rb.ongaeshi.me/editor/)
-  - [詳しい仕組み](https://ongaeshi.hatenablog.com/entry/2023/03/10/021113)
+  - [解説](https://ongaeshi.hatenablog.com/entry/2023/03/10/021113)
