@@ -1,3 +1,5 @@
+# Shinjuku.rb logo https://shinjukurb.connpass.com/event/311092/
+
 def setup
   createCanvas(720, 300)
   background(255)
