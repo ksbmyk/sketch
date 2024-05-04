@@ -35,10 +35,10 @@ def draw
     rotate(angle) # 四角形を円周に沿って回転
     rectMode(CENTER)
     if i.odd?
-    	rect(0, 0, 10, 10) # 四角形を描画
+    	rect(0, 0, 10, 10)
     else
-      rect(0, 0-10, 10, 10) # 四角形を描画
-      rect(0, 0+10, 10, 10) # 四角形を描画
+      rect(0, 0-10, 10, 10)
+      rect(0, 0+10, 10, 10)
     end
     pop()
   end
