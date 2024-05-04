@@ -92,22 +92,28 @@ def draw
   strokeWeight(2)
   fill(255)
   ellipse(0, 0, 120*2 -70, 120*2 -70)
-  
 
-  # Ruby
-  line(-45, 45, -45, -45)
-  line(-45, 45, -10, 70)
+  draw_ruby
+end
+
+def draw_ruby
+  stroke(0)
+  strokeWeight(2)
+  fill("#ec6158")
+
+  beginShape()
+  vertex(-45, 45)
+  vertex(-45, -45)
+  vertex(-10, -70)
+  vertex(65, 0)
+  vertex(-10, 70)
+  endShape(CLOSE)
+
   line(-45, 45, -10, 25)
-  
   line(-45, 0, -10, 25)
   line(-45, 0, -10, -25)
-  
   line(-45, -45, -10, -25)
-  line(-45, -45, -10, -70)
-  
   line(-10, 70, -10, -70)
-  line(-10, 70, 65, 0)
   line(-10, 25, 65, 0)
-  line(-10, -70, 65, 0)
   line(-10, -25, 65, 0)
 end
