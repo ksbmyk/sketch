@@ -6,7 +6,8 @@ end
 
 def draw
   translate(width / 2, height / 2) # 原点をキャンパスの中心に
- 
+  rotate(PI/2)
+
   # 円周上の四角
   rect_count = 10 #四角形の数
   radius = 100 # 円の半径
