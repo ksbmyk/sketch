@@ -1,6 +1,6 @@
 def setup
   createCanvas(400, 400)
-  background(220)
+  background("#fced4f")
   noLoop
 end
 
@@ -8,6 +8,19 @@ def draw
   translate(width / 2, height / 2) # 原点をキャンパスの中心に
   rotate(PI/2)
 
+  # 枠線
+  strokeWeight(8)
+  fill("#9cee60")
+  ellipse(0, 0, 120*2 +40, 120*2 +40)
+ 
+  fill(255)
+  strokeWeight(2)
+  ellipse(0, 0, 120*2 +10, 120*2 +10) # 模様の外側
+  fill("#9cee60")
+  ellipse(0, 0, 120*2 -50, 120*2 -50) # 模様の内側
+  
+  fill(0)
+  noStroke
   # 円周上の四角
   rect_count = 10 #四角形の数
   radius = 100 # 円の半径
@@ -75,7 +88,9 @@ def draw
   end
   
   # 枠線
-  noFill()
-  ellipse(0, 0, radius*2 -50, radius*2 -50)
-  ellipse(0, 0, radius*2 +10, radius*2 +10)
+  stroke(0)
+  strokeWeight(2)
+  fill(255)
+  ellipse(0, 0, 120*2 -70, 120*2 -70)
+  
 end
