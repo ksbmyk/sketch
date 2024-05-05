@@ -7,14 +7,13 @@ end
 def draw
   translate(width / 2, height / 2) # 原点をキャンパスの中心に
   rotate(PI/2)
+  strokeWeight(3)
 
-  # 枠線
-  strokeWeight(8)
+  # 枠
   fill("#9cee60")
   ellipse(0, 0, 120*2 +40, 120*2 +40)
  
   fill(255)
-  strokeWeight(2)
   ellipse(0, 0, 120*2 +10, 120*2 +10) # 模様の外側
   fill("#9cee60")
   ellipse(0, 0, 120*2 -50, 120*2 -50) # 模様の内側
@@ -87,9 +86,8 @@ def draw
     pop()
   end
   
-  # 枠線
+  # 枠
   stroke(0)
-  strokeWeight(2)
   fill(255)
   ellipse(0, 0, 120*2 -70, 120*2 -70)
 
@@ -97,8 +95,6 @@ def draw
 end
 
 def draw_ruby
-  stroke(0)
-  strokeWeight(2)
   fill("#ec6158")
 
   beginShape()
