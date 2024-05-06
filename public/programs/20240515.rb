@@ -50,15 +50,15 @@ def draw_minsa
         if i.odd?
           rect(0, 0, 10, 10)
         else
-          rect(0, 0-10, 10, 10)
-          rect(0, 0+10, 10, 10)
+          rect(0, 0 - 10, 10, 10)
+          rect(0, 0 + 10, 10, 10)
         end
       else
         if i.even?
           rect(0, 0, 10, 10)
         else
-          rect(0, 0-10, 10, 10)
-          rect(0, 0+10, 10, 10)
+          rect(0, 0 - 10, 10, 10)
+          rect(0, 0 + 10, 10, 10)
         end
       end
       pop
