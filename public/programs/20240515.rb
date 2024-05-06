@@ -1,3 +1,5 @@
+# RubyKaigi 2024 logo https://rubykaigi.org/2024/ design by mmito
+
 def setup
   createCanvas(400, 400)
   background("#fced4f")
@@ -26,12 +28,8 @@ def draw_frame
 end
 
 def draw_minsa
-  fill(0)
   noStroke
-
-  # 円周上の四角
   fill(0)
-  noStroke
   rect_count = 10 #四角形の数
 
   3.times do |t|
