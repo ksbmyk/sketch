@@ -36,6 +36,7 @@ def draw_minsa
     radius = 100 + 10 * t # 円の半径
     interval_angle = TWO_PI / rect_count # 各四角形の間隔の角度
 
+    # 円周に沿って四角を並べる
     rect_count.times do |i|
       angle = i * interval_angle # 四角形の角度
       x = radius * cos(angle)
