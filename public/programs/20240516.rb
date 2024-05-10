@@ -43,6 +43,8 @@ end
 def frame
   # TODO フレームの色パターン追加
   # フレーム
+  drawingContext.shadowColor = 'transparent'
+  drawingContext.shadowBlur = 0
   stroke(0)
   rect_size = 80
   rect_weight = 2
