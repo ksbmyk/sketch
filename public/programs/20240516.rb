@@ -8,6 +8,7 @@ end
 
 def draw
   sea
+  sky
   frame
 end
 
@@ -21,7 +22,7 @@ def sea
   freq = map(100, 0, width, 1, 5)
   vel = map(200, 0, height, 1, 50)
 
-  (height/10 * 4..height/10 * 8).step(y_value) do |y|
+  (height/10 * 3..height/10 * 8).step(y_value) do |y|
 	 if y < height/10 * 7
       fill(0, random(100, 150), random(200, 250))
     else
@@ -61,4 +62,18 @@ def frame
   rect(width - rect_weight - rect_size , rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
   rect(width - rect_weight - rect_size , height - rect_weight - rect_size, rect_size)
+end
+
+def sky
+  drawingContext.shadowColor = 'transparent'
+  drawingContext.shadowBlur = 10
+  r = (floor(random() * 17) + 1).to_i
+  p = [color(54, 116, 178), color(198, 168, 200)]
+  noFill
+  (0..height/10*4).step do |i|
+    inter = map(i, 0, height, 0, 1)
+    c = lerpColor(p[0], p[1], inter)
+    stroke(c)
+    line(0, i, width, i)
+  end
 end
