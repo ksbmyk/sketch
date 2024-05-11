@@ -11,6 +11,7 @@ def draw
   sky
   cloud
   frame
+  ruby
 end
 
 def sea
@@ -92,4 +93,35 @@ def cloud
   ellipse(500,       300, 100-20, 20)
   ellipse(500+10, 300+10, 100,    20)
   ellipse(500-10, 300+20, 100-0,  20)
+end
+
+def ruby
+  translate(width / 2, height / 4 * 3)
+  r = rand(-90..90)
+  rotate(r)
+  scale(0.25)
+
+  drawingContext.shadowColor = color(255)
+  drawingContext.shadowBlur = 50
+
+  stroke(255)
+  fill("#ec6158")
+  x = rand (-width..width)
+  y = rand(-height/3..height / 5 * 3)
+  puts ("x:" + x.to_s + ", y:" + y.to_s + ", r:" + r.to_s )
+  beginShape()
+  vertex(x-45, y+45)
+  vertex(x-45, y-45)
+  vertex(x-10, y-70)
+  vertex(x+65, y+0)
+  vertex(x-10, y+70)
+  endShape(CLOSE)
+
+  line(x-45, y+45, x-10, y+25)
+  line(x-45, y+0, x-10, y+25)
+  line(x-45, y+0, x-10, y-25)
+  line(x-45, y-45, x-10, y-25)
+  line(x-10, y+70, x-10, y-70)
+  line(x-10, y+25, x+65, y+0)
+  line(x-10, y+-25, x+65, y+0)
 end
