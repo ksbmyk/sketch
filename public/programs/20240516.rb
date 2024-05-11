@@ -9,6 +9,7 @@ end
 def draw
   sea
   sky
+  cloud
   frame
 end
 
@@ -76,4 +77,19 @@ def sky
     stroke(c)
     line(0, i, width, i)
   end
+end
+
+def cloud
+  noStroke
+  fill(255)
+  drawingContext.shadowColor = color(255)
+  drawingContext.shadowBlur = 10
+
+  ellipse(200,       200, 100-20, 20)
+  ellipse(200+10, 200+10, 100,    20)
+  ellipse(200-10, 200+20, 100-0,  20)
+  
+  ellipse(500,       300, 100-20, 20)
+  ellipse(500+10, 300+10, 100,    20)
+  ellipse(500-10, 300+20, 100-0,  20)
 end
