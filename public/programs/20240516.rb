@@ -7,6 +7,14 @@ def setup
     [color(5, 29, 191), color(105, 179, 255)],
     [color(0, 31, 114), color(183, 255, 251)]
   ]
+  @hr_patterns = [
+    [color(112, 132, 165), color(212, 176, 181)],
+    [color(200, 206, 202), color(226, 168, 114)]
+  ]
+  @night_patterns = [
+    [color(5, 22, 55), color(92, 101, 139)],
+    [color(6, 7, 14), color(76, 95, 187)]
+  ]
   angleMode(DEGREES)
   background("gray")
   noLoop
@@ -74,19 +82,31 @@ end
 def sky
   drawingContext.shadowColor = 'transparent'
   drawingContext.shadowBlur = 10
-  p = @sky_patterns.sample
 
+  r = rand(0..100)
+  case r
+  when 0..60
+    gradation(@sky_patterns.sample)
+
+    cloud(@base * 2, height / 10 * 2, @base)
+    cloud(@base * 5, height / 10 * 3, @base)
+    cloud(@base * 8, height / 10 * 1.5, @base)
+  when 61..80
+    gradation(@hr_patterns.sample)
+  else
+    gradation(@night_patterns.sample)
+    stars(@base * 4)
+  end
+end
+
+def gradation(pattern)
   noFill
-  (0..@base*4).step do |i|
-    inter = map(i, 0, @base*4, 0, 1)
-    c = lerpColor(p[0], p[1], inter)
+  (0..@base * 4).step do |i|
+    inter = map(i, 0, @base * 4, 0, 1)
+    c = lerpColor(pattern[0], pattern[1], inter)
     stroke(c)
     line(0, i, width, i)
   end
-
-  cloud(@base * 2, height / 10 * 2, @base)
-  cloud(@base * 5, height / 10 * 3, @base)
-  cloud(@base * 8, height / 10 * 1.5, @base)
 end
 
 def cloud(x, y, s)
@@ -99,6 +119,12 @@ def cloud(x, y, s)
   ellipse(x+10, y+10, s,    20)
   ellipse(x-10, y+20, s-0,  20)
 end
+
+def stars(h)
+  fill(255)
+  100.times { ellipse(rand(0..width), rand(0..h - 3), 3) }
+end
+
 
 def ruby
   translate(@base * 5, @base * 7.5)
