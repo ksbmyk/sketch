@@ -3,7 +3,6 @@ def setup
   createCanvas(size, size)
   @base = width / 10
   angleMode(DEGREES)
-  background("gray")
   noLoop
 end
 
@@ -47,7 +46,7 @@ def frame
   patterns = [
     ["#9cee60", "#4b92f7"],
     ["#fced4f", "#4b92f7"],
-    ["#fced4f", "#9cee60"],
+    ["#fced4f", "#9cee60"]
   ]
   p = patterns.sample
   drawingContext.shadowColor = 'transparent'
