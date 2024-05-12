@@ -156,14 +156,14 @@ def ruby
   fill("#ec6158")
   case r
   when -45
-    x = rand(-400..-300)
-    y = rand(-500..300)
+    x = rand(-@base*4..-@base*3)
+    y = rand(-@base*5..@base*3)
   when 15
-    x = rand(800..1300)
-    y = rand(0..200)
+    x = rand(@base*8..@base*13)
+    y = rand(0..@base*2)
   when 105
-    x = rand(0..600)
-    y = rand(0..600)
+    x = rand(0..@base*6)
+    y = rand(0..@base*6)
   end
   beginShape()
   vertex(x-45, y+45)
