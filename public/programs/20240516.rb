@@ -75,7 +75,7 @@ def sky
 
   r = rand(0..100)
   case r
-  when 0..60
+  when 0..80
     sky_patterns = [
       [color(105, 179, 256), color(255, 255, 255)],
       [color(5, 29, 191), color(105, 179, 255)],
@@ -89,7 +89,7 @@ def sky
     # cloud(@base * 2, height / 10 * 2, @base)
     # cloud(@base * 5, height / 10 * 3, @base)
     # cloud(@base * 8, height / 10 * 1.5, @base)
-  when 61..80
+  when 81..90
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
       [color(200, 206, 202), color(226, 168, 114)]
