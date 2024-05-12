@@ -2,6 +2,11 @@ def setup
   size = min(windowWidth, 1000)
   createCanvas(size, size)
   @base = width / 10
+  @sky_patterns = [
+    [color(105, 179, 256), color(255, 255, 255)],
+    [color(5, 29, 191), color(105, 179, 255)],
+    [color(0, 31, 114), color(183, 255, 251)]
+  ]
   angleMode(DEGREES)
   background("gray")
   noLoop
@@ -69,11 +74,11 @@ end
 def sky
   drawingContext.shadowColor = 'transparent'
   drawingContext.shadowBlur = 10
-  r = (floor(random() * 17) + 1).to_i
-  p = [color(54, 116, 178), color(198, 168, 200)]
+  p = @sky_patterns.sample
+
   noFill
-  (0..height/10*4).step do |i|
-    inter = map(i, 0, height, 0, 1)
+  (0..@base*4).step do |i|
+    inter = map(i, 0, @base*4, 0, 1)
     c = lerpColor(p[0], p[1], inter)
     stroke(c)
     line(0, i, width, i)
