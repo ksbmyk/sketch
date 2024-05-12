@@ -3,13 +3,12 @@
 def setup
   createCanvas(400, 400)
   background("#fced4f")
-  noLoop
+  frameRate(5)
 end
 
 def draw
   translate(width / 2, height / 2)
-  rotate(PI/2)
-
+  rotate(HALF_PI - frameCount)
   draw_frame
   draw_minsa
   draw_ruby
@@ -31,6 +30,7 @@ def draw_minsa
   noStroke
   fill(0)
   rect_count = 10 #四角形の数
+        
 
   3.times do |t|
     radius = 100 + 10 * t # 円の半径
@@ -69,7 +69,7 @@ end
 def draw_ruby
   stroke(0)
   fill("#ec6158")
-
+  rotate(TWO_PI + frameCount)
   beginShape()
   vertex(-45, 45)
   vertex(-45, -45)
