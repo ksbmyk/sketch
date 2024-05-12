@@ -80,9 +80,12 @@ def sky
     ]
     gradation(sky_patterns.sample)
 
-    cloud(@base * 2, height / 10 * 2, @base)
-    cloud(@base * 5, height / 10 * 3, @base)
-    cloud(@base * 8, height / 10 * 1.5, @base)
+    cloud(@base * rand(1.5..2.5), height / 10 * rand(1.5..2.5), @base * rand(0.7..1.0))
+    cloud(@base * rand(4.5..5.5), height / 10 * rand(2.5..3.5), @base * rand(0.5..1.5))
+    cloud(@base * rand(7.5..8.5), height / 10 * rand(1.5..2.5), @base * rand(0.8..1.2))
+    # cloud(@base * 2, height / 10 * 2, @base)
+    # cloud(@base * 5, height / 10 * 3, @base)
+    # cloud(@base * 8, height / 10 * 1.5, @base)
   when 61..80
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
@@ -94,7 +97,7 @@ def sky
       [color(5, 22, 55), color(92, 101, 139)],
       [color(6, 7, 14), color(76, 95, 187)]
     ]
-    gradation(night_patterns.sample)
+    gradation(@night_patterns.sample)
     stars(@base * 4)
   end
 end
@@ -115,9 +118,9 @@ def cloud(x, y, s)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(x,    y,    s-20, 20)
-  ellipse(x+10, y+10, s,    20)
-  ellipse(x-10, y+20, s-0,  20)
+  ellipse(x,    y,    s-20, rand(18..22))
+  ellipse(x+10, y+10, s,    rand(18..22))
+  ellipse(x-10, y+20, s,    rand(18..22))
 end
 
 def stars(h)
