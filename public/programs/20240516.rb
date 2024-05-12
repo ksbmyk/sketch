@@ -44,22 +44,26 @@ def sea
 end
 
 def frame
-  # TODO フレームの色パターン追加
-  # フレーム
+  patterns = [
+    ["#9cee60", "#4b92f7"],
+    ["#fced4f", "#4b92f7"],
+    ["#fced4f", "#9cee60"],
+  ]
+  p = patterns.sample
   drawingContext.shadowColor = 'transparent'
   drawingContext.shadowBlur = 0
   stroke(0)
-  rect_size = 80
+  rect_size = @base * 0.8
   rect_weight = 2
   strokeWeight(rect_weight)
 
-  fill("#9cee60")
+  fill(p[0])
   rect(rect_weight, rect_weight, width, rect_size)
   rect(width - rect_weight - rect_size , rect_weight, rect_size, height)
   rect(rect_weight, height - rect_weight - rect_size, width, rect_size)
   rect(rect_weight, rect_weight, rect_size, height)
 
-  fill("#4b92f7")
+  fill(p[1])
   rect(rect_weight, rect_weight, rect_size)
   rect(width - rect_weight - rect_size , rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
