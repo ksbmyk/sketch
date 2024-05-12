@@ -9,7 +9,6 @@ end
 def draw
   sea
   sky
-  cloud
   frame
   ruby
 end
@@ -78,21 +77,21 @@ def sky
     stroke(c)
     line(0, i, width, i)
   end
+
+  cloud(width / 10 * 2, height / 10 * 2, width / 10)
+  cloud(width / 10 * 5, height / 10 * 3, width / 10)
+  cloud(width / 10 * 8, height / 10 * 1.5, width / 10)
 end
 
-def cloud
+def cloud(x, y, s)
   noStroke
   fill(255)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(200,       200, 100-20, 20)
-  ellipse(200+10, 200+10, 100,    20)
-  ellipse(200-10, 200+20, 100-0,  20)
-  
-  ellipse(500,       300, 100-20, 20)
-  ellipse(500+10, 300+10, 100,    20)
-  ellipse(500-10, 300+20, 100-0,  20)
+  ellipse(x,    y,    s-20, 20)
+  ellipse(x+10, y+10, s,    20)
+  ellipse(x-10, y+20, s-0,  20)
 end
 
 def ruby
