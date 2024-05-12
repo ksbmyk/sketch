@@ -92,6 +92,8 @@ def sky
       [color(200, 206, 202), color(226, 168, 114)]
     ]
     gradation(hr_patterns.sample)
+
+    first_star(@base * 4)
   else
     night_patterns = [
       [color(5, 22, 55), color(92, 101, 139)],
@@ -123,9 +125,18 @@ def cloud(x, y, s)
   ellipse(x-10, y+20, s,    rand(18..22))
 end
 
+
+def first_star(h)
+  noStroke
+  fill(255, 255, 170)
+  drawingContext.shadowColor = color(255)
+  drawingContext.shadowBlur = 80
+  ellipse(rand(@base..width - @base), rand(@base..h - @base), 5)
+end
+
 def stars(h)
   fill(255)
-  100.times { ellipse(rand(0..width), rand(0..h - 3), 3) }
+  100.times { ellipse(rand(@base..width - @base), rand(@base..h - 3), 3) }
 end
 
 def ruby
