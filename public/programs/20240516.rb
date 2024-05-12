@@ -2,19 +2,6 @@ def setup
   size = min(windowWidth, 1000)
   createCanvas(size, size)
   @base = width / 10
-  @sky_patterns = [
-    [color(105, 179, 256), color(255, 255, 255)],
-    [color(5, 29, 191), color(105, 179, 255)],
-    [color(0, 31, 114), color(183, 255, 251)]
-  ]
-  @hr_patterns = [
-    [color(112, 132, 165), color(212, 176, 181)],
-    [color(200, 206, 202), color(226, 168, 114)]
-  ]
-  @night_patterns = [
-    [color(5, 22, 55), color(92, 101, 139)],
-    [color(6, 7, 14), color(76, 95, 187)]
-  ]
   angleMode(DEGREES)
   background("gray")
   noLoop
@@ -86,15 +73,28 @@ def sky
   r = rand(0..100)
   case r
   when 0..60
-    gradation(@sky_patterns.sample)
+    sky_patterns = [
+      [color(105, 179, 256), color(255, 255, 255)],
+      [color(5, 29, 191), color(105, 179, 255)],
+      [color(0, 31, 114), color(183, 255, 251)]
+    ]
+    gradation(sky_patterns.sample)
 
     cloud(@base * 2, height / 10 * 2, @base)
     cloud(@base * 5, height / 10 * 3, @base)
     cloud(@base * 8, height / 10 * 1.5, @base)
   when 61..80
-    gradation(@hr_patterns.sample)
+    hr_patterns = [
+      [color(112, 132, 165), color(212, 176, 181)],
+      [color(200, 206, 202), color(226, 168, 114)]
+    ]
+    gradation(hr_patterns.sample)
   else
-    gradation(@night_patterns.sample)
+    night_patterns = [
+      [color(5, 22, 55), color(92, 101, 139)],
+      [color(6, 7, 14), color(76, 95, 187)]
+    ]
+    gradation(night_patterns.sample)
     stars(@base * 4)
   end
 end
@@ -125,7 +125,6 @@ def stars(h)
   100.times { ellipse(rand(0..width), rand(0..h - 3), 3) }
 end
 
-
 def ruby
   translate(@base * 5, @base * 7.5)
   r = rand(-90..90)
@@ -139,7 +138,7 @@ def ruby
   fill("#ec6158")
   x = rand (-width..width)
   y = rand(-@base * 3..@base * 6)
-  puts ("x:" + x.to_s + ", y:" + y.to_s + ", r:" + r.to_s )
+  # puts ("x:" + x.to_s + ", y:" + y.to_s + ", r:" + r.to_s )
   beginShape()
   vertex(x-45, y+45)
   vertex(x-45, y-45)
