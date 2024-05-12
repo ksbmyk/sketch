@@ -1,6 +1,7 @@
 def setup
   size = min(windowWidth, 1000)
   createCanvas(size, size)
+  @base = width / 10
   angleMode(DEGREES)
   background("gray")
   noLoop
@@ -78,9 +79,9 @@ def sky
     line(0, i, width, i)
   end
 
-  cloud(width / 10 * 2, height / 10 * 2, width / 10)
-  cloud(width / 10 * 5, height / 10 * 3, width / 10)
-  cloud(width / 10 * 8, height / 10 * 1.5, width / 10)
+  cloud(@base * 2, height / 10 * 2, @base)
+  cloud(@base * 5, height / 10 * 3, @base)
+  cloud(@base * 8, height / 10 * 1.5, @base)
 end
 
 def cloud(x, y, s)
@@ -95,7 +96,7 @@ def cloud(x, y, s)
 end
 
 def ruby
-  translate(width / 2, height / 4 * 3)
+  translate(@base * 5, @base * 7.5)
   r = rand(-90..90)
   rotate(r)
   scale(0.25)
@@ -106,7 +107,7 @@ def ruby
   stroke(255)
   fill("#ec6158")
   x = rand (-width..width)
-  y = rand(-height/3..height / 5 * 3)
+  y = rand(-@base * 3..@base * 6)
   puts ("x:" + x.to_s + ", y:" + y.to_s + ", r:" + r.to_s )
   beginShape()
   vertex(x-45, y+45)
