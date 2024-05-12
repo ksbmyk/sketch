@@ -9,8 +9,8 @@ end
 def draw
   sea
   sky
-  frame
   ruby
+  frame
 end
 
 def sea
@@ -143,8 +143,9 @@ def stars(h)
 end
 
 def ruby
+  push
   translate(@base * 5, @base * 7.5)
-  r = rand(-90..90)
+  r = [-45,15,105].sample
   rotate(r)
   scale(0.25)
 
@@ -153,9 +154,17 @@ def ruby
 
   stroke(255)
   fill("#ec6158")
-  x = rand (-width..width)
-  y = rand(-@base * 3..@base * 6)
-  # puts ("x:" + x.to_s + ", y:" + y.to_s + ", r:" + r.to_s )
+  case r
+  when -45
+    x = rand(-400..-300)
+    y = rand(-500..300)
+  when 15
+    x = rand(800..1300)
+    y = rand(0..200)
+  when 105
+    x = rand(0..600)
+    y = rand(0..600)
+  end
   beginShape()
   vertex(x-45, y+45)
   vertex(x-45, y-45)
@@ -171,4 +180,5 @@ def ruby
   line(x-10, y+70, x-10, y-70)
   line(x-10, y+25, x+65, y+0)
   line(x-10, y+-25, x+65, y+0)
+  pop
 end
