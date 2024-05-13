@@ -18,21 +18,21 @@ def sea
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 50
 
-  x_value = width / 100
-  y_value = height / 15
-  freq = map(100, 0, width, 1, 5)
-  vel = map(200, 0, height, 1, 50)
+  x_value = @base * 0.1 #width / 100
+  y_value = @base * 0.7 #height / 15
+  freq = map(@base, 0, width, 1,  @base * 0.05)
+  vel = map(@base * 2, 0, height, 1, @base * 0.5)
 
-  (height/10 * 3..height/10 * 8).step(y_value) do |y|
-	 if y < height/10 * 7
-      fill(0, random(100, 150), random(200, 250))
+  (@base * 3..@base * 8).step(y_value) do |y|
+    if y < @base * 7
+      fill(0, rand(100..150), rand(200..255))
     else
       fill(220, 221, 178)
     end
     beginShape()
 
     (0..width).step(x_value) do |x|
-      a = 200
+      a = @base
       b = sin((y + x + a) * freq) * vel
       vertex(x, b + y)
     end
@@ -57,16 +57,16 @@ def frame
   strokeWeight(rect_weight)
 
   fill(p[0])
-  rect(rect_weight, rect_weight, width, rect_size)
+  rect(rect_weight, rect_weight, width-rect_weight * 2, rect_size)
   rect(width - rect_weight - rect_size , rect_weight, rect_size, height)
-  rect(rect_weight, height - rect_weight - rect_size, width, rect_size)
+  rect(rect_weight, height - rect_weight - rect_size, width - rect_weight * 2, rect_size)
   rect(rect_weight, rect_weight, rect_size, height)
 
   fill(p[1])
   rect(rect_weight, rect_weight, rect_size)
-  rect(width - rect_weight - rect_size , rect_weight, rect_size)
+  rect(width - rect_weight - rect_size, rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
-  rect(width - rect_weight - rect_size , height - rect_weight - rect_size, rect_size)
+  rect(width - rect_weight - rect_size, height - rect_weight - rect_size, rect_size)
 end
 
 def sky
@@ -86,9 +86,6 @@ def sky
     cloud(@base * rand(1.5..2.5), height / 10 * rand(1.5..2.5), @base * rand(0.7..1.0))
     cloud(@base * rand(4.5..5.5), height / 10 * rand(2.5..3.5), @base * rand(0.5..1.5))
     cloud(@base * rand(7.5..8.5), height / 10 * rand(1.5..2.5), @base * rand(0.8..1.2))
-    # cloud(@base * 2, height / 10 * 2, @base)
-    # cloud(@base * 5, height / 10 * 3, @base)
-    # cloud(@base * 8, height / 10 * 1.5, @base)
   when 81..90
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
@@ -102,7 +99,7 @@ def sky
       [color(5, 22, 55), color(92, 101, 139)],
       [color(6, 7, 14), color(76, 95, 187)]
     ]
-    gradation(@night_patterns.sample)
+    gradation(night_patterns.sample)
     stars(@base * 4)
   end
 end
@@ -123,9 +120,9 @@ def cloud(x, y, s)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(x,    y,    s-20, rand(18..22))
-  ellipse(x+10, y+10, s,    rand(18..22))
-  ellipse(x-10, y+20, s,    rand(18..22))
+  ellipse(x,    y,    s-@base*0.2, rand(18..22))
+  ellipse(x+@base*0.1, y+@base*0.1, s,    rand(18..22))
+  ellipse(x-@base*0.1, y+@base*0.2, s,    rand(18..22))
 end
 
 
