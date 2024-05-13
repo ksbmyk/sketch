@@ -1,5 +1,5 @@
 def setup
-  size = min(windowWidth, 1000)
+  size = min(windowWidth, 800)
   createCanvas(size, size)
   @base = width / 10
   angleMode(DEGREES)
@@ -67,6 +67,10 @@ def frame
   rect(width - rect_weight - rect_size, rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
   rect(width - rect_weight - rect_size, height - rect_weight - rect_size, rect_size)
+
+  noFill
+  stroke(1)
+  rect(0, 0, width, height)
 end
 
 def sky
@@ -77,7 +81,7 @@ def sky
 
   r = rand(0..100)
   case r
-  when 0..80
+  when 0..70
     sky_patterns = [
       [color(105, 179, 256), color(255, 255, 255)],
       [color(5, 29, 191), color(105, 179, 255)],
@@ -85,10 +89,10 @@ def sky
     ]
     gradation(sky_patterns.sample)
 
-    cloud(@base * rand(1.5..2.5), height / 10 * rand(1.5..2.5), @base * rand(0.7..1.0))
-    cloud(@base * rand(4.5..5.5), height / 10 * rand(2.5..3.5), @base * rand(0.5..1.5))
-    cloud(@base * rand(7.5..8.5), height / 10 * rand(1.5..2.5), @base * rand(0.8..1.2))
-  when 81..90
+    cloud(@base * rand(1.5..2.5), @base * rand(1.5..2.5), @base * rand(0.7..1.0))
+    cloud(@base * rand(4.5..5.5), @base * rand(2.5..3.5), @base * rand(0.5..1.5))
+    cloud(@base * rand(7.5..8.5), @base * rand(1.5..2.5), @base * rand(0.8..1.2))
+  when 71..80
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
       [color(200, 206, 202), color(226, 168, 114)]
@@ -112,7 +116,7 @@ def gradation(pattern)
     inter = map(i, 0, @base * 4, 0, 1)
     c = lerpColor(pattern[0], pattern[1], inter)
     stroke(c)
-    line(0, i, width, i)
+    line(1, i, width - 1, i)
   end
 end
 
@@ -122,11 +126,10 @@ def cloud(x, y, s)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(x,    y,    s-@base*0.2, rand(18..22))
-  ellipse(x+@base*0.1, y+@base*0.1, s,    rand(18..22))
-  ellipse(x-@base*0.1, y+@base*0.2, s,    rand(18..22))
+  ellipse(x, y, s - @base*0.2, rand(18..22))
+  ellipse(x+@base*0.1, y + @base*0.1, s, rand(18..22))
+  ellipse(x-@base*0.1, y + @base*0.2, s, rand(18..22))
 end
-
 
 def first_star(h)
   noStroke
