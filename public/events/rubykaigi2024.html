@@ -63,16 +63,16 @@ def frame
   strokeWeight(rect_weight)
 
   fill(p[0])
-  rect(rect_weight, rect_weight, width, rect_size)
+  rect(rect_weight, rect_weight, width-rect_weight * 2, rect_size)
   rect(width - rect_weight - rect_size , rect_weight, rect_size, height)
-  rect(rect_weight, height - rect_weight - rect_size, width, rect_size)
+  rect(rect_weight, height - rect_weight - rect_size, width - rect_weight * 2, rect_size)
   rect(rect_weight, rect_weight, rect_size, height)
 
   fill(p[1])
   rect(rect_weight, rect_weight, rect_size)
-  rect(width - rect_weight - rect_size , rect_weight, rect_size)
+  rect(width - rect_weight - rect_size, rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
-  rect(width - rect_weight - rect_size , height - rect_weight - rect_size, rect_size)
+  rect(width - rect_weight - rect_size, height - rect_weight - rect_size, rect_size)
 end
 
 def sky
