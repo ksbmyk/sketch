@@ -1,4 +1,4 @@
-# RubyKaigi 2024 logo https://rubykaigi.org/2024/ design by mmito
+# RubyKaigi 2024 logo https://rubykaigi.org/2024/ design by mmito1224 & yuki930
 
 def setup
   createCanvas(400, 400)
