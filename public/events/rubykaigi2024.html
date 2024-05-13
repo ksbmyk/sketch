@@ -73,6 +73,10 @@ def frame
   rect(width - rect_weight - rect_size, rect_weight, rect_size)
   rect(rect_weight, height - rect_weight - rect_size, rect_size)
   rect(width - rect_weight - rect_size, height - rect_weight - rect_size, rect_size)
+
+  noFill
+  stroke(1)
+  rect(0, 0, width, height)
 end
 
 def sky
@@ -91,9 +95,9 @@ def sky
     ]
     gradation(sky_patterns.sample)
 
-    cloud(@base * rand(1.5..2.5), height / 10 * rand(1.5..2.5), @base * rand(0.7..1.0))
-    cloud(@base * rand(4.5..5.5), height / 10 * rand(2.5..3.5), @base * rand(0.5..1.5))
-    cloud(@base * rand(7.5..8.5), height / 10 * rand(1.5..2.5), @base * rand(0.8..1.2))
+    cloud(@base * rand(1.5..2.5), @base * rand(1.5..2.5), @base * rand(0.7..1.0))
+    cloud(@base * rand(4.5..5.5), @base * rand(2.5..3.5), @base * rand(0.5..1.5))
+    cloud(@base * rand(7.5..8.5), @base * rand(1.5..2.5), @base * rand(0.8..1.2))
   when 71..80
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
@@ -118,7 +122,7 @@ def gradation(pattern)
     inter = map(i, 0, @base * 4, 0, 1)
     c = lerpColor(pattern[0], pattern[1], inter)
     stroke(c)
-    line(0, i, width, i)
+    line(1, i, width - 1, i)
   end
 end
 
@@ -128,11 +132,10 @@ def cloud(x, y, s)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(x,    y,    s-@base*0.2, rand(18..22))
-  ellipse(x+@base*0.1, y+@base*0.1, s,    rand(18..22))
-  ellipse(x-@base*0.1, y+@base*0.2, s,    rand(18..22))
+  ellipse(x, y, s - @base*0.2, rand(18..22))
+  ellipse(x+@base*0.1, y + @base*0.1, s, rand(18..22))
+  ellipse(x-@base*0.1, y + @base*0.2, s, rand(18..22))
 end
-
 
 def first_star(h)
   noStroke
@@ -187,7 +190,6 @@ def ruby
   line(x-10, y+-25, x+65, y+0)
   pop
 end
-    
 
 P5::init()
     </script>
