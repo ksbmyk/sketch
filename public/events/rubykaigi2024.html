@@ -76,6 +76,8 @@ def frame
 end
 
 def sky
+  fill(255)
+  rect(0, 0, width, @base * 4 -1)
   drawingContext.shadowColor = 'transparent'
   drawingContext.shadowBlur = 10
 
