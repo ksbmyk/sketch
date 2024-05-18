@@ -18,8 +18,8 @@ def sea
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 50
 
-  x_value = @base * 0.1 #width / 100
-  y_value = @base * 0.7 #height / 15
+  x_value = @base * 0.1
+  y_value = @base * 0.7
   freq = map(@base, 0, width, 1,  @base * 0.05)
   vel = map(@base * 2, 0, height, 1, @base * 0.5)
 
