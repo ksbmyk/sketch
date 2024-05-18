@@ -1,5 +1,5 @@
 def setup
-  size = min(windowWidth, 1000)
+  size = min(windowWidth, 800)
   createCanvas(size, size)
   @base = width / 10
   angleMode(DEGREES)
@@ -77,7 +77,7 @@ def sky
 
   r = rand(0..100)
   case r
-  when 0..80
+  when 0..70
     sky_patterns = [
       [color(105, 179, 256), color(255, 255, 255)],
       [color(5, 29, 191), color(105, 179, 255)],
@@ -88,7 +88,7 @@ def sky
     cloud(@base * rand(1.5..2.5), height / 10 * rand(1.5..2.5), @base * rand(0.7..1.0))
     cloud(@base * rand(4.5..5.5), height / 10 * rand(2.5..3.5), @base * rand(0.5..1.5))
     cloud(@base * rand(7.5..8.5), height / 10 * rand(1.5..2.5), @base * rand(0.8..1.2))
-  when 81..90
+  when 71..80
     hr_patterns = [
       [color(112, 132, 165), color(212, 176, 181)],
       [color(200, 206, 202), color(226, 168, 114)]
