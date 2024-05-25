@@ -1,4 +1,4 @@
-# RubyKaigi 2024 logo https://rubykaigi.org/2024/ design by mmito1224 & yuki930
+# RubyKaigi 2024 logo https://rubykaigi.org/2024/ design by mmito1224
 
 def setup
   createCanvas(400, 400)
@@ -30,7 +30,6 @@ def draw_minsa
   noStroke
   fill(0)
   rect_count = 10 #四角形の数
-        
 
   3.times do |t|
     radius = 100 + 10 * t # 円の半径
