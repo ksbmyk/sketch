@@ -122,9 +122,9 @@ def cloud(x, y, s)
   drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 10
 
-  ellipse(x,    y,    s-@base*0.2, rand(18..22))
-  ellipse(x+@base*0.1, y+@base*0.1, s,    rand(18..22))
-  ellipse(x-@base*0.1, y+@base*0.2, s,    rand(18..22))
+  ellipse(x, y, s - @base * 0.2, rand(18..22))
+  ellipse(x + @base*0.1, y + @base*0.1, s, rand(18..22))
+  ellipse(x - @base*0.1, y + @base*0.2, s, rand(18..22))
 end
 
 
@@ -144,7 +144,7 @@ end
 def ruby
   push
   translate(@base * 5, @base * 7.5)
-  r = [-45,15,105].sample
+  r = [-45, 15, 105].sample
   rotate(r)
   scale(0.25)
 
@@ -172,12 +172,12 @@ def ruby
   vertex(x-10, y+70)
   endShape(CLOSE)
 
-  line(x-45, y+45, x-10, y+25)
-  line(x-45, y+0, x-10, y+25)
-  line(x-45, y+0, x-10, y-25)
-  line(x-45, y-45, x-10, y-25)
-  line(x-10, y+70, x-10, y-70)
-  line(x-10, y+25, x+65, y+0)
-  line(x-10, y+-25, x+65, y+0)
+  line(x - 45, y + 45, x-10, y + 25)
+  line(x - 45, y , x - 10, y + 25)
+  line(x - 45, y , x - 10, y - 25)
+  line(x - 45, y - 45, x - 10, y - 25)
+  line(x - 10, y + 70, x - 10, y - 70)
+  line(x - 10, y + 25, x + 65, y + 0)
+  line(x - 10, y - 25, x + 65, y + 0)
   pop
 end
