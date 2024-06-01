@@ -5,7 +5,7 @@ def setup
 end
 
 def draw
-  background(255)
+  background(0)
   noStroke
 
   if rand < @rate
