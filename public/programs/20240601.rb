@@ -3,9 +3,8 @@ def setup
   @circles = []
   @rate = 0.08
   frameRate(40)
-  drawingContext.shadowColor = color(220)
+  drawingContext.shadowColor = color(255)
   drawingContext.shadowBlur = 50
-
 end
 
 def draw
