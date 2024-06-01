@@ -1,18 +1,21 @@
 def setup
   createCanvas(700, 700)
-  @circle = Circle.new(width/2, height/2)
+  @circles = []
+  @rate = 0.08
 end
 
 def draw
   background(255)
   noStroke
 
-  @circle.update
-  @circle.display
+  if rand < @rate
+    @circles << Circle.new(rand(0..width), rand(0..height))
+  end
 
-  if @circle.finished?
-    @circle.radius = 0
-    @circle.alpha = 255
+  @circles.each do |circle| 
+    circle.update
+    circle.display
+    @circles.reject! { |c| c.finished? }
   end
 end
 
