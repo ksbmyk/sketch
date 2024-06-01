@@ -12,4 +12,10 @@ def draw
   ellipse(width/2, height/2, $radius * 2)
   $radius = $radius + 1
   $alpha  = $alpha -1
+
+  # reset
+  if ($alpha <= 0)
+    $radius = 0
+    $alpha = 255
+  end
 end
