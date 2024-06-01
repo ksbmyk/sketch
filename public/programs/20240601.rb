@@ -1,4 +1,5 @@
 $radius = 0
+$alpha = 255
 def setup
   createCanvas(700, 700)
 end
@@ -6,12 +7,9 @@ end
 def draw
   background(255)
   noStroke
-  fill("blue")
+  fill(0, 0, 255, $alpha)
 
   ellipse(width/2, height/2, $radius * 2)
   $radius = $radius + 1
-
-  if ($radius > width / 3)
-    noLoop
-  end
+  $alpha  = $alpha -1
 end
