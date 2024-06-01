@@ -1,21 +1,42 @@
-$radius = 0
-$alpha = 255
 def setup
   createCanvas(700, 700)
+  @circle = Circle.new(width/2, height/2)
 end
 
 def draw
   background(255)
   noStroke
-  fill(0, 0, 255, $alpha)
 
-  ellipse(width/2, height/2, $radius * 2)
-  $radius = $radius + 1
-  $alpha  = $alpha -1
+  @circle.update
+  @circle.display
 
-  # reset
-  if ($alpha <= 0)
-    $radius = 0
-    $alpha = 255
+  if @circle.finished?
+    @circle.radius = 0
+    @circle.alpha = 255
+  end
+end
+
+class Circle
+  attr_accessor :x, :y, :radius, :alpha
+
+  def initialize(x, y)
+    @x = x
+    @y = y
+    @radius = 0
+    @alpha = 255
+  end
+
+  def update
+    self.radius = radius + 1
+    self.alpha = alpha - 1
+  end
+
+  def display
+    fill(0, 0, 255, alpha)
+    ellipse(x, y, radius * 2)
+  end
+
+  def finished?
+    alpha <= 0
   end
 end
