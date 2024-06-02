@@ -3,6 +3,7 @@
 
 def setup
   createCanvas(500, 500)
+  colorMode(HSB, 360, 100, 100)
   noLoop
 end
 
@@ -15,11 +16,8 @@ def draw
   amp = 100
 
   (0..width).step do |y|
-    r = map(y, 0, height, 100, 0)
-    g = map(y, 0, height, 0, 255)
-    b = 255
-
-    stroke(r, g, b)
+    hue = map(y, 0, height, 170, 260)
+    stroke(hue, 100, 100)
     noFill
 
     beginShape
