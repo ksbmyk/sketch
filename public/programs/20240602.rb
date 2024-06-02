@@ -22,7 +22,7 @@ def draw
 
     beginShape
     width.to_i.times do |x|
-      wave_y = y + sin(x * freq + y * rate) * amp # 波 sin⁡(𝑎𝑥+𝑏𝑦)×𝑐sin(ax+by)×c
+      wave_y = y + sin(x * freq + y * rate) * amp # 波 sin(ax+by)*c
       vertex(x, wave_y)
     end
     endShape
