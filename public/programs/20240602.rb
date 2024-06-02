@@ -15,13 +15,13 @@ def draw
   rate = 1
   amp = 100
 
-  (0..width).step do |y|
+  height.to_i.times do |y|
     hue = map(y, 0, height, 170, 260)
     stroke(hue, 100, 100)
     noFill
 
     beginShape
-    (0..height).step do |x|
+    width.to_i.times do |x|
       wave_y = y + sin(x * freq + y * rate) * amp # 波 sin⁡(𝑎𝑥+𝑏𝑦)×𝑐sin(ax+by)×c
       vertex(x, wave_y)
     end
