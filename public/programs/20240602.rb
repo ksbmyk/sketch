@@ -16,8 +16,8 @@ def draw
   amp = 100
 
   height.to_i.times do |y|
-    hue = map(y, 0, height, 170, 260)
-    stroke(hue, 100, 100)
+    hue = map(y, 0, height, 170, 230)
+    stroke(hue, 60, 100)
     noFill
 
     beginShape
