@@ -15,9 +15,9 @@ def draw
     while y < height do
       alpha = map(y, 0, height, 50, 255)
       fill(100, 150, 200, alpha)
-      ellipse(x + $size / 2, y + $size / 2, 10)
+      ellipse(x + $size / 2, y + $size / 2, rand(3..$size * 0.8))
       y += $size 
     end
     x += $size
   end
-end 
+end
