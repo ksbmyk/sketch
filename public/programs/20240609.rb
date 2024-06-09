@@ -4,6 +4,7 @@
 $size = 50
 def setup
   createCanvas(700, 700)
+  rectMode(CENTER)
   noStroke
   noLoop
 end
@@ -16,6 +17,7 @@ def draw
       alpha = map(y, 0, height, 50, 255)
       fill(100, 150, 200, alpha)
       ellipse(x + $size / 2, y + $size / 2, rand(3..$size * 0.8))
+      rect(x + $size / 2, y + $size / 2, rand(3..$size * 0.8))
       y += $size 
     end
     x += $size
