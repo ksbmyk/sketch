@@ -4,6 +4,7 @@
 $size = 50
 def setup
   createCanvas(700, 700)
+  background(0)
   rectMode(CENTER)
   noStroke
   noLoop
