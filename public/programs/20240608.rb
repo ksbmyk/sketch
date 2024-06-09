@@ -7,7 +7,7 @@ def setup
   createCanvas(700, 700)
   background("#c0c0c0")
   noStroke
-  until $circles.length >= 200
+  until $circles.length >= 250
     if (new_circle = create_new_circle)
       $circles << new_circle
     end
