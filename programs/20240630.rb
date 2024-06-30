@@ -13,7 +13,7 @@ COLORS = [
 ]
 
 def setup
-  createCanvas(800, 600)
+  createCanvas(700, 700)
   background(0)
   noStroke
 end
