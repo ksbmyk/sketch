@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter, faGithub } from "@fortawesome/free-brands-svg-icons"
-import { faNote } from "@fortawesome/free-solid-svg-icons";
+import { faStickyNote } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   children?: ReactNode
@@ -37,7 +37,7 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
         </Link>
         <span className="ml-2"></span>
         <Link href="https://note.com/chobishiba/n/n2f838aff2849" target="_blank" className="text-customLink hover:text-customLinkHover">
-          <span> <FontAwesomeIcon icon={faNote} className="h-[20px]" /> </span>
+          <span> <FontAwesomeIcon icon={faStickyNote} className="h-[20px]" /> </span>
         </Link>
       </nav>
     </header>
