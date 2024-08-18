@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Head from 'next/head'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter, faGithub } from "@fortawesome/free-brands-svg-icons"
+import { faNote } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   children?: ReactNode
@@ -25,17 +26,22 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
       <meta property='og:type' content='website' />
       <link rel="icon" href="favicon.ico" />
     </Head>
-
+    <header className="mx-4 mt-4">
+      <nav className="flex items-center">
+        <Link href="https://twitter.com/chobishiba" target="_blank" className="text-customLink hover:text-customLinkHover">
+          <span> <FontAwesomeIcon icon={faTwitter} className="h-[20px]" /> </span>
+        </Link>
+        <span className="ml-2"></span>
+        <Link href="https://github.com/ksbmyk/sketch" target="_blank" className="text-customLink hover:text-customLinkHover">
+          <span> <FontAwesomeIcon icon={faGithub} className="h-[20px]" /> </span>
+        </Link>
+        <span className="ml-2"></span>
+        <Link href="https://note.com/chobishiba/n/n2f838aff2849" target="_blank" className="text-customLink hover:text-customLinkHover">
+          <span> <FontAwesomeIcon icon={faNote} className="h-[20px]" /> </span>
+        </Link>
+      </nav>
+    </header>
     {children}
-    <footer className="flex justify-center mb-4">
-      <Link href="https://twitter.com/chobishiba" target="_blank" className="text-customLink hover:text-customLinkHover">
-        <span> <FontAwesomeIcon icon={faTwitter} className="h-[20px]" /> </span>
-      </Link>
-      <span className="ml-2"></span>
-      <Link href="https://github.com/ksbmyk/sketch" target="_blank" className="text-customLink hover:text-customLinkHover">
-        <span> <FontAwesomeIcon icon={faGithub} className="h-[20px]" /> </span>
-      </Link>
-    </footer>
   </div>
 )
 
