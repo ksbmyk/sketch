@@ -1,36 +1,39 @@
 let  n = 5;
+let r1, r2;
 function setup() {
-  createCanvas(200, 200);
+  createCanvas(300, 300);
   background(0);
-  frameRate(1);
+  frameRate(30);
 }
 
 function draw() {
+  
+if (frameCount % 30 === 0){
   background(0);
-
+  [r1, r2] = getUniqueRandomPair(3, 6);
+  
   stroke(255);
   strokeWeight(2);
   noFill();
-  pattern(n);
+  pattern(n, r1);
 
   stroke(random(0,100), random(100, 255), 255);
   strokeWeight(1);
-  //noFill();
-	
-  pattern(n);
+  pattern(n, r2);
   
   if (n === 7){
     n = 5;
   }else{
     n = n + 1;
   }
+}
   
   //n = floor(random(5,9));
 }
 
 
-function pattern(n) {
-  geometric(100, 100, width, n, floor(random(3,6)));
+function pattern(n, r) {
+  geometric(width/2, width/2, width, n, r);
 }
 
 function geometric(x, y, radius, sides, depth) {
@@ -49,4 +52,15 @@ function geometric(x, y, radius, sides, depth) {
     geometric(nextX, nextY, nextRadius, sides, depth - 1);
   }
   endShape(CLOSE);
+}
+
+function getUniqueRandomPair(min, max) {
+  let value1, value2;
+  
+  do {
+    value1 = floor(random(min, max + 1));
+    value2 = floor(random(min, max + 1));
+  } while (value1 === value2);
+  
+  return [value1, value2];
 }
