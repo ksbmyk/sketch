@@ -1,22 +1,16 @@
 
-let c1;
-let c2;
-let c3;
+let c1, c2, c3;
+
 function setup() {
   createCanvas(600, 600);
   frameRate(0.5);
-  c1 = color(random(255), random(255), random(255));
-  c2 = color(random(255), random(255), random(255));
-  c3 = color(random(255), random(255), random(255));
+  colorMode(HSB, 360, 100, 100);
+  [c1, c2, c3] = setColor();
 }
 
 function draw() {
-  if (frameCount % 4 === 0) {
-    c1 = color(random(255), random(255), random(255));
-    c2 = color(random(255), random(255), random(255));
-    c3 = color(random(255), random(255), random(255));
-  }
-  
+  [c1, c2, c3] = setColor();
+
   background(c1);
   noFill();
 
@@ -54,4 +48,22 @@ function diamond(x, y, radius, depth) {
   }
   endShape(CLOSE);
 }
-artist, Software Engineer
+
+function setColor(){
+ let baseHue = random([50, 100, 150, 200, 250, 300, 350]);
+  // let baseHue = 50, 100, 150, 200, 250, 300, 350;
+  console.log(baseHue);
+ let saturation = 80; 
+ let brightness = 90;
+  let color1 = color(baseHue, saturation, brightness);
+
+  // 120度ずらしてトライアドカラーを生成
+  // let color2 = color((baseHue + 120) % 360, saturation, brightness);
+  // let color3 = color((baseHue + 240) % 360, saturation, brightness);
+
+    let color2 = color((baseHue + 30) % 360, saturation, brightness - 50);
+  let color3 = color((baseHue - 30 + 360) % 360, saturation, brightness);
+
+  
+  return [color1, color2, color3]
+}
