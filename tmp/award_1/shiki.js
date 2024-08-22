@@ -1,11 +1,11 @@
 let fallingObjects = [];
-let numObjects = 30;
+let numObjects = 60;
 let seasons = ["spring", "summer", "autumn", "winter"];
 let seasonColors = {
-  spring: [255, 182, 193], // 春色 (ピンク)
-  summer: [135, 206, 250], // 夏色 (空色)
-  autumn: [255, 165, 0], // 秋色 (オレンジ)
-  winter: [0, 0, 0] // 冬色 (黒)
+  spring: [0, 0, 0], // 春色 (ピンク)
+  summer: [255, 182, 193], // 夏色 (空色)
+  autumn: [135, 206, 250], // 秋色 (オレンジ)
+  winter: [255, 204, 0] // 冬色 (黒)
 };
 
 let seasonObjects = {
@@ -18,7 +18,7 @@ let seasonObjects = {
 let currentSeasonIndex = 0;
 let nextSeasonIndex = 1;
 let lerpAmount = 0;
-let totalFramesPerSeason = 600;
+let totalFramesPerSeason = 500;
 
 function setup() {
   createCanvas(600, 600);
@@ -82,7 +82,7 @@ class FallingObject {
     this.char = char;
     this.rotates = rotates;
     this.rotation = rotates ? random(TWO_PI) : 0;  // 回転しない場合は0に固定
-    this.speed = random(1, 3);
+    this.speed = random(2, 5);
   }
 
   update() {
