@@ -19,6 +19,7 @@ let currentSeasonIndex = 0;
 let nextSeasonIndex = 1;
 let lerpAmount = 0;
 let totalFramesPerSeason = 500;
+let objectsToRemove = [];
 
 function setup() {
   createCanvas(600, 600);
@@ -42,6 +43,15 @@ function draw() {
     obj.update();
     obj.display();
   }
+
+  // 画面外のオブジェクトを削除する
+  for (let obj of objectsToRemove) {
+    let index = fallingObjects.indexOf(obj);
+    if (index > -1) {
+      fallingObjects.splice(index, 1);
+    }
+  }
+  objectsToRemove = []; // 削除対象のリストをリセット
 
   // 徐々に次の季節へ
   lerpAmount += 1 / totalFramesPerSeason;
@@ -90,6 +100,9 @@ class FallingObject {
     if (this.rotates) {
       this.rotation += 0.05;
     }
+    if (this.isOutOfScreen()) {
+      objectsToRemove.push(this);
+    }
   }
 
   display() {
@@ -99,4 +112,10 @@ class FallingObject {
     text(this.char, 0, 0);
     pop();
   }
+
+  // オブジェクトが画面外に出たかどうかをチェックする
+  isOutOfScreen() {
+    return this.y > height;
+  }
+
 }
