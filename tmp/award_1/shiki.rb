@@ -73,7 +73,7 @@ class Flake
   def initialize(x, y, char, color, size, rotates)
     @x, @y, @char, @color, @size, @rotates = x, y, char, color, size, rotates
     @rotation = rotates ? rand(0..TWO_PI) : 0
-    @speed = rand(2.0..5.0)
+    @speed = rand(2.0..6.0)
     @variation = rotates ? rand(-2.0..2.0) : 0
   end
 
@@ -94,6 +94,6 @@ class Flake
   end
 
   def out_of_screen?
-    @y > height
+    @y > height + 10
   end
 end
