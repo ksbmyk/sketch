@@ -9,37 +9,34 @@ def draw
   background(colors[:background])
   noFill
 
-  stroke(colors[:stroke1])
-  strokeWeight(10)
-  diamond_pattern
-  
-  stroke(colors[:stroke2])
-  strokeWeight(2)
-  diamond_pattern
+  draw_pattern(colors[:stroke1], 5)
+  draw_pattern(colors[:stroke2], 2)
 end
 
-def diamond_pattern
+def draw_pattern(color, weight)
+  stroke(color)
+  strokeWeight(weight)
   (0..8).each do |i|
     (0..8).each do |j|
-      diamond(80 * i, 80 * j, 100, rand(3..5), rand(2..6))
+      geometric(80 * i, 80 * j, 100, rand(3..5), rand(2..6))
     end
   end
 end
 
-def diamond(x, y, radius, depth, n)
+def geometric(x, y, radius, depth, num_sides)
   return if depth.zero?
   
   beginShape
-  n.times do |i|
-    angle = map(i, 0, n, 0, TWO_PI)
-    new_x = x + cos(angle) * radius
-    new_y = y + sin(angle) * radius
-    vertex(new_x, new_y)
+  num_sides.times do |i|
+    angle = map(i, 0, num_sides, 0, TWO_PI)
+    x_offset = x + cos(angle) * radius
+    y_offset = y + sin(angle) * radius
+    vertex(x_offset, y_offset)
     
     next_radius = radius * 0.3
     next_x = x + cos(angle) * next_radius
     next_y = y + sin(angle) * next_radius
-    diamond(next_x, next_y, next_radius, depth - 1, n)
+    geometric(next_x, next_y, next_radius, depth - 1, num_sides)
   end
   endShape(CLOSE)
 end
