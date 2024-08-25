@@ -15,7 +15,6 @@ let seasonObjects = {
   winter: { char: '*', rotates: false, color: [255, 255, 255]}
 };
 
-
 let currentSeasonIndex = 0;
 let nextSeasonIndex = 1;
 let lerpAmount = 0;
@@ -73,10 +72,6 @@ background(bgColor);
     }
   }
   objectsToRemove = []; // 削除対象のリストをリセット
-
-
-
-
 }
 
 function initializeObjects() {
