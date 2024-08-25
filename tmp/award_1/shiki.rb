@@ -3,7 +3,6 @@ def setup
   textAlign(CENTER, CENTER)
   initialize_data
   initialize_flakes
-  frameRate(60)
 end
 
 def draw
@@ -16,7 +15,7 @@ private
 
 def initialize_data
   @flakes = []
-  @flake_num = 100
+  @flake_num = 150
   @seasons = [:spring, :summer, :autumn, :winter]
   @season_data = {
     spring: { char: '✿', rotates: true, size: 32, color: [255, 105, 180], bg_color: [255, 182, 193] },
@@ -55,7 +54,7 @@ def initialize_flakes
   season_attributes = @season_data[@current_season]
   @flake_num.times do
     x = rand(width)
-    y = rand(-height..0)
+    y = rand(-height * 1.2..0)
     @flakes << Flake.new(x, y, season_attributes[:char], season_attributes[:color], season_attributes[:size], season_attributes[:rotates])
   end
 end
@@ -74,12 +73,13 @@ class Flake
   def initialize(x, y, char, color, size, rotates)
     @x, @y, @char, @color, @size, @rotates = x, y, char, color, size, rotates
     @rotation = rotates ? rand(0..TWO_PI) : 0
-    @speed = rand(2..5)
-    @variation = rotates ? rand(-2..2) : 0
+    @speed = rand(2.0..6.0)
+    @variation = rotates ? rand(-2.0..2.0) : 0
   end
 
   def update
     @y += @speed
+    @x += @variation
     @rotation += 0.05 if @rotates
   end
 
