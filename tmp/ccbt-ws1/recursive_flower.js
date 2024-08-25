@@ -1,6 +1,6 @@
 let n = 5;
 let r1, r2;
-let size = 100;
+let size = 300;
 let grid = 4
 
 function setup() {
@@ -11,34 +11,26 @@ function setup() {
 
 function draw() {
   
-  if (frameCount % 20 === 0){
+  if (frameCount % 30 === 0){
     background(0);
 
     for (let x = 0; x < width; x += size) {
       for (let y = 0; y < height; y += size) {
+        [r1, r2] = getUniqueRandomPair(3, 6);
+        stroke(255);
+        strokeWeight(1);
+        noFill();
+        pattern(x, y, n, r1);
 
-      [r1, r2] = getUniqueRandomPair(3, 6);
-      stroke(255);
-      strokeWeight(2);
-      noFill();
-      pattern(x, y, n, r1);
+        stroke(random(0,100), random(80, 180), 255);
+        strokeWeight(1);
+        pattern(x, y, n, r2);
 
-      stroke(random(0,100), random(100, 255), 255);
-      strokeWeight(1);
-      pattern(x, y, n, r2);
-
-      n = floor(random(5, 9));
+        n = floor(random(5, 9));
       }
     }
-
-    // if (n === 8){
-    //   n = 5;
-    // }else{
-    //   n = n + 1;
-    // }
   }
 }
-
 
 function pattern(x, y, n, r) {
   geometric(x+size/2, y+size/2, size, n, r);
