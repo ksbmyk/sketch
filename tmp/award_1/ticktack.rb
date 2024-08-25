@@ -2,19 +2,18 @@ def setup
   createCanvas(600, 600)
   frameRate(0.5)
   colorMode(HSB, 360, 100, 100)
-  @colors = set_color
 end
 
 def draw
-  @colors = set_color
-  background(@colors[:c1])
+  colors = set_color
+  background(colors[:background])
   noFill
 
-  stroke(@colors[:c2])
+  stroke(colors[:stroke1])
   strokeWeight(10)
   diamond_pattern
   
-  stroke(@colors[:c3])
+  stroke(colors[:stroke2])
   strokeWeight(2)
   diamond_pattern
 end
@@ -49,10 +48,10 @@ def set_color
   base_hue = rand(0..360)
   saturation = 80
   brightness = 90
-  color1 = color(base_hue, saturation, brightness)
   
-  color2 = color((base_hue + 30) % 360, saturation, brightness - 50)
-  color3 = color((base_hue - 30 + 360) % 360, saturation, brightness)
-
-  { c1: color1, c2: color2, c3: color3 }
+  {
+    background: color(base_hue, saturation, brightness),
+    stroke1: color((base_hue + 30) % 360, saturation, brightness - 50),
+    stroke2: color((base_hue - 30 + 360) % 360, saturation, brightness)
+  }
 end
