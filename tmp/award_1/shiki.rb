@@ -20,7 +20,7 @@ def initialize_data
   @season_data = {
     spring: { char: '✿', rotates: true, size: 32, color: [255, 105, 180], bg_color: [255, 182, 193] },
     summer: { char: ';', rotates: false, size: 32, color: [30, 144, 255], bg_color: [135, 206, 250] },
-    autumn: { char: '♣', rotates: true, size: 32, color: [204, 85, 0], bg_color: [204, 163, 0] },
+    autumn: { char: '♠', rotates: true, size: 32, color: [204, 85, 0], bg_color: [204, 163, 0] },
     winter: { char: '*', rotates: false, size: 50, color: [255, 255, 255], bg_color: [0, 31, 63] }
   }
   @current_season = :spring
