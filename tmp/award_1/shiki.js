@@ -2,23 +2,24 @@ let fallingObjects = [];
 let numObjects = 60;
 let seasons = ["spring", "summer", "autumn", "winter"];
 let seasonColors = {
-  spring: [0, 0, 0], // 春色 (ピンク)
-  summer: [255, 182, 193], // 夏色 (空色)
-  autumn: [135, 206, 250], // 秋色 (オレンジ)
-  winter: [255, 204, 0] // 冬色 (黒)
+  spring: [0, 0, 0],
+  summer: [255, 182, 193],
+  autumn: [135, 206, 250],
+  winter: [255, 204, 0]
 };
 
 let seasonObjects = {
-  spring: { char: '🌸', rotates: true },
-  summer: { char: '💧', rotates: false },
-  autumn: { char: '🍁', rotates: true },
-  winter: { char: '❄️', rotates: true }
+  spring: { char: '✿', rotates: true, color: [255, 105, 180]},
+  summer: { char: ';', rotates: false, color: [173, 216, 230]},
+  autumn: { char: '♣', rotates: true, color: [255, 69, 0]},
+  winter: { char: '*', rotates: false, color: [255, 255, 255]}
 };
+
 
 let currentSeasonIndex = 0;
 let nextSeasonIndex = 1;
 let lerpAmount = 0;
-let totalFramesPerSeason = 500;
+let totalFramesPerSeason = 450;
 let objectsToRemove = [];
 
 function setup() {
@@ -69,7 +70,7 @@ function initializeObjects() {
   for (let i = 0; i < numObjects; i++) {
     let x = random(width);
     let y = random(-height, 0);
-    fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.rotates));
+    fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.color, seasonInfo.rotates));
   }
 }
 
@@ -80,19 +81,21 @@ function addNewSeasonObjects() {
   for (let i = 0; i < numObjects; i++) {
     let x = random(width);
     let y = random(-height, 0);
-    fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.rotates));
+    fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.color, seasonInfo.rotates));
   }
 }
 
 // FallingObjectクラスを定義
 class FallingObject {
-  constructor(x, y, char, rotates) {
+  constructor(x, y, char, color, rotates) {
     this.x = x;
     this.y = y;
     this.char = char;
+    this.color = color;
     this.rotates = rotates;
-    this.rotation = rotates ? random(TWO_PI) : 0;  // 回転しない場合は0に固定
-    this.speed = random(2, 5);
+    this.rotation = rotates ? random(TWO_PI) : 0;
+    this.speed = random(2, 6);
+    this.size = char === '*' ? 50 : 32;
   }
 
   update() {
@@ -108,14 +111,13 @@ class FallingObject {
   display() {
     push();
     translate(this.x, this.y);
-    rotate(this.rotation);  // rotatesがfalseならrotationは0なので回転しない
+    rotate(this.rotation);
+    textSize(this.size);
     text(this.char, 0, 0);
     pop();
   }
 
-  // オブジェクトが画面外に出たかどうかをチェックする
   isOutOfScreen() {
     return this.y > height;
   }
-
 }
