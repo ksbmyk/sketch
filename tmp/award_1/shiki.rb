@@ -10,10 +10,10 @@ def setup
     winter:  [255, 204, 0] 
   }
   @season_objects = {
-    spring:  { char: '🌸', rotates: true },
-    summer:  { char: '💧', rotates: false },
-    autumn:  { char: '🍁', rotates: true },
-    winter: { char: '❄️', rotates: true }
+    spring: { char: '✿', rotates: true, size: 32, color: [255, 105, 180]},
+    summer: { char: ';', rotates: false, size: 32, color: [30, 144, 255]},
+    autumn: { char: '♣', rotates: true, size: 32, color: [204, 85, 0]},
+    winter: { char: '*', rotates: false, size: 50, color: [255, 255, 255]}
   }
   @current_season_index = 0
   @next_season_index = 1
@@ -24,7 +24,6 @@ def setup
 end
 
 def draw
-  textSize(32)
   current_season_color = @season_colors[@seasons[@current_season_index]]
   next_season_color = @season_colors[@seasons[@next_season_index]]
 
@@ -51,20 +50,18 @@ def initialize_objects(season_index)
   10.times do
     x = rand(0..width)
     y = rand(-height..0)
-    @falling_objects << FallingObject.new(x, y, season_info[:char], season_info[:rotates])
+    @falling_objects << FallingObject.new(x, y, season_info[:char], season_info[:color], season_info[:size], season_info[:rotates])
   end
 end
 
 class FallingObject
   attr_accessor :x, :y, :char, :rotates, :rotation, :speed
 
-  def initialize(x, y, char, rotates)
-    @x = x
-    @y = y
-    @char = char
-    @rotates = rotates
+  def initialize(x, y, char, color, size, rotates)
+    @x, @y, @char, @color, @size, @rotates = x, y, char, color, size, rotates
     @rotation = rotates ? rand(0..TWO_PI) : 0
     @speed = rand(2..5)
+    @variation = rotates ? rand(-2..2) : 0
   end
 
   def update
@@ -76,6 +73,8 @@ class FallingObject
     push
     translate(@x, @y)
     rotate(@rotation)
+    fill(@color)
+    textSize(@size)
     text(@char, 0, 0)
     pop
   end
