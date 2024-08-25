@@ -27,7 +27,7 @@ end
 def draw
   # 色変化のタイミングを調整するための変数
   transition_threshold = 0.5 # 0.5までのlerp_amountで色を維持する
-  
+
   # 季節を変えるコード
   @lerp_amount += 1.0 / @total_frames_per_season
   
@@ -65,11 +65,11 @@ def initialize_objects(season_index)
   @num_objects.times do
     x = rand(0..width)
     y = rand(-height..0)
-    @falling_objects << FallingObject.new(x, y, season_info[:char], season_info[:color], season_info[:size], season_info[:rotates])
+    @falling_objects << Flake.new(x, y, season_info[:char], season_info[:color], season_info[:size], season_info[:rotates])
   end
 end
 
-class FallingObject
+class Flake
   attr_accessor :x, :y, :char, :rotates, :rotation, :speed
 
   def initialize(x, y, char, color, size, rotates)
