@@ -56,7 +56,7 @@ def initialize_flakes
   @flake_num.times do
     x = rand(width)
     y = rand(-height..0)
-    @flakes << Flake.new(x, y, season_attributes[:char], season_attributes[:color], season_attributes[:size], season_params[:rotates])
+    @flakes << Flake.new(x, y, season_attributes[:char], season_attributes[:color], season_attributes[:size], season_attributes[:rotates])
   end
 end
 
