@@ -1,17 +1,17 @@
 let fallingObjects = [];
-let numObjects = 100;
+let numObjects = 150;
 let seasons = ["spring", "summer", "autumn", "winter"];
 let seasonColors = {
-  spring: [0, 0, 0],
-  summer: [255, 182, 193],
-  autumn: [135, 206, 250],
-  winter: [255, 204, 0]
+  spring: [255, 182, 193],
+  summer: [135, 206, 250],
+  autumn: [204, 163, 0],
+  winter: [0, 31, 63]
 };
 
 let seasonObjects = {
-  spring: { char: '✿', rotates: true, color: [255, 105, 180]},
-  summer: { char: ';', rotates: false, color: [173, 216, 230]},
-  autumn: { char: '♣', rotates: true, color: [255, 69, 0]},
+  spring: { char: '✿', rotates: true,  color: [255, 105, 180]},
+  summer: { char: ';', rotates: false, color: [30, 144, 255]},
+  autumn: { char: '♣', rotates: true, color: [204, 85, 0]},
   winter: { char: '*', rotates: false, color: [255, 255, 255]}
 };
 
@@ -19,7 +19,7 @@ let seasonObjects = {
 let currentSeasonIndex = 0;
 let nextSeasonIndex = 1;
 let lerpAmount = 0;
-let totalFramesPerSeason = 450;
+let totalFramesPerSeason = 600;
 let objectsToRemove = [];
 
 function setup() {
@@ -30,15 +30,35 @@ function setup() {
 
 function draw() {
   textSize(32);
-  // 背景色の設定
-  let currentSeasonColor = seasonColors[seasons[currentSeasonIndex]];
-  let nextSeasonColor = seasonColors[seasons[nextSeasonIndex]];
 
-  let adjustedLerpAmount = lerpAmount;
+// 色変化のタイミングを調整するための変数
+let transitionThreshold = 0.5; // 0.5までのlerpAmountで色を維持する
 
-  let bgColor = lerpColor(color(...currentSeasonColor), color(...nextSeasonColor), adjustedLerpAmount);
-  background(bgColor);
+// 季節を変えるコード
+lerpAmount += 1 / totalFramesPerSeason;
 
+// 序盤は現在の色を維持し、後半で次の色に変化
+let adjustedLerpAmount;
+if (lerpAmount < transitionThreshold) {
+    adjustedLerpAmount = 0;  // 色を維持
+} else {
+    adjustedLerpAmount = map(lerpAmount, transitionThreshold, 1, 0, 1);  // 徐々に変化
+}
+
+// 背景色の設定
+let currentSeasonColor = seasonColors[seasons[currentSeasonIndex]];
+let nextSeasonColor = seasonColors[seasons[nextSeasonIndex]];
+let bgColor = lerpColor(color(...currentSeasonColor), color(...nextSeasonColor), adjustedLerpAmount);
+background(bgColor);
+
+    // 季節が変わるタイミング
+  if (lerpAmount >= 1) {
+      lerpAmount = 0;
+      currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
+      nextSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
+      addNewSeasonObjects();
+  }
+  
   // オブジェクトを表示
   for (let obj of fallingObjects) {
     obj.update();
@@ -54,14 +74,9 @@ function draw() {
   }
   objectsToRemove = []; // 削除対象のリストをリセット
 
-  // 徐々に次の季節へ
-  lerpAmount += 1 / totalFramesPerSeason;
-  if (lerpAmount >= 1) {
-    lerpAmount = 0;
-    currentSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
-    nextSeasonIndex = (currentSeasonIndex + 1) % seasons.length;
-    addNewSeasonObjects();
-  }
+
+
+
 }
 
 function initializeObjects() {
@@ -69,7 +84,7 @@ function initializeObjects() {
   
   for (let i = 0; i < numObjects; i++) {
     let x = random(width);
-    let y = random(-height, 0);
+    let y = random(-height*1.5, 0);
     fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.color, seasonInfo.rotates));
   }
 }
@@ -79,7 +94,7 @@ function addNewSeasonObjects() {
 
   for (let i = 0; i < numObjects; i++) {
     let x = random(width);
-    let y = random(-height, 0);
+    let y = random(-height*1.5, 0);
     fallingObjects.push(new FallingObject(x, y, seasonInfo.char, seasonInfo.color, seasonInfo.rotates));
   }
 }
