@@ -1,5 +1,5 @@
 let fallingObjects = [];
-let numObjects = 60;
+let numObjects = 100;
 let seasons = ["spring", "summer", "autumn", "winter"];
 let seasonColors = {
   spring: [0, 0, 0],
@@ -77,7 +77,6 @@ function initializeObjects() {
 function addNewSeasonObjects() {
   let seasonInfo = seasonObjects[seasons[currentSeasonIndex]];
 
-  // 新しい季節のオブジェクトを追加（古いオブジェクトは落ち切るまで残る）
   for (let i = 0; i < numObjects; i++) {
     let x = random(width);
     let y = random(-height, 0);
@@ -85,7 +84,6 @@ function addNewSeasonObjects() {
   }
 }
 
-// FallingObjectクラスを定義
 class FallingObject {
   constructor(x, y, char, color, rotates) {
     this.x = x;
@@ -96,10 +94,12 @@ class FallingObject {
     this.rotation = rotates ? random(TWO_PI) : 0;
     this.speed = random(2, 6);
     this.size = char === '*' ? 50 : 32;
+    this.variation = rotates ? random(-2, 2) : 0;
   }
 
   update() {
     this.y += this.speed;
+    this.x += this.variation;
     if (this.rotates) {
       this.rotation += 0.05;
     }
@@ -112,6 +112,7 @@ class FallingObject {
     push();
     translate(this.x, this.y);
     rotate(this.rotation);
+    fill(this.color);
     textSize(this.size);
     text(this.char, 0, 0);
     pop();
