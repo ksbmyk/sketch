@@ -18,7 +18,7 @@ def draw_pattern(color, weight)
   strokeWeight(weight)
   (0..8).each do |i|
     (0..8).each do |j|
-      geometric(80 * i, 80 * j, 100, rand(3..5), rand(2..6))
+      geometric(80 * i, 80 * j, 100, rand(3..5), rand(1..6))
     end
   end
 end
