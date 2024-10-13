@@ -3,7 +3,7 @@ def setup
   @size = 100
   @num = 5
   createCanvas(@size * @num, @size * @num)
-  background("#aaaaaa")
+  # background("#aaaaaa")
   noLoop
 end
 
@@ -11,18 +11,43 @@ def draw
   noStroke
   @num.times do |i|
     @num.times do |j|
-      large_arc(i * @size, j * @size, "#ffffff")
-      small_arc(i*@size, j*@size)
+      dot_arc(i * @size, j * @size)
+      #small_arc(i*@size, j*@size)
     end
   end
 end
 
-def large_arc(x, y, color)
-  fill(color)
-  push
-  translate(@size, @size)
-  arc(x, y, @size * 2, @size * 2, 180, 270)
-  pop
+def dot_arc(x, y)
+  fill("#00c5da")
+  rect(x, y, @size)
+
+  fill("#ffffff")
+  arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
+
+  cols = 8
+  rows = 8
+  max_diameter = 15
+  spacing = 15
+
+  # 水玉
+  rows.times do |i|
+    cols.times do |j|
+      diameter = max_diameter * (1 - i.to_f / cols)
+      pos_x = i * spacing + spacing / 2
+      pos_y = j * spacing + (i.even? ? spacing / 2 : 0)
+      fill("#00c5da")
+      ellipse(x + pos_x, y + pos_y + 8, diameter, diameter)
+    end
+  end
+
+  blendMode(OVERLAY)
+  fill("#000000")
+  # 黒にするために重ねる
+  3.times do
+    arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
+  end
+
+  blendMode(BLEND)
 end
 
 def small_arc(x, y)
