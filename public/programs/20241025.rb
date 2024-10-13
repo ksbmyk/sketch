@@ -1,7 +1,7 @@
 def setup
   angleMode(DEGREES)
   @size = 100
-  @num = 5
+  @num = 6
   createCanvas(@size * @num, @size * @num)
   # background("#aaaaaa")
   noLoop
@@ -11,11 +11,34 @@ def draw
   noStroke
   @num.times do |i|
     @num.times do |j|
-      #dot_arc(i * @size, j * @size)
-      #small_arc(i*@size, j*@size)
-      #double_arc_red(i*@size, j*@size)
-      #double_arc_blue(i*@size, j*@size)
-      triangles(i * @size, j * @size)
+      pattern_type = (i + j) % 5 + 1
+      if j.even?
+        case pattern_type
+        when 1
+          dot_arc(i * @size, j * @size)
+        when 2
+          small_arc(i*@size, j*@size)
+        when 3
+          double_arc_red(i*@size, j*@size)
+        when 4
+          double_arc_blue(i*@size, j*@size)
+        when 5
+          triangles(i * @size, j * @size)
+        end
+      else
+        case pattern_type
+        when 1
+          dot_arc(i * @size, j * @size)
+        when 2
+          triangles_reverse(i*@size, j*@size)
+        when 3
+          double_arc_blue_reverse(i*@size, j*@size)
+        when 4
+          double_arc_red_reverse(i*@size, j*@size)
+        when 5
+          small_arc(i*@size, j*@size)
+        end
+      end
     end
   end
 end
@@ -83,6 +106,19 @@ def double_arc_red(x, y)
   arc(x + @size, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 90, 180)
 end
 
+def double_arc_red_reverse(x, y)
+  fill("#fe4053")
+  rect(x, y, @size)
+  fill("#ffffff")
+  arc(x, y + @size, @size * 2, @size * 2, 270, 0)
+  fill("#fe4053")
+  arc(x, y + @size, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 270, 0)
+  fill("#aaaaaa")
+  arc(x, y + @size, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 270, 0)
+  fill("#fe4053")
+  arc(x, y + @size, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 270, 0)
+end
+
 def double_arc_blue(x, y)
   fill("#00c5da")
   rect(x, y, @size)
@@ -96,7 +132,40 @@ def double_arc_blue(x, y)
   arc(x, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 0, 90)
 end
 
+def double_arc_blue_reverse(x, y)
+  fill("#00c5da")
+  rect(x, y, @size)
+  fill("#ffffff")
+  arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
+  fill("#00c5da")
+  arc(x + @size, y + @size, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 180, 270)
+  fill("#aaaaaa")
+  arc(x + @size, y + @size, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 180, 270)
+  fill("#00c5da")
+  arc(x + @size, y + @size, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 180, 270)
+end
+
 def triangles(x, y)
+  fill("#aaaaaa")
+  rect(x, y, @size)
+  size = @size / 3
+
+  fill("#fe4053")
+  triangle(x, y + size, x + size, y, x + size, y + size)
+  fill("#ffffff")
+  triangle(x + size, y + size, x + size * 2, y, x + size * 2, y + size)
+  fill("#000000")
+  triangle(x + size * 2, y + size, x + size * 3, y, x + size * 3, y + size)
+
+  fill("#fe4053")
+  rect(x + size, y + size, size * 2)
+end
+
+def triangles_reverse(x, y)
+  fill("#aaaaaa")
+  rect(x, y, @size)
+  size = @size / 3
+
   fill("#aaaaaa")
   rect(x, y, @size)
   size = @size / 3
