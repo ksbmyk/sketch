@@ -12,9 +12,10 @@ def draw
   @num.times do |i|
     @num.times do |j|
       #dot_arc(i * @size, j * @size)
-      small_arc(i*@size, j*@size)
+      #small_arc(i*@size, j*@size)
       #double_arc_red(i*@size, j*@size)
       #double_arc_blue(i*@size, j*@size)
+      triangles(i * @size, j * @size)
     end
   end
 end
@@ -93,4 +94,18 @@ def double_arc_blue(x, y)
   arc(x, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 0, 90)
   fill("#00c5da")
   arc(x, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 0, 90)
+end
+
+def triangles(x, y)
+  fill("#aaaaaa")
+  rect(x, y, @size)
+  size = @size / 3
+  fill("#fe4053")
+  rect(x, y, size * 2)
+  fill("#000000")
+  triangle(x, y + size * 2, x, y + size * 3, x + size, y + size * 2)
+  fill("#ffffff")
+  triangle(x + size, y + size * 2, x + size, y + size * 3, x + size * 2, y + size * 2)
+  fill("#fe4053")
+  triangle(x + size * 2, y + size * 2, x + size * 2, y + size * 3, x + size * 3, y + size * 2)
 end
