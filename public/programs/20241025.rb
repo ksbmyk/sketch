@@ -3,7 +3,6 @@ def setup
   @size = 100
   @num = 6
   createCanvas(@size * @num, @size * @num)
-  # background("#aaaaaa")
   noLoop
 end
 
@@ -28,7 +27,7 @@ def draw
       else
         case pattern_type
         when 1
-          dot_arc(i * @size, j * @size)
+          dot_arc_reverse(i * @size, j * @size)
         when 2
           triangles_reverse(i*@size, j*@size)
         when 3
@@ -71,6 +70,38 @@ def dot_arc(x, y)
   # 黒にするために重ねる
   3.times do
     arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
+  end
+
+  blendMode(BLEND)
+end
+
+def dot_arc_reverse(x, y)
+  fill("#00c5da")
+  rect(x, y, @size)
+
+  fill("#ffffff")
+  arc(x, y + @size, @size * 2, @size * 2, 270, 0)
+
+  cols = 8
+  rows = 8
+  max_diameter = 15
+  spacing = 15
+
+  rows.times do |i|
+    cols.times do |j|
+      diameter = max_diameter * (1 - i.to_f / rows)
+      pos_x = j * spacing + spacing / 2
+      pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
+      fill("#00c5da")
+      ellipse(x + pos_x, y + pos_y + 8, diameter, diameter)
+    end
+  end
+
+  blendMode(OVERLAY)
+  fill("#000000")
+  # 黒にするために重ねる
+  3.times do
+    arc(x, y + @size, @size * 2, @size * 2, 270, 0)
   end
 
   blendMode(BLEND)
