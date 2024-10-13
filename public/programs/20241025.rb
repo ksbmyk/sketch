@@ -12,9 +12,9 @@ def draw
   @num.times do |i|
     @num.times do |j|
       #dot_arc(i * @size, j * @size)
-      #small_arc(i*@size, j*@size)
+      small_arc(i*@size, j*@size)
       #double_arc_red(i*@size, j*@size)
-      double_arc_blue(i*@size, j*@size)
+      #double_arc_blue(i*@size, j*@size)
     end
   end
 end
@@ -53,17 +53,20 @@ def dot_arc(x, y)
 end
 
 def small_arc(x, y)
-  size = @size/2
-  2.times do |i|
-    2.times do |j|
-      c = (i + j).even? ? "#fe4053" : "#00c5da"
-      fill(c)
-      push
-      translate(size, size)
-      arc(x + i*size, y + j*size, size * 2, size * 2, 180, 270)
-      pop
-    end
-  end
+  push
+  fill("#aaaaaa")
+  rect(x, y, @size)
+  size = @size / 2
+  margin = 5
+
+  fill("#fe4053")
+  arc(x + 1 * size, y + 1 * size, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  fill("#00c5da")
+  arc(x + 2 * size-margin, y + 1 * size, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  arc(x + 1 * size, y + 2 * size - margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  fill("#fe4053")
+  arc(x + 2*size-margin, y + 2 * size-margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  pop
 end
 
 def double_arc_red(x, y)
