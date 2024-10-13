@@ -11,8 +11,9 @@ def draw
   noStroke
   @num.times do |i|
     @num.times do |j|
-      dot_arc(i * @size, j * @size)
+      #dot_arc(i * @size, j * @size)
       #small_arc(i*@size, j*@size)
+      double_arc_red(i*@size, j*@size)
     end
   end
 end
@@ -62,4 +63,17 @@ def small_arc(x, y)
       pop
     end
   end
+end
+
+def double_arc_red(x, y)
+  fill("#fe4053")
+  rect(x, y, @size)
+  fill("#ffffff")
+  arc(x + @size, y, @size * 2, @size * 2, 90, 180)
+  fill("#fe4053")
+  arc(x + @size, y, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 90, 180)
+  fill("#aaaaaa")
+  arc(x + @size, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 90, 180)
+  fill("#fe4053")
+  arc(x + @size, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 90, 180)
 end
