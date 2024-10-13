@@ -13,7 +13,8 @@ def draw
     @num.times do |j|
       #dot_arc(i * @size, j * @size)
       #small_arc(i*@size, j*@size)
-      double_arc_red(i*@size, j*@size)
+      #double_arc_red(i*@size, j*@size)
+      double_arc_blue(i*@size, j*@size)
     end
   end
 end
@@ -76,4 +77,17 @@ def double_arc_red(x, y)
   arc(x + @size, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 90, 180)
   fill("#fe4053")
   arc(x + @size, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 90, 180)
+end
+
+def double_arc_blue(x, y)
+  fill("#00c5da")
+  rect(x, y, @size)
+  fill("#ffffff")
+  arc(x, y, @size * 2, @size * 2, 0, 90)
+  fill("#00c5da")
+  arc(x, y, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 0, 90)
+  fill("#aaaaaa")
+  arc(x, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 0, 90)
+  fill("#00c5da")
+  arc(x, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 0, 90)
 end
