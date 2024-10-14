@@ -19,7 +19,7 @@ def draw
         when 1
           dot_arc(i * @size, j * @size, :bottom_right)
         when 2
-          patterned_arcs(i * @size, j * @size)
+          patterned_arc(i * @size, j * @size)
         when 3
           layered_arc(i * @size, j * @size, :top_right, :red)
         when 4
@@ -39,7 +39,7 @@ def draw
         when 4
           layered_arc(i * @size, j * @size, :bottom_left, :red)
         when 5
-          patterned_arcs(i * @size, j * @size)
+          patterned_arc(i * @size, j * @size)
         end
       end
     end
@@ -109,19 +109,19 @@ def dot_arc(x, y, position)
   image(pg, x, y)
 end
 
-def patterned_arcs(x, y)
+def patterned_arc(x, y)
   fill("#aaaaaa")
   rect(x, y, @size)
   size = @size / 2
   margin = 5
 
   fill("#fe4053")
-  arc(x + 1 * size, y + 1 * size, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  arc(x + 1 * size, y + 1 * size, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
   fill("#00c5da")
-  arc(x + 2 * size-margin, y + 1 * size, size * 2 -10, size * 2 - margin * 2, 180, 270)
-  arc(x + 1 * size, y + 2 * size - margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  arc(x + 2 * size - margin, y + 1 * size, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
+  arc(x + 1 * size, y + 2 * size - margin, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
   fill("#fe4053")
-  arc(x + 2*size-margin, y + 2 * size-margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
+  arc(x + 2*size - margin, y + 2 * size-margin, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
 end
 
 def layered_arc(x, y, position, color)
