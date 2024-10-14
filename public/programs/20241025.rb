@@ -15,7 +15,7 @@ def draw
         # 偶数行
         case pattern_type
         when 1
-          dot_arc(i * @size, j * @size)
+          dot_arc(i * @size, j * @size, :bottom_right)
         when 2
           patterned_arcs(i * @size, j * @size)
         when 3
@@ -29,7 +29,7 @@ def draw
         # 奇数行
         case pattern_type
         when 1
-          dot_arc_reverse(i * @size, j * @size)
+          dot_arc(i * @size, j * @size, :bottom_left)
         when 2
           patterned_triangles(i * @size, j * @size, :bottom)
         when 3
@@ -44,12 +44,9 @@ def draw
   end
 end
 
-def dot_arc(x, y)
+def dot_arc(x, y, position)
   fill("#00c5da")
   rect(x, y, @size)
-
-  fill("#ffffff")
-  arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
 
   # ドット
   cols = 8
@@ -57,14 +54,43 @@ def dot_arc(x, y)
   max_diameter = 15
   spacing = 15
 
-  # 右にいくほど小さなドットにする
-  rows.times do |i|
-    cols.times do |j|
-      diameter = max_diameter * (1 - i.to_f / cols)
-      pos_x = i * spacing + spacing / 2
-      pos_y = j * spacing + (i.even? ? spacing / 2 : 0)
-      fill("#00c5da")
-      ellipse(x + pos_x, y + pos_y + 8, diameter, diameter)
+  case position
+  when :bottom_right
+    start_angle = 180
+    arc_x = x + @size
+    arc_y = y + @size
+
+    fill("#ffffff")
+    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    # 右にいくほど小さなドットにする
+    rows.times do |i|
+      cols.times do |j|
+        diameter = max_diameter * (1 - i.to_f / cols)
+        pos_x = i * spacing + spacing / 2
+        # 並びを違い違いにするために足す
+        pos_y = j * spacing + (i.even? ? spacing / 2 : 0)
+        fill("#00c5da")
+        ellipse(x + pos_x, y + pos_y + spacing / 2, diameter, diameter)
+      end
+    end
+  when :bottom_left
+    start_angle = 270
+    arc_x = x
+    arc_y = y + @size
+
+    fill("#ffffff")
+    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+
+    # 下にいくほど小さなドットにする
+    rows.times do |i|
+      cols.times do |j|
+        diameter = max_diameter * (1 - i.to_f / rows)
+        pos_x = j * spacing + spacing / 2
+        # 並びを違い違いにするために足す
+        pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
+        fill("#00c5da")
+        ellipse(x + pos_x, y + pos_y + spacing / 2, diameter, diameter)
+      end
     end
   end
 
@@ -72,44 +98,10 @@ def dot_arc(x, y)
   fill("#000000")
   # 黒にするために重ねる
   3.times do
-    arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
+    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
   end
 
-  blendMode(BLEND)
-end
-
-def dot_arc_reverse(x, y)
-  fill("#00c5da")
-  rect(x, y, @size)
-
-  fill("#ffffff")
-  arc(x, y + @size, @size * 2, @size * 2, 270, 0)
-
-  # ドット
-  cols = 8
-  rows = 8
-  max_diameter = 15
-  spacing = 15
-
-  # 下にいくほど小さなドットにする
-  rows.times do |i|
-    cols.times do |j|
-      diameter = max_diameter * (1 - i.to_f / rows)
-      pos_x = j * spacing + spacing / 2
-      # 並びを違い違いにする
-      pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
-      fill("#00c5da")
-      ellipse(x + pos_x, y + pos_y + 8, diameter, diameter)
-    end
-  end
-
-  blendMode(OVERLAY)
-  fill("#000000")
-  # 黒にするために重ねる
-  3.times do
-    arc(x, y + @size, @size * 2, @size * 2, 270, 0)
-  end
-
+  # blendModeを戻す
   blendMode(BLEND)
 end
 
