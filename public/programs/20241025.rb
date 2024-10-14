@@ -23,7 +23,7 @@ def draw
         when 4
           layered_arc(i * @size, j * @size, 0, :top_left, :blue)
         when 5
-          triangles(i * @size, j * @size)
+          triangles(i * @size, j * @size, :top)
         end
       else
         # 奇数行
@@ -31,7 +31,7 @@ def draw
         when 1
           dot_arc_reverse(i * @size, j * @size)
         when 2
-          triangles_reverse(i * @size, j * @size)
+          triangles(i * @size, j * @size, :bottom)
         when 3
           layered_arc(i * @size, j * @size, 180, :bottom_right, :blue)
         when 4
@@ -170,36 +170,29 @@ def layered_arc(x, y, start_angle, position, color)
   arc(arc_x, arc_y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, start_angle, start_angle + 90)
 end
 
-def triangles(x, y)
+def triangles(x, y, position)
   fill("#aaaaaa")
   rect(x, y, @size)
   size = @size / 3
 
-  fill("#fe4053")
-  triangle(x, y + size, x + size, y, x + size, y + size)
-  fill("#ffffff")
-  triangle(x + size, y + size, x + size * 2, y, x + size * 2, y + size)
-  fill("#000000")
-  triangle(x + size * 2, y + size, x + size * 3, y, x + size * 3, y + size)
-
-  fill("#fe4053")
-  rect(x + size, y + size, size * 2)
-end
-
-def triangles_reverse(x, y)
-  fill("#aaaaaa")
-  rect(x, y, @size)
-  size = @size / 3
-
-  fill("#aaaaaa")
-  rect(x, y, @size)
-  size = @size / 3
-  fill("#fe4053")
-  rect(x, y, size * 2)
-  fill("#000000")
-  triangle(x, y + size * 2, x, y + size * 3, x + size, y + size * 2)
-  fill("#ffffff")
-  triangle(x + size, y + size * 2, x + size, y + size * 3, x + size * 2, y + size * 2)
-  fill("#fe4053")
-  triangle(x + size * 2, y + size * 2, x + size * 2, y + size * 3, x + size * 3, y + size * 2)
+  case position
+  when :top
+    fill("#fe4053")
+    rect(x + size, y + size, size * 2)
+    fill("#fe4053")
+    triangle(x, y + size, x + size, y, x + size, y + size)
+    fill("#ffffff")
+    triangle(x + size, y + size, x + size * 2, y, x + size * 2, y + size)
+    fill("#000000")
+    triangle(x + size * 2, y + size, x + size * 3, y, x + size * 3, y + size)
+  when :bottom
+    fill("#fe4053")
+    rect(x, y, size * 2)
+    fill("#000000")
+    triangle(x, y + size * 2, x, y + size * 3, x + size, y + size * 2)
+    fill("#ffffff")
+    triangle(x + size, y + size * 2, x + size, y + size * 3, x + size * 2, y + size * 2)
+    fill("#fe4053")
+    triangle(x + size * 2, y + size * 2, x + size * 2, y + size * 3, x + size * 3, y + size * 2)
+  end
 end
