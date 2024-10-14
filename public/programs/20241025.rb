@@ -1,3 +1,5 @@
+# Kaigi on Rails 2024 https://kaigionrails.org/2024/ design by @moegi29
+
 def setup
   angleMode(DEGREES)
   @size = 100
@@ -64,6 +66,7 @@ def dot_arc(x, y, position)
 
     pg.fill("#ffffff")
     pg.arc(arc_x, arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+
     # 右にいくほど小さなドットにする
     rows.times do |i|
       cols.times do |j|
