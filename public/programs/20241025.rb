@@ -29,7 +29,7 @@ def draw
         # 奇数行
         case pattern_type
         when 1
-          dot_arc(i * @size, j * @size, :bottom_left)
+          dot_arc(i * @size, j * @size, :top_left)
         when 2
           patterned_triangles(i * @size, j * @size, :bottom)
         when 3
@@ -75,10 +75,10 @@ def dot_arc(x, y, position)
         pg.ellipse(pos_x, pos_y + spacing / 2, diameter, diameter)
       end
     end
-  when :bottom_left
-    start_angle = 270
+  when :top_left
+    start_angle = 0
     arc_x = 0
-    arc_y = @size
+    arc_y = 0
 
     pg.fill("#ffffff")
     pg.arc(arc_x, arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
@@ -91,7 +91,7 @@ def dot_arc(x, y, position)
         # 並びを違い違いにするために足す
         pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
         pg.fill("#00c5da")
-        pg.ellipse(pos_x, pos_y + spacing / 2, diameter, diameter)
+        pg.ellipse(pos_x, pos_y - spacing / 2, diameter, diameter)
       end
     end
   end
