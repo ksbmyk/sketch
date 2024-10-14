@@ -19,9 +19,9 @@ def draw
         when 2
           patterned_arcs(i * @size, j * @size)
         when 3
-          layered_arc(i * @size, j * @size, 90, :top_right, :red)
+          layered_arc(i * @size, j * @size, :top_right, :red)
         when 4
-          layered_arc(i * @size, j * @size, 0, :top_left, :blue)
+          layered_arc(i * @size, j * @size, :top_left, :blue)
         when 5
           patterned_triangles(i * @size, j * @size, :top)
         end
@@ -33,9 +33,9 @@ def draw
         when 2
           patterned_triangles(i * @size, j * @size, :bottom)
         when 3
-          layered_arc(i * @size, j * @size, 180, :bottom_right, :blue)
+          layered_arc(i * @size, j * @size, :bottom_right, :blue)
         when 4
-          layered_arc(i * @size, j * @size, 270, :bottom_left, :red)
+          layered_arc(i * @size, j * @size, :bottom_left, :red)
         when 5
           patterned_arcs(i * @size, j * @size)
         end
@@ -122,7 +122,7 @@ def patterned_arcs(x, y)
   pop
 end
 
-def layered_arc(x, y, start_angle, position, color)
+def layered_arc(x, y, position, color)
   color_code = case color
   when :red
     "#fe4053"
@@ -136,18 +136,22 @@ def layered_arc(x, y, start_angle, position, color)
   fill("#ffffff")
   case position
   when :top_right
+    start_angle = 90
     arc(x + @size, y, @size * 2, @size * 2, start_angle, start_angle + 90)
     arc_x = x + @size
     arc_y = y
   when :bottom_left
+    start_angle = 270
     arc(x, y + @size, @size * 2, @size * 2, start_angle, start_angle + 90)
     arc_x = x
     arc_y = y + @size
   when :top_left
+    start_angle = 0
     arc(x, y, @size * 2, @size * 2, start_angle, start_angle + 90)
     arc_x = x
     arc_y = y
   when :bottom_right
+    start_angle = 180
     arc(x + @size, y + @size, @size * 2, @size * 2, start_angle, start_angle + 90)
     arc_x = x + @size
     arc_y = y + @size
