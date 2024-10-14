@@ -17,13 +17,13 @@ def draw
         when 1
           dot_arc(i * @size, j * @size)
         when 2
-          small_arc(i * @size, j * @size)
+          patterned_arcs(i * @size, j * @size)
         when 3
           layered_arc(i * @size, j * @size, 90, :top_right, :red)
         when 4
           layered_arc(i * @size, j * @size, 0, :top_left, :blue)
         when 5
-          triangles(i * @size, j * @size, :top)
+          patterned_triangles(i * @size, j * @size, :top)
         end
       else
         # 奇数行
@@ -31,13 +31,13 @@ def draw
         when 1
           dot_arc_reverse(i * @size, j * @size)
         when 2
-          triangles(i * @size, j * @size, :bottom)
+          patterned_triangles(i * @size, j * @size, :bottom)
         when 3
           layered_arc(i * @size, j * @size, 180, :bottom_right, :blue)
         when 4
           layered_arc(i * @size, j * @size, 270, :bottom_left, :red)
         when 5
-          small_arc(i * @size, j * @size)
+          patterned_arcs(i * @size, j * @size)
         end
       end
     end
@@ -113,7 +113,7 @@ def dot_arc_reverse(x, y)
   blendMode(BLEND)
 end
 
-def small_arc(x, y)
+def patterned_arcs(x, y)
   push
   fill("#aaaaaa")
   rect(x, y, @size)
@@ -170,7 +170,7 @@ def layered_arc(x, y, start_angle, position, color)
   arc(arc_x, arc_y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, start_angle, start_angle + 90)
 end
 
-def triangles(x, y, position)
+def patterned_triangles(x, y, position)
   fill("#aaaaaa")
   rect(x, y, @size)
   size = @size / 3
