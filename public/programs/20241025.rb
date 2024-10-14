@@ -110,7 +110,6 @@ def dot_arc(x, y, position)
 end
 
 def patterned_arcs(x, y)
-  push
   fill("#aaaaaa")
   rect(x, y, @size)
   size = @size / 2
@@ -123,7 +122,6 @@ def patterned_arcs(x, y)
   arc(x + 1 * size, y + 2 * size - margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
   fill("#fe4053")
   arc(x + 2*size-margin, y + 2 * size-margin, size * 2 -10, size * 2 - margin * 2, 180, 270)
-  pop
 end
 
 def layered_arc(x, y, position, color)
