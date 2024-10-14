@@ -12,30 +12,32 @@ def draw
     @num.times do |j|
       pattern_type = (i + j) % 5 + 1
       if j.even?
+        # 偶数行
         case pattern_type
         when 1
           dot_arc(i * @size, j * @size)
         when 2
-          small_arc(i*@size, j*@size)
+          small_arc(i * @size, j * @size)
         when 3
-          double_arc_red(i*@size, j*@size)
+          layered_arc(i * @size, j * @size, 90, :top_right, :red)
         when 4
-          double_arc_blue(i*@size, j*@size)
+          layered_arc(i * @size, j * @size, 0, :top_left, :blue)
         when 5
           triangles(i * @size, j * @size)
         end
       else
+        # 奇数行
         case pattern_type
         when 1
           dot_arc_reverse(i * @size, j * @size)
         when 2
-          triangles_reverse(i*@size, j*@size)
+          triangles_reverse(i * @size, j * @size)
         when 3
-          double_arc_blue_reverse(i*@size, j*@size)
+          layered_arc(i * @size, j * @size, 180, :bottom_right, :blue)
         when 4
-          double_arc_red_reverse(i*@size, j*@size)
+          layered_arc(i * @size, j * @size, 270, :bottom_left, :red)
         when 5
-          small_arc(i*@size, j*@size)
+          small_arc(i * @size, j * @size)
         end
       end
     end
@@ -49,12 +51,13 @@ def dot_arc(x, y)
   fill("#ffffff")
   arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
 
+  # ドット
   cols = 8
   rows = 8
   max_diameter = 15
   spacing = 15
 
-  # 水玉
+  # 右にいくほど小さなドットにする
   rows.times do |i|
     cols.times do |j|
       diameter = max_diameter * (1 - i.to_f / cols)
@@ -82,15 +85,18 @@ def dot_arc_reverse(x, y)
   fill("#ffffff")
   arc(x, y + @size, @size * 2, @size * 2, 270, 0)
 
+  # ドット
   cols = 8
   rows = 8
   max_diameter = 15
   spacing = 15
 
+  # 下にいくほど小さなドットにする
   rows.times do |i|
     cols.times do |j|
       diameter = max_diameter * (1 - i.to_f / rows)
       pos_x = j * spacing + spacing / 2
+      # 並びを違い違いにする
       pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
       fill("#00c5da")
       ellipse(x + pos_x, y + pos_y + 8, diameter, diameter)
@@ -124,56 +130,44 @@ def small_arc(x, y)
   pop
 end
 
-def double_arc_red(x, y)
-  fill("#fe4053")
-  rect(x, y, @size)
-  fill("#ffffff")
-  arc(x + @size, y, @size * 2, @size * 2, 90, 180)
-  fill("#fe4053")
-  arc(x + @size, y, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 90, 180)
-  fill("#aaaaaa")
-  arc(x + @size, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 90, 180)
-  fill("#fe4053")
-  arc(x + @size, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 90, 180)
-end
+def layered_arc(x, y, start_angle, position, color)
+  color_code = case color
+  when :red
+    "#fe4053"
+  when :blue
+    "#00c5da"
+  end
 
-def double_arc_red_reverse(x, y)
-  fill("#fe4053")
+  fill(color_code)
   rect(x, y, @size)
-  fill("#ffffff")
-  arc(x, y + @size, @size * 2, @size * 2, 270, 0)
-  fill("#fe4053")
-  arc(x, y + @size, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 270, 0)
-  fill("#aaaaaa")
-  arc(x, y + @size, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 270, 0)
-  fill("#fe4053")
-  arc(x, y + @size, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 270, 0)
-end
 
-def double_arc_blue(x, y)
-  fill("#00c5da")
-  rect(x, y, @size)
   fill("#ffffff")
-  arc(x, y, @size * 2, @size * 2, 0, 90)
-  fill("#00c5da")
-  arc(x, y, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 0, 90)
-  fill("#aaaaaa")
-  arc(x, y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 0, 90)
-  fill("#00c5da")
-  arc(x, y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 0, 90)
-end
+  case position
+  when :top_right
+    arc(x + @size, y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    arc_x = x + @size
+    arc_y = y
+  when :bottom_left
+    arc(x, y + @size, @size * 2, @size * 2, start_angle, start_angle + 90)
+    arc_x = x
+    arc_y = y + @size
+  when :top_left
+    arc(x, y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    arc_x = x
+    arc_y = y
+  when :bottom_right
+    arc(x + @size, y + @size, @size * 2, @size * 2, start_angle, start_angle + 90)
+    arc_x = x + @size
+    arc_y = y + @size
+  end
 
-def double_arc_blue_reverse(x, y)
-  fill("#00c5da")
-  rect(x, y, @size)
-  fill("#ffffff")
-  arc(x + @size, y + @size, @size * 2, @size * 2, 180, 270)
-  fill("#00c5da")
-  arc(x + @size, y + @size, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, 180, 270)
+  # 大きな円弧の上に小さな円弧を重ね差分を線に見せる
+  fill(color_code)
+  arc(arc_x, arc_y, @size * 2 - @size * 0.35, @size * 2 - @size * 0.35, start_angle, start_angle + 90)
   fill("#aaaaaa")
-  arc(x + @size, y + @size, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, 180, 270)
-  fill("#00c5da")
-  arc(x + @size, y + @size, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, 180, 270)
+  arc(arc_x, arc_y, @size * 2 - @size * 0.5, @size * 2 - @size * 0.5, start_angle, start_angle + 90)
+  fill(color_code)
+  arc(arc_x, arc_y, @size * 2 - @size * 0.85, @size * 2 - @size * 0.85, start_angle, start_angle + 90)
 end
 
 def triangles(x, y)
