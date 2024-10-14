@@ -45,8 +45,10 @@ def draw
 end
 
 def dot_arc(x, y, position)
-  fill("#00c5da")
-  rect(x, y, @size)
+  pg = createGraphics(@size, @size)
+  pg.background("#00c5da")
+  pg.angleMode(DEGREES)
+  pg.noStroke
 
   # ドット
   cols = 8
@@ -57,11 +59,11 @@ def dot_arc(x, y, position)
   case position
   when :bottom_right
     start_angle = 180
-    arc_x = x + @size
-    arc_y = y + @size
+    arc_x = @size
+    arc_y = @size
 
-    fill("#ffffff")
-    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    pg.fill("#ffffff")
+    pg.arc(arc_x, arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
     # 右にいくほど小さなドットにする
     rows.times do |i|
       cols.times do |j|
@@ -69,17 +71,17 @@ def dot_arc(x, y, position)
         pos_x = i * spacing + spacing / 2
         # 並びを違い違いにするために足す
         pos_y = j * spacing + (i.even? ? spacing / 2 : 0)
-        fill("#00c5da")
-        ellipse(x + pos_x, y + pos_y + spacing / 2, diameter, diameter)
+        pg.fill("#00c5da")
+        pg.ellipse(pos_x, pos_y + spacing / 2, diameter, diameter)
       end
     end
   when :bottom_left
     start_angle = 270
-    arc_x = x
-    arc_y = y + @size
+    arc_x = 0
+    arc_y = @size
 
-    fill("#ffffff")
-    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    pg.fill("#ffffff")
+    pg.arc(arc_x, arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
 
     # 下にいくほど小さなドットにする
     rows.times do |i|
@@ -88,21 +90,20 @@ def dot_arc(x, y, position)
         pos_x = j * spacing + spacing / 2
         # 並びを違い違いにするために足す
         pos_y = i * spacing + (j.even? ? spacing / 2 : 0)
-        fill("#00c5da")
-        ellipse(x + pos_x, y + pos_y + spacing / 2, diameter, diameter)
+        pg.fill("#00c5da")
+        pg.ellipse(pos_x, pos_y + spacing / 2, diameter, diameter)
       end
     end
   end
 
-  blendMode(OVERLAY)
-  fill("#000000")
+  pg.blendMode(OVERLAY)
+  pg.fill("#000000")
   # 黒にするために重ねる
   3.times do
-    arc(arc_x,arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
+    pg.arc(arc_x, arc_y, @size * 2, @size * 2, start_angle, start_angle + 90)
   end
 
-  # blendModeを戻す
-  blendMode(BLEND)
+  image(pg, x, y)
 end
 
 def patterned_arcs(x, y)
