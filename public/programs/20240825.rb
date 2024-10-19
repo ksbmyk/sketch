@@ -5,6 +5,7 @@ def setup
   createCanvas(600, 600)
   frameRate(0.5)
   colorMode(HSB, 360, 100, 100)
+  noLoop # 重いのでこのサイトでは繰り返し描画しない
 end
 
 def draw
