@@ -87,7 +87,7 @@ class Flake
     push
     translate(@x, @y)
     rotate(@rotation)
-    fill(@color)
+    fill(*@color)
     textSize(@size)
     text(@char, 0, 0)
     pop
