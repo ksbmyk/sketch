@@ -1,3 +1,7 @@
+# Flow of Seasons
+# 第一回ジェネラティブアート・アワード 応募作品 https://generativeart.or.jp/generative-art-award
+# 全体的に重いのでrbCanvas/p5版 https://ksbmyk.github.io/sketch/events/award_1/flow_of_seasons.html の方がスムーズです
+
 def setup
   createCanvas(600, 600)
   textAlign(CENTER, CENTER)
