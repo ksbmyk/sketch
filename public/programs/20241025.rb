@@ -115,19 +115,19 @@ def patterned_arc(x, y)
   size = @size / 2
   margin = 5
 
-  fill("#fe4053")
+  fill("#ff4053")
   arc(x + 1 * size, y + 1 * size, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
   fill("#00c5da")
   arc(x + 2 * size - margin, y + 1 * size, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
   arc(x + 1 * size, y + 2 * size - margin, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
-  fill("#fe4053")
+  fill("#ff4053")
   arc(x + 2*size - margin, y + 2 * size-margin, size * 2 - margin * 2, size * 2 - margin * 2, 180, 270)
 end
 
 def layered_arc(x, y, position, color)
   color_code = case color
   when :red
-    "#fe4053"
+    "#ff4053"
   when :blue
     "#00c5da"
   end
@@ -175,22 +175,22 @@ def patterned_triangles(x, y, position)
 
   case position
   when :top
-    fill("#fe4053")
+    fill("#ff4053")
     rect(x + size, y + size, size * 2)
-    fill("#fe4053")
+    fill("#ff4053")
     triangle(x, y + size, x + size, y, x + size, y + size)
     fill("#ffffff")
     triangle(x + size, y + size, x + size * 2, y, x + size * 2, y + size)
     fill("#000000")
     triangle(x + size * 2, y + size, x + size * 3, y, x + size * 3, y + size)
   when :bottom
-    fill("#fe4053")
+    fill("#ff4053")
     rect(x, y, size * 2)
     fill("#000000")
     triangle(x, y + size * 2, x, y + size * 3, x + size, y + size * 2)
     fill("#ffffff")
     triangle(x + size, y + size * 2, x + size, y + size * 3, x + size * 2, y + size * 2)
-    fill("#fe4053")
+    fill("#ff4053")
     triangle(x + size * 2, y + size * 2, x + size * 2, y + size * 3, x + size * 3, y + size * 2)
   end
 end
