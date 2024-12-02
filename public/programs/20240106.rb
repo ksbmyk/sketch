@@ -15,7 +15,7 @@ def draw
 end
 
 class Particle
-  attr_accessor :pos, :vel, :acc, :maxspeed, :prev_pos, :size, :r, :g, :b
+  attr_accessor :pos, :vel, :acc, :maxspeed, :prev_pos, :size, :color_setting
 
   def initialize(x, y)
     @pos = createVector(x, y) # 位置
@@ -23,9 +23,7 @@ class Particle
     @acc = createVector(0, 0) # 加速度
     @maxspeed = 4
     @prev_pos = pos.copy #前回の位置を初期化
-    @r = 0
-    @g = rand(0..255)
-    @b = rand(100..200)
+    @color_setting = color(0, rand(0..255), rand(100..200))
     @size = rand(10..20)
   end
 
@@ -46,7 +44,7 @@ class Particle
   def show
     strokeWeight(2)
     stroke(255, 255, 255, 80)
-    fill(r, g, b)
+    fill(color_setting)
     ellipse(pos.x, pos.y, size)
   end
 end
