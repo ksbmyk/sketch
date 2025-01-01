@@ -6,11 +6,7 @@ def setup
 end
 
 def draw
-    noLoop
-    draw_background
-end
-
-def draw_background
+  noLoop
   (0..height).each do |y|
     gradient = map(abs(y - height / 2), 0, height / 2, 255, 0)
     stroke(lerpColor(color(100, 200, 255), color(255, 150, 60), gradient.to_f / 255))
