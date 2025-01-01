@@ -11,22 +11,17 @@ def draw
 end
 
 def draw_background
-  strokeWeight(4)
-  blendMode(ADD)
   (0..height).each do |y|
-    if y.odd?
-      gradient = map(abs(y - height / 2), 0, height / 2, 255, 0)
-      stroke(lerpColor(color(100, 120, 255), color(40, 50, 255), gradient.to_f / 255))
-      line(0, y, width, y)
-    end
+    gradient = map(abs(y - height / 2), 0, height / 2, 255, 0)
+    stroke(lerpColor(color(100, 200, 255), color(255, 150, 60), gradient.to_f / 255))
+    line(0, y, width, y)
   end
-  blendMode(BLEND)
-  strokeWeight(1)
-  50.times do
-    stroke(255, 255, 255, rand(100..200))
-    x_point = rand(0..height)
-    y_start = rand(10..height)
-    length = rand(10..100)
-    line(x_point, y_start, x_point, y_start + length)
+
+  100.times do
+    stroke(255, 255, 255, rand(50..180))
+    y_point = rand((height / 2 + 50)..height)
+    x_start = rand(10..height)
+    length = rand(5..40)
+    line(x_start, y_point, x_start + length, y_point)
   end
 end
