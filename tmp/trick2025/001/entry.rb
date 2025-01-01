@@ -8,6 +8,11 @@ def shooting_star(width, height, speed)
     puts " " * (y % width) + "🌟"
     sleep(speed)
   end
+  
+  system('clear')
+  (1..height).each do |line|
+    puts " " * (line % width) + chars.sample
+  end
 end
 
 shooting_star(50, 20, 0.1)
