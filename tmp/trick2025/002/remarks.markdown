@@ -1,0 +1,4 @@
+Gemをインストール
+```
+gem install processing
+```
