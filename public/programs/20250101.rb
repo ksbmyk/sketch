@@ -3,23 +3,27 @@
 
 def setup
   createCanvas(700, 700)
-  noLoop
 end
 
 def draw
+    noLoop
     draw_background
 end
 
 def draw_background
+  strokeWeight(4)
+  blendMode(ADD)
   (0..height).each do |y|
     if y.odd?
       gradient = map(abs(y - height / 2), 0, height / 2, 255, 0)
-      stroke(lerpColor(color(0, 120, 255), color(0, 0, 255), gradient.to_f / 255))
+      stroke(lerpColor(color(100, 120, 255), color(40, 50, 255), gradient.to_f / 255))
       line(0, y, width, y)
     end
   end
-  stroke("#ffffff")
+  blendMode(BLEND)
+  strokeWeight(1)
   50.times do
+    stroke(255, 255, 255, rand(100..200))
     x_point = rand(0..height)
     y_start = rand(10..height)
     length = rand(10..100)
