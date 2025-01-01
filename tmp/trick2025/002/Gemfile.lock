@@ -1,0 +1,34 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    beeps (0.3)
+      rucy (~> 0.3)
+      xot (~> 0.3)
+    processing (1.1)
+      rays (~> 0.3)
+      reflexion (~> 0.3)
+      rexml
+      rucy (~> 0.3)
+      xot (~> 0.3)
+    rays (0.3)
+      rucy (~> 0.3)
+      xot (~> 0.3)
+    reflexion (0.3)
+      beeps (~> 0.3)
+      rays (~> 0.3)
+      rucy (~> 0.3)
+      xot (~> 0.3)
+    rexml (3.4.0)
+    rucy (0.3)
+      xot (~> 0.3)
+    xot (0.3)
+
+PLATFORMS
+  arm64-darwin-23
+  ruby
+
+DEPENDENCIES
+  processing
+
+BUNDLED WITH
+   2.5.23
