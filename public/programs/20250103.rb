@@ -5,17 +5,17 @@ def setup
   createCanvas(700, 700)
   @graphic1 = createGraphics(width/2, height/2)
   @graphic2 = createGraphics(width/2, height/2)
-  sitihou("#cc512e", "#f9ede9")
+  shippo("#cc512e", "#f9ede9")
   image(@graphic1, 0, 0)
-  seikaiha(["#f9ede9", "#cc512e"])
+  seigaiha(["#f9ede9", "#cc512e"])
   image(@graphic2, width/2, 0)
-  seikaiha(["#cc512e", "#f9ede9"])
+  seigaiha(["#cc512e", "#f9ede9"])
   image(@graphic2, 0, height/2)
-  sitihou("#f9ede9", "#cc512e")
+  shippo("#f9ede9", "#cc512e")
   image(@graphic1, width/2, height/2)
 end
 
-def sitihou(line_color, background_color)
+def shippo(line_color, background_color)
   draw_size = @graphic1.height / 4
   @graphic1.background(background_color)
   @graphic1.stroke(line_color)
@@ -31,7 +31,7 @@ def sitihou(line_color, background_color)
   end
 end
 
-def seikaiha(colors)
+def seigaiha(colors)
   draw_size = @graphic2.height / 4
   mark_num = 6
   @graphic2.noStroke
