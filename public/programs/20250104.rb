@@ -3,6 +3,7 @@
 
 def setup
   createCanvas(700, 700)
+  frameRate(5)
 end
 
 def draw
@@ -12,4 +13,11 @@ def draw
     fill(0, random(50, 250))
     rect(i, 0, 15, height)
   end
+
+  maskGraphics = createGraphics(width, height)
+  maskGraphics.background(0)
+  maskGraphics.erase
+  maskGraphics.circle(width / 2, height / 2, width / 2)
+  maskGraphics.noErase
+  image(maskGraphics, 0, 0)
 end
