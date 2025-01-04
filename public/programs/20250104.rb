@@ -1,13 +1,12 @@
 def setup
   createCanvas(700, 700)
-  noLoop
 end
 
 def draw
+  background(255)
   noStroke
   0.step(width, 10) do |i|
-    fill(0, random(50, 205))
-    rect(i, 0, 10, height)
-    rect(0, i, width, 10)
+    fill(0, random(50, 250))
+    rect(i, 0, 15, height)
   end
 end
