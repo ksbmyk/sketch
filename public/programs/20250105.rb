@@ -26,10 +26,11 @@ def draw_cube(x, y, size, scaling_factor)
   push
   translate(x, y)
   scale(scaling_factor)
+  stroke(255, 100)
+  strokeWeight(1)
 
   # 上
-  fill(200, 220, 255)
-  stroke(0)
+  fill(255, 182, 193)
   beginShape
   vertex(0, -size / 2)
   vertex(size / 2, 0)
@@ -38,7 +39,7 @@ def draw_cube(x, y, size, scaling_factor)
   endShape(CLOSE)
 
   # 右
-  fill(180, 200, 240)
+  fill(144, 238, 144)
   beginShape
   vertex(0, size / 2)
   vertex(size / 2, 0)
@@ -47,7 +48,7 @@ def draw_cube(x, y, size, scaling_factor)
   endShape(CLOSE)
 
   # 左
-  fill(160, 180, 220)
+  fill(173, 216, 230)
   beginShape
   vertex(0, size / 2)
   vertex(-size / 2, 0)
