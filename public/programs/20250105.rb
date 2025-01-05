@@ -1,3 +1,6 @@
+# GENUARY 2025 jan5 "Isometric Art (No vanishing points)."
+# https://genuary.art/prompts
+
 COUNT_NUM = 20
 BOX_SIZE = 200
 
