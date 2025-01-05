@@ -15,15 +15,17 @@ def draw
     (-GREID_SIZE).step(GREID_SIZE, 1) do |y|
       xpos = (x - y) * BOX_SIZE * 0.5 # アイソメトリックのX座標
       ypos = (x + y) * BOX_SIZE * 0.25 # アイソメトリックのY座標
-      draw_cube(xpos, ypos, BOX_SIZE)
+      scaling_factor = random(0.5, 1.5)
+      draw_cube(xpos, ypos, BOX_SIZE, scaling_factor)
     end
   end
 end
 
 # 立方体を描画する関数
-def draw_cube(x, y, size)
+def draw_cube(x, y, size, scaling_factor)
   push
   translate(x, y)
+  scale(scaling_factor)
 
   # 上
   fill(200, 220, 255)
