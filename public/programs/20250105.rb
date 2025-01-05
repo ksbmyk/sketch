@@ -1,5 +1,5 @@
-GREID_SIZE = 6
-BOX_SIZE = 50
+GREID_SIZE = 10
+BOX_SIZE = 200
 
 def setup
   createCanvas(700, 700, WEBGL)
@@ -8,21 +8,18 @@ def setup
 end
 
 def draw
-  background(255)
-
-  (-GREID_SIZE).step(GREID_SIZE, 1) do |x|
-    (-GREID_SIZE).step(GREID_SIZE, 1) do |y|
-      xpos = (x - y) * BOX_SIZE * 0.5 # アイソメトリックのX座標
-      ypos = (x + y) * BOX_SIZE * 0.25 # アイソメトリックのY座標
-      scaling_factor = random(0.5, 1.5)
-      draw_cube(xpos, ypos, BOX_SIZE, scaling_factor)
-    end
+  background(240)
+  translate(0, -150)
+  
+  (GREID_SIZE * 2).times do
+    scaling_factor = random(0.5, 1.5)
+    draw_cube(BOX_SIZE, scaling_factor)
   end
 end
 
-def draw_cube(x, y, size, scaling_factor)
+def draw_cube(size, scaling_factor)
   push
-  translate(x, y)
+  
   scale(scaling_factor)
   stroke(255, 100)
   strokeWeight(1)
