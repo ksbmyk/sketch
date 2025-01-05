@@ -58,5 +58,15 @@ def draw_cube(x, y, size, scaling_factor)
   vertex(0, size + size / 2)
   endShape(CLOSE)
 
+  # 光
+  noStroke
+  fill(255, 255, 255, 100)
+  beginShape
+  vertex(0, -size / 2)
+  vertex(size / 2, 0)
+  vertex(size / 2, size)
+  vertex(0, size / 2)
+  endShape(CLOSE)
+
   pop
 end
