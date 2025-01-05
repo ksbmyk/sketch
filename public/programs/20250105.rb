@@ -1,4 +1,4 @@
-GREID_SIZE = 10
+COUNT_NUM = 20
 BOX_SIZE = 200
 
 def setup
@@ -11,7 +11,7 @@ def draw
   background(240)
   translate(0, -150)
   
-  (GREID_SIZE * 2).times do
+  COUNT_NUM.times do
     scaling_factor = random(0.5, 1.5)
     draw_cube(BOX_SIZE, scaling_factor)
   end
