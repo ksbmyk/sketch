@@ -2,14 +2,13 @@ GREID_SIZE = 6
 BOX_SIZE = 50
 
 def setup
-  createCanvas(700, 700)
+  createCanvas(700, 700, WEBGL)
   angleMode(DEGREES)
   noLoop
 end
 
 def draw
   background(255)
-  translate(width / 2, height / 2)
 
   (-GREID_SIZE).step(GREID_SIZE, 1) do |x|
     (-GREID_SIZE).step(GREID_SIZE, 1) do |y|
@@ -21,13 +20,16 @@ def draw
   end
 end
 
-# 立方体を描画する関数
 def draw_cube(x, y, size, scaling_factor)
   push
   translate(x, y)
   scale(scaling_factor)
   stroke(255, 100)
   strokeWeight(1)
+
+  angle = frameCount * 0.5
+  rotateX(angle)
+  rotateY(angle)
 
   # 上
   fill(255, 182, 193)
