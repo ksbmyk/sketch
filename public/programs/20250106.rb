@@ -1,10 +1,12 @@
 def setup
   createCanvas(700, 700)
+  frameRate(10)
 end
 
 def draw
-    noLoop
-    draw_background
+  background(0)
+  draw_background
+  draw_puddle
 end
 
 def draw_background
@@ -23,7 +25,18 @@ def draw_background
     stroke(255, 255, 255, rand(100..200))
     x_point = rand(0..height)
     y_start = rand(10..height)
-    length = rand(10..100)
+    length = rand(0..100)
     line(x_point, y_start, x_point, y_start + length)
   end
+end
+
+def draw_puddle
+  fill(255, 50)
+  ellipse(200, 700 + rand(1..5), 200, 30)
+  ellipse(200, 700 + rand(1..5), 300, 50)
+  ellipse(200, 700 + rand(1..5), 400, 100)
+  
+  ellipse(500, 650 + rand(1..5), 200, 10)
+  ellipse(500, 650 + rand(1..5), 500, 50)
+  ellipse(500, 650 + rand(1..5), 550, 100)
 end
