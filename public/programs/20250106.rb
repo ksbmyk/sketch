@@ -36,7 +36,7 @@ def draw_puddle
   ellipse(200, 700 + rand(1..5), 300, 50)
   ellipse(200, 700 + rand(1..5), 400, 100)
   
-  ellipse(500, 650 + rand(1..5), 200, 10)
-  ellipse(500, 650 + rand(1..5), 500, 50)
-  ellipse(500, 650 + rand(1..5), 550, 100)
+  ellipse(500, 670 + rand(1..5), 200, 10)
+  ellipse(500, 670 + rand(1..5), 500, 50)
+  ellipse(500, 670 + rand(1..5), 550, 100)
 end
