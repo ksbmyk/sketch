@@ -1,3 +1,6 @@
+# GENUARY 2025 jan6 "Make a landscape using only primitive shapes."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   frameRate(10)
