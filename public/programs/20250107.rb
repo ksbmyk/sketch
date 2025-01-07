@@ -27,8 +27,8 @@ class Ball
 end
 
 height = 20
-num_balls = 5
-balls = num_balls.times.map do
+ball_count = 5
+balls = ball_count.times.map do
   Ball.new(
     rand < 0.5 ? "\e[36m○\e[0m" : "\e[36m●\e[0m",
     rand(10),
