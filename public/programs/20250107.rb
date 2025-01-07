@@ -1,3 +1,6 @@
+# GENUARY 2025 jan7 "Use software that is not intended to create art or images."
+# https://genuary.art/prompts
+
 class Ball
   attr_reader :position, :symbol
 
