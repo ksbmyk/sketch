@@ -1,3 +1,6 @@
+# GENUARY 2025 jan8 "Draw one million of something."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   background(255)
