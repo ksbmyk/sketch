@@ -4,6 +4,7 @@ def setup
 end
 
 def draw
+  background(50, 150, 50)
   noStroke
   grid_size = 20
 
@@ -14,6 +15,7 @@ def draw
       else
         fill(40 + rand(-10..10), 130 + rand(-10..10), 40 + rand(-10..10))
       end
+      next if rand < 0.05
 
       rect(x, y, grid_size, grid_size)
     end
