@@ -1,3 +1,6 @@
+# GENUARY 2025 jan9 "The textile design patterns of public transport seating."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noLoop
