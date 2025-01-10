@@ -1,3 +1,6 @@
+# GENUARY 2025 jan10 "You can only use TAU in your code, no other number allowed."
+# https://genuary.art/prompts
+
 def setup
   @canvas_size = (TAU + TAU + TAU) * TAU * TAU
   createCanvas(@canvas_size, @canvas_size)
