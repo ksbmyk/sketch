@@ -4,7 +4,7 @@
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
-  noStroke()
+  noStroke
   frameRate(20)
 end
 
@@ -13,13 +13,12 @@ def draw
 end
 
 def recursive_circles(x, y, r, depth, hue)
-  fill((hue + frameCount) % 360, 80, 100, 80)
-
   return if depth <= 0
 
+  fill((hue + frameCount) % 360, 80, 100, 80)
   ellipse(x, y, r * 2)
 
-  new_r = r * 0.5
+  new_r = r / 2
   recursive_circles(x - new_r, y, new_r, depth - 1, (hue + 60) % 360)
   recursive_circles(x + new_r, y, new_r, depth - 1, (hue + 60 * 2) % 360)
   recursive_circles(x, y - new_r, new_r, depth - 1, (hue + 60 * 3) % 360)
