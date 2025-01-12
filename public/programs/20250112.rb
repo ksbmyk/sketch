@@ -2,14 +2,14 @@
 # https://genuary.art/prompts
 
 def setup
-  createCanvas(600, 600)
+  createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
   noStroke()
   frameRate(20)
 end
 
 def draw
-  recursive_circles(width / 2, height / 2, 200, 5, 0)
+  recursive_circles(width / 2, height / 2, 250, 5, 0)
 end
 
 def recursive_circles(x, y, r, depth, hue)
