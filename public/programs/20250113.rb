@@ -1,3 +1,6 @@
+# GENUARY 2025 jan13 "Triangles and nothing else."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noStroke
