@@ -1,3 +1,6 @@
+# GENUARY 2025 jan14 "Pure black and white. No gray."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noStroke
