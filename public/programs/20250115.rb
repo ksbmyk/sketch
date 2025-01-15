@@ -1,4 +1,4 @@
-# GENUARY 2025 jan17 "Design a rug."
+# GENUARY 2025 jan15 "Design a rug."
 # https://genuary.art/prompts
 
 COLORES = ["#f3f1eb", "#b2c0d2"]
