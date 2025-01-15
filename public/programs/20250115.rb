@@ -1,27 +1,38 @@
 # GENUARY 2025 jan17 "Design a rug."
 # https://genuary.art/prompts
 
+COLORES = ["#f3f1eb", "#b2c0d2"]
 def setup
   createCanvas(600, 600)
-  background("#800000")
+  background(COLORES[1])
   noLoop
 end
   
 def draw
-  stroke("#FFBF00")
+  stroke(COLORES[0])
   strokeWeight(2)
   noFill
   arabesque_pattern
 
   noStroke
-  fill("#FFBF00")
+  fill(COLORES[0])
   circle_pattern
   
-  stroke("#FFBF00")
-  rect(0, 0, width, 70)
-  rect(0, height - 70, width, height)
-  rect(0, 0, 70, height)
-  rect(width - 70, 0, width, height)
+  fill(COLORES[0])
+  frame(70)
+  fill(COLORES[1])
+  frame(50)
+  fill(COLORES[0])
+  frame(40)
+  fill(COLORES[1])
+  frame(20)
+end
+
+def frame(width_size)
+  rect(0, 0, width, width_size)
+  rect(0, height - width_size, width, height)
+  rect(0, 0, width_size, height)
+  rect(width - width_size, 0, width, height)
 end
 
 def arabesque_pattern
@@ -46,7 +57,7 @@ def arabesque(x, y, radius, sides, depth)
     new_y = y + sin(angle) * radius
     vertex(new_x, new_y)
     
-    next_radius = radius * 0.3 # 反復サイズ
+    next_radius = radius * 0.3
     next_x = x + cos(angle) * next_radius
     next_y = y + sin(angle) * next_radius
     arabesque(next_x, next_y, next_radius, sides, depth - 1)
