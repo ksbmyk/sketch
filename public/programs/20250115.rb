@@ -12,7 +12,8 @@ def draw
   stroke(COLORES[0])
   strokeWeight(2)
   noFill
-  arabesque_pattern
+  # rbCanvas/p5 の場合は実行しても問題ない
+  # arabesque_pattern
 
   noStroke
   fill(COLORES[0])
