@@ -1,5 +1,5 @@
 def setup
-  createCanvas(400, 400)
+  createCanvas(600, 600)
   colorMode(HSB, 360, 100, 100, 100)
   noStroke
   frameRate(0.5)
