@@ -4,12 +4,9 @@
 def setup
   createCanvas(600, 600)
   noFill
-  strokeWeight(1)
-  blendMode(ADD)
 end
 
 def draw
-  background(0)
   translate(width / 2, height / 2)
 
   10.times do |i|
