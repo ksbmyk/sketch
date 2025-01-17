@@ -1,3 +1,6 @@
+# GENUARY 2025 jan17 "What happens if pi=4?"
+# https://genuary.art/prompts
+
 def setup
   createCanvas(600, 600)
   noFill
