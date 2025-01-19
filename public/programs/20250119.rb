@@ -12,7 +12,7 @@ def draw
   rows.times do |y|
     cols.times do |x|
       fill(255)
-      offset = sin(frameCount * 0.05 + (x + y) * 0.5) * 10
+      offset = sin(frameCount * 0.1 + (x + y) * 0.5) * 20
       rect(x * size + offset, y * size + offset, size - 10, size - 10)
     end
   end
