@@ -1,3 +1,6 @@
+# GENUARY 2025 jan19 "Op Art."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(600, 600)
   noStroke
