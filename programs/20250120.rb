@@ -11,10 +11,10 @@ def setup
   frameRate(0.5)
   noStroke
   
-  set_gradient(0, 0, width, height, color(50, 50, 150), color(20, 20, 80), 1)
+  set_gradient(0, 0, width.to_i, height.to_i, color(50, 50, 150), color(20, 20, 80), 1)
 
-  rows.times do |y|
-    cols.times do |x|
+  rows.to_i.times do |y|
+    cols.to_i.times do |x|
       building = {
         x: x * grid_size,
         y: height - (y * grid_size),
@@ -26,7 +26,7 @@ def setup
         windows: []
       }
 
-      window_rows = (building[:height] / 20).floor
+      window_rows = building[:height] / 20
       window_rows.times do |i|
         (building[:width] / 20).floor.times do |j|
           building[:windows] << { x: j * 20 + building[:x] + 5, y: building[:y] - (i + 1) * 20 }
