@@ -21,6 +21,20 @@ end
 def draw
   background(0)
   
+  # 線を描画
+  stroke("#ffffff")
+  strokeWeight(1)
+  @circles.combination(2).each do |circle1, circle2|
+    dx = circle1[:x] - circle2[:x]
+    dy = circle1[:y] - circle2[:y]
+    distance = sqrt(dx * dx + dy * dy)
+    threshold = 100 # 線を引く距離の閾値
+
+    if distance < threshold
+      line(circle1[:x], circle1[:y], circle2[:x], circle2[:y])
+    end
+  end
+
   @circles.each_with_index do |circle, i|
     circle[:x] += circle[:speed_x]
     circle[:y] += circle[:speed_y]
