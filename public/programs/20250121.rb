@@ -22,7 +22,7 @@ def setup
 end
 
 def draw
-  background(0)
+  background(255)
   draw_lines_between_circles
   update_circles
 end
@@ -35,7 +35,8 @@ def draw_lines_between_circles
     dx = circle1[:x] - circle2[:x]
     dy = circle1[:y] - circle2[:y]
     distance = sqrt(dx**2 + dy**2)
-
+    color_value = map(distance, 0, THRESHOLD, 255, 100)
+    stroke(color_value, 255 - color_value, 255)
     line(circle1[:x], circle1[:y], circle2[:x], circle2[:y]) if distance < THRESHOLD
   end
 end
@@ -104,7 +105,7 @@ end
 
 # 円を描画
 def draw_circle(circle)
-  fill(255)
+  fill(0, 0, 255, 100)
   noStroke
   ellipse(circle[:x], circle[:y], circle[:diameter])
 end
