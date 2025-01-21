@@ -12,8 +12,8 @@ def setup
   circle_count = 40
   @circles = circle_count.times.map do
     {
-      x: rand(0..width),
-      y: rand(0..height),
+      x: rand(10..width - 10),
+      y: rand(10..height - 10),
       diameter: rand(10..30),
       speed_x: rand(-3..3) + 0.1,
       speed_y: rand(-3..3) + 0.1
