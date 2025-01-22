@@ -1,3 +1,6 @@
+# GENUARY 2025 jan22 "Generative Architecture."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(600, 600)
   noLoop
