@@ -1,4 +1,4 @@
-# GENUARY 2025 jan22 "Generative Architecture."
+# GENUARY 2025 jan22 "Gradients only."
 # https://genuary.art/prompts
 
 def setup
