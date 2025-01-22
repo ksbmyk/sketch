@@ -3,7 +3,6 @@
 
 def setup
   @buildings = []
-  cols, rows = 0, 0
   grid_size = 50
   createCanvas(600, 600)
   cols = width / grid_size
