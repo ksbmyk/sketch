@@ -1,3 +1,6 @@
+# GENUARY 2025 jan23 "Inspired by brutalism."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(600, 600)
   noLoop
