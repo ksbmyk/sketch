@@ -17,7 +17,7 @@ def draw
       fill(rand(50..200))
       stroke(rand(50..200))
       if rand > 0.5
-        ellipse(x + size / 2, y + size / 2, size / 2)
+        ellipse(x + size / 2, y + size / 2, size / 2, size / 2)
       end
     end
   end
