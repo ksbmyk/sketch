@@ -1,3 +1,6 @@
+# GENUARY 2025 jan24 "Geometric art - pick either a circle, rectangle, or triangle and use only that geometric shape."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   @grid_size = 70
