@@ -16,7 +16,6 @@ def setup
   ]
   rectMode(CENTER)
   noStroke
-
 end
 
 def draw
@@ -28,33 +27,43 @@ def draw
       x_pos = x * (@grid_size + @margin) + @grid_size / 2 + @margin
       y_pos = y * (@grid_size + @margin) + @grid_size / 2 + @margin
 
-      rect_color = @colors.sample
-      fill(rect_color)
-      rect_size = @grid_size
-      rect(x_pos, y_pos, rect_size, rect_size)
+      color1 = @colors.sample
+      fill(color1)
 
-      triangle_color = @colors.sample
-	    triangle_color = @colors.sample while triangle_color == rect_color
-      fill(triangle_color)
-      triangle_size = rect_size / 2
+      triangle(
+        x_pos - @grid_size / 2, y_pos - @grid_size / 2,
+        x_pos + @grid_size / 2, y_pos - @grid_size / 2,
+        x_pos, y_pos - @grid_size / 2 + @grid_size / 2
+      )
 
-      direction = rand(3)
-	    if direction == 0
-        fill(255, 150)
-        rect(x_pos, y_pos, rect_size / 2, rect_size / 2)
-      elsif direction == 1
+      color2 = @colors.sample
+      color2 = @colors.sample while color2 == color1
+      fill(color2)
+
+      triangle(
+        x_pos - @grid_size / 2, y_pos + @grid_size / 2,
+        x_pos + @grid_size / 2, y_pos + @grid_size / 2,
+        x_pos, y_pos + @grid_size / 2 - @grid_size / 2
+      )
+
+      color3 = @colors.sample
+      color3 = @colors.sample while color1 == color3
+      fill(color3)
+
         triangle(
-          x_pos - triangle_size, y_pos - rect_size / 2,
-          x_pos + triangle_size, y_pos - rect_size / 2,
-          x_pos, y_pos - rect_size / 2 + triangle_size / 2
+          x_pos - @grid_size / 2, y_pos - @grid_size / 2,
+          x_pos + @grid_size / 2, y_pos - @grid_size / 2,
+          x_pos, y_pos - @grid_size / 2 + @grid_size / 2 / 2
         )
-      elsif direction == 2
+
+      color4 = @colors.sample
+      color4 = @colors.sample while color2 == color4
+      fill(color4)
         triangle(
-          x_pos - triangle_size, y_pos + rect_size / 2,
-          x_pos + triangle_size, y_pos + rect_size / 2,
-          x_pos, y_pos + rect_size / 2 - triangle_size / 2
+          x_pos - @grid_size / 2, y_pos + @grid_size / 2,
+          x_pos + @grid_size / 2, y_pos + @grid_size / 2,
+          x_pos, y_pos + @grid_size / 2 - @grid_size / 2 / 2
         )
-      end
     end
   end
 end
