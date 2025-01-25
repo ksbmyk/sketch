@@ -2,7 +2,7 @@
 # https://genuary.art/prompts
 
 def setup
-  createCanvas(600, 600)
+  createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100)
   background(0)
   strokeWeight(2)
