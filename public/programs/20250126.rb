@@ -1,3 +1,6 @@
+# GENUARY 2025 jan26 "Symmetry."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   background(0)
