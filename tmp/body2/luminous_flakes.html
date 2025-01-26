@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>rbCanvas/p5</title>
+<!-- rbCanvas/p5 editor v0.5.1 -->
+</head>
+<body>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/opal_patched.min.js"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/opal-parser_patched.min.js" onload="Opal.load('opal-parser'); Opal.load('parser/ruby31');"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/native.min.js" onload="Opal.load('native')"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/date.min.js" onload="Opal.load('date')"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/p5/p5.min.js"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/rbcanvasp5/rbcanvasp5.js"></script>
+<script type="text/ruby" section="s00" name="main">
+$PROGRAM_NAME = "main"
+def setup
+  createCanvas(700, 700)
+  rectMode(CENTER)
+  frameRate(1)
+  background(0)
+  noStroke
+end
+
+def draw
+  blendMode(BLEND)
+  background(0)
+
+  size = 50
+  blendMode(ADD)
+  (0..height).step(size) do |y|
+    (0..width).step(size) do |x|
+      fill(100, 150, rand(100..255), rand(0..200))
+      ellipse(x + size / 2, y + size / 2, rand(3..size * 2 ))
+      rect(x + size / 2, y + size / 2, rand(3..size * 2))
+      push
+      translate(x + size / 2, y + size / 2)
+      rotate(PI / 4)
+      rect(0, 0, rand(3..size * 0.7))
+      pop
+    end
+  end
+end
+
+$PROGRAM_NAME = "main"
+</script>
+
+</body>
+</html>
