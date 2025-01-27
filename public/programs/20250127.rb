@@ -1,3 +1,6 @@
+# GENUARY 2025 jan27 "Make something interesting with no randomness or noise or trig."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noFill
