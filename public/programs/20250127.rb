@@ -22,8 +22,8 @@ def draw
   @ripples.reverse_each do |ripple|
     is_active = false
     3.times do |j|
-      t = frameCount - ripple[:startTime] - j * 10
-      if t >= 0 && t < 200  # 波紋が表示中か
+      t = frameCount - ripple[:start_time] - j * 10
+      if t.between?(0, 200)
         radius = map(t, 0, 200, 10, width)
         stroke(255, map(t, 0, 200, 200, 0))
         ellipse(ripple[:x], ripple[:y], radius, radius)
@@ -37,11 +37,11 @@ end
 
 # クリック時に波紋を追加
 def mousePressed
-  @ripples.push({ x: mouseX, y: mouseY, startTime: frameCount })
+  @ripples.push({ x: mouseX, y: mouseY, start_time: frameCount })
 end
 
 # タップ時に波紋を追加
 def touchStarted
-  @ripples.push({ x: mouseX, y: mouseY, startTime: frameCount })
+  @ripples.push({ x: mouseX, y: mouseY, start_time: frameCount })
   return false  # デフォルトの動作防止
 end
