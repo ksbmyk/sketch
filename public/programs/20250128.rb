@@ -48,9 +48,9 @@ def create_random_pattern(graphics)
   graphics.background(c)
   graphics.noStroke
   if c == 0
-   graphics.blendMode(ADD)
+    graphics.blendMode(ADD)
   else
-   graphics.blendMode(BLEND)
+    graphics.blendMode(BLEND)
   end
 
   # 円
