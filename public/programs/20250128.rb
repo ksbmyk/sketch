@@ -44,8 +44,14 @@ end
 
 # 模様
 def create_random_pattern(graphics)
-  graphics.background([0, 200, 255].sample)
+  c = [0, 200, 255].sample
+  graphics.background(c)
   graphics.noStroke
+  if c == 0
+   graphics.blendMode(ADD)
+  else
+   graphics.blendMode(BLEND)
+  end
 
   # 円
   5.times do
