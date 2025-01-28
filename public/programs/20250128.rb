@@ -1,3 +1,5 @@
+# GENUARY 2025 jan28 "Infinite Scroll."
+# https://genuary.art/prompts
 
 def setup
   createCanvas(700, 700)
