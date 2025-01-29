@@ -4,13 +4,9 @@ def setup
   background(240)
 
   grid_size = 100
-  rows = height / grid_size
-  cols = width / grid_size
 
-  rows.to_i.times do |row|
-    cols.to_i.times do |col|
-      x = col * grid_size
-      y = row * grid_size
+  (0..height).step(grid_size) do |y|
+    (0..width).step(grid_size) do |x|
       draw_pattern(x, y, grid_size)
     end
   end
