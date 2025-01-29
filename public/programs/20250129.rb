@@ -1,3 +1,6 @@
+# GENUARY 2025 jan29 "Grid-based graphic design."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noStroke
