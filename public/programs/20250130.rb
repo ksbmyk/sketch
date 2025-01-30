@@ -1,3 +1,7 @@
+# GENUARY 2025 jan30 "Abstract map."
+# https://genuary.art/prompts
+# かなり重い
+
 def setup
   createCanvas(600, 600)
   noLoop
