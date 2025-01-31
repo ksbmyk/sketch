@@ -1,3 +1,6 @@
+# GENUARY 2025 jan30 "Pixel sorting."
+# https://genuary.art/prompts
+
 def preload
   @img = loadImage('https://ksbmyk.github.io/sketch/images/20240102.png')
 end
@@ -20,6 +23,7 @@ def setup
       ]
     end
 
+    # RGBAのG(緑)でソート
     column.sort_by! { |c| -c[1].to_i }
 
     (0...@img.height.to_i).each do |y|
