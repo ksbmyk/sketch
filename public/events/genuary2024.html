@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Grid</title>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(7, auto); /* 7列 */
+      grid-gap: 5px; /* 画像間の隙間 */
+    }
+
+    .grid-item {
+      width: 100px; /* 画像の幅 */
+      height: 100px; /* 画像の高さ */
+    }
+
+    .grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 画像のアスペクト比を保持しつつ、親要素にフィット */
+    }
+  </style>
+</head>
+<body>
+  Genuary 2024
+  <div class="grid-container">
+    <!-- 画像を7列x5行で配置 -->
+    <div class="grid-item"><img src="../images/20240101.png" alt="Image 1"></div>
+    <div class="grid-item"><img src="../images/20240102.png" alt="Image 2"></div>
+    <div class="grid-item"><img src="../images/20240103.gif" alt="Image 3"></div>
+    <div class="grid-item"><img src="../images/20240104.gif" alt="Image 4"></div>
+    <div class="grid-item"><img src="../images/20240105.png" alt="Image 5"></div>
+    <div class="grid-item"><img src="../images/20240106.gif" alt="Image 6"></div>
+    <div class="grid-item"><img src="../images/20240107.gif" alt="Image 7"></div>
+    <div class="grid-item"><img src="../images/20240108.png" alt="Image 8"></div>
+    <div class="grid-item"><img src="../images/20240109.gif" alt="Image 9"></div>
+    <div class="grid-item"><img src="../images/20240110.png" alt="Image 10"></div>
+    <div class="grid-item"><img src="../images/20240111.png" alt="Image 11"></div>
+    <div class="grid-item"><img src="../images/20240112.gif" alt="Image 12"></div>
+    <div class="grid-item"><img src="../images/20240113.gif" alt="Image 13"></div>
+    <div class="grid-item"><img src="../images/20240114.gif" alt="Image 14"></div>
+    <div class="grid-item"><img src="../images/20240115.gif" alt="Image 15"></div>
+    <div class="grid-item"><img src="../images/20240116.png" alt="Image 16"></div>
+    <div class="grid-item"><img src="../images/20240117.png" alt="Image 17"></div>
+    <div class="grid-item"><img src="../images/20240118.png" alt="Image 18"></div>
+    <div class="grid-item"><img src="../images/20240119.gif" alt="Image 19"></div>
+    <div class="grid-item"><img src="../images/20240120.png" alt="Image 20"></div>
+    <div class="grid-item"><img src="../images/20240121.png" alt="Image 21"></div>
+    <div class="grid-item"><img src="../images/20240122.png" alt="Image 22"></div>
+    <div class="grid-item"><img src="../images/20240123.png" alt="Image 23"></div>
+    <div class="grid-item"><img src="../images/20240124.png" alt="Image 24"></div>
+    <div class="grid-item"><img src="../images/20240125.png" alt="Image 25"></div>
+    <div class="grid-item"><img src="../images/20240126.png" alt="Image 26"></div>
+    <div class="grid-item"><img src="../images/20240127.png" alt="Image 27"></div>
+    <div class="grid-item"><img src="../images/20240128.png" alt="Image 28"></div>
+    <div class="grid-item"><img src="../images/20240129.gif" alt="Image 29"></div>
+    <div class="grid-item"><img src="../images/20240130.gif" alt="Image 30"></div>
+    <div class="grid-item"><img src="../images/20240131.gif" alt="Image 31"></div>
+    <!-- 以下同様に続く -->
+    <!-- 画像のパスは実際のファイル名に置き換えてください -->
+  </div>
+</body>
+</html>
