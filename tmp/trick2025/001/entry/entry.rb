@@ -1,18 +1,5 @@
-def shooting_star(width, height, speed)
-  chars = [' ', '.', '*', '✨']
-  (1..height).each do |y|
-    system('clear')
-    (1..y).each do |line|
-      puts " " * (line % width) + chars.sample
-    end
-    puts " " * (y % width) + "🌟"
-    sleep(speed)
-  end
-  
-  system('clear')
-  (1..height).each do |line|
-    puts " " * (line % width) + chars.sample
-  end
-end
-
-shooting_star(50, 20, 0.1)
+->(w, h, s) {
+  c=[' ', '.', '*', '✨']
+  h.times { |y| system('clear'); y.times { |l| puts ' ' * (l % w) + c.sample }; puts ' ' * (y % w) + '🌟'; sleep s }
+  system('clear'); h.times { |l| puts ' ' * (l % w) + c.sample }
+}[50, 20, 0.1]
