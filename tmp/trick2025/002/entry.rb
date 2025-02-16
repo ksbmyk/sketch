@@ -12,6 +12,7 @@ draw do
   update_background_color
   handle_season_transition
   update_and_display_flakes
+
 end
 
 private
@@ -39,8 +40,9 @@ def update_background_color
   current_bg_color = @season_data[@current_season][:bg_color]  # 現在の季節の背景色
   next_bg_color = @season_data[@next_season][:bg_color]  # 次の季節の背景色
   bg_color = lerpColor(color(*current_bg_color), color(*next_bg_color), adjusted_lerp_ratio)  # 背景色の補間
-  
-  background(bg_color)
+  bg_color_rgba = [red(bg_color), green(bg_color), blue(bg_color), alpha(bg_color)] # rgbaに戻さないと扱えない
+  background(*bg_color_rgba)
+
   @lerp_ratio += 1.0 / @season_frame_count
 end
 
@@ -90,7 +92,7 @@ class Flake
     push
     translate(@x, @y)
     rotate(@rotation)
-    fill(@color)
+    fill(*@color)
     textSize(@size)
     text(@char, 0, 0)
     pop
