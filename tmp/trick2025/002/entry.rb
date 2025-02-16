@@ -12,7 +12,6 @@ draw do
   update_background_color
   handle_season_transition
   update_and_display_flakes
-
 end
 
 private
@@ -34,13 +33,13 @@ def initialize_data
 end
 
 def update_background_color
-  transition_threshold = 0.5  # 色変化の開始点
+  transition_threshold = 0.5
   adjusted_lerp_ratio = @lerp_ratio < transition_threshold ? 0 : map(@lerp_ratio, transition_threshold, 1, 0, 1)
   
-  current_bg_color = @season_data[@current_season][:bg_color]  # 現在の季節の背景色
-  next_bg_color = @season_data[@next_season][:bg_color]  # 次の季節の背景色
-  bg_color = lerpColor(color(*current_bg_color), color(*next_bg_color), adjusted_lerp_ratio)  # 背景色の補間
-  bg_color_rgba = [red(bg_color), green(bg_color), blue(bg_color), alpha(bg_color)] # rgbaに戻さないと扱えない
+  current_bg_color = @season_data[@current_season][:bg_color]
+  next_bg_color = @season_data[@next_season][:bg_color]
+  bg_color = lerpColor(color(*current_bg_color), color(*next_bg_color), adjusted_lerp_ratio)
+  bg_color_rgba = [red(bg_color), green(bg_color), blue(bg_color), alpha(bg_color)]
   background(*bg_color_rgba)
 
   @lerp_ratio += 1.0 / @season_frame_count
