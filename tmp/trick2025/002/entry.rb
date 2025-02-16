@@ -1,103 +1,58 @@
 require 'processing'
 using Processing
 
-setup do
-  createCanvas(600, 600)
-  textAlign(CENTER, CENTER)
-  initialize_data
-  initialize_flakes
-end
-
-draw do
-  update_background_color
-  handle_season_transition
-  update_and_display_flakes
-end
+setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
+draw { u; h; uf }
 
 private
 
-def initialize_data
-  @flakes = []
-  @flake_num = 150
-  @seasons = [:spring, :summer, :autumn, :winter]
-  @season_data = {
-    spring: { char: '✿', rotates: true, size: 32, color: [255, 105, 180], bg_color: [255, 182, 193] },
-    summer: { char: ';', rotates: false, size: 32, color: [30, 144, 255], bg_color: [135, 206, 250] },
-    autumn: { char: '♠', rotates: true, size: 32, color: [204, 85, 0], bg_color: [204, 163, 0] },
-    winter: { char: '*', rotates: false, size: 50, color: [255, 255, 255], bg_color: [0, 31, 63] }
-  }
-  @current_season = :spring
-  @next_season = :summer
-  @lerp_ratio = 0.0
-  @season_frame_count = 600
+def i
+  @f = []; @n = 150
+  @s = [:spring, :summer, :autumn, :winter]
+  @d = { spring: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
+         summer: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
+         autumn: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
+         winter: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
+  @cs, @ns, @l, @sf = :spring, :summer, 0.0, 600
 end
 
-def update_background_color
-  transition_threshold = 0.5
-  adjusted_lerp_ratio = @lerp_ratio < transition_threshold ? 0 : map(@lerp_ratio, transition_threshold, 1, 0, 1)
-  
-  current_bg_color = @season_data[@current_season][:bg_color]
-  next_bg_color = @season_data[@next_season][:bg_color]
-  bg_color = lerpColor(color(*current_bg_color), color(*next_bg_color), adjusted_lerp_ratio)
-  bg_color_rgba = [red(bg_color), green(bg_color), blue(bg_color), alpha(bg_color)]
-  background(*bg_color_rgba)
-
-  @lerp_ratio += 1.0 / @season_frame_count
+def u
+  l = @l < 0.5 ? 0 : map(@l, 0.5, 1, 0, 1)
+  background(*[red(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), green(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), blue(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), alpha(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l))])
+  @l += 1.0 / @sf
 end
 
-def handle_season_transition
-  if @lerp_ratio >= 1
-    @lerp_ratio = 0
-    @current_season = @next_season
-    @next_season = @seasons[(@seasons.index(@current_season) + 1) % @seasons.length]
-    initialize_flakes
+def h
+  if @l >= 1
+    @l = 0; @cs, @ns = @ns, @s[(@s.index(@cs) + 1) % @s.length]; f
   end
 end
 
-def initialize_flakes
-  season_attributes = @season_data[@current_season]
-  @flake_num.times do
-    x = rand(width)
-    y = rand(-height * 1.2..0)
-    @flakes << Flake.new(x, y, season_attributes[:char], season_attributes[:color], season_attributes[:size], season_attributes[:rotates])
-  end
+def f
+  @n.times { @f << Flake.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
 end
 
-def update_and_display_flakes
-  @flakes.reject! do |flake|
-    flake.update
-    flake.display
-    flake.out_of_screen?
-  end
+def uf
+  @f.reject! { |x| x.u; x.d; x.o }
 end
 
 class Flake
-  attr_reader :x, :y, :char, :color, :size
-
-  def initialize(x, y, char, color, size, rotates)
-    @x, @y, @char, @color, @size, @rotates = x, y, char, color, size, rotates
-    @rotation = rotates ? rand(0..TWO_PI) : 0
-    @speed = rand(2.0..6.0)
-    @variation = rotates ? rand(-2.0..2.0) : 0
+  attr_reader :x, :y, :c, :co, :s
+  def initialize(x, y, c, co, s, r)
+    @x, @y, @c, @co, @s = x, y, c, co, s
+    @r = r ? rand(TWO_PI) : 0
+    @sp, @v = rand(2..6), r ? rand(-2..2) : 0
   end
 
-  def update
-    @y += @speed
-    @x += @variation
-    @rotation += 0.05 if @rotates
+  def u
+    @y += @sp; @x += @v; @r += 0.05 if @r != 0
   end
 
-  def display
-    push
-    translate(@x, @y)
-    rotate(@rotation)
-    fill(*@color)
-    textSize(@size)
-    text(@char, 0, 0)
-    pop
+  def d
+    push; translate(@x, @y); rotate(@r); fill(*@co); textSize(@s); text(@c, 0, 0); pop
   end
 
-  def out_of_screen?
+  def o
     @y > height + 10
   end
 end
