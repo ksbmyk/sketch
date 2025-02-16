@@ -17,19 +17,21 @@ def i
 end
 
 def u
-  l = @l < 0.5 ? 0 : map(@l, 0.5, 1, 0, 1)
-  background(*[red(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), green(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), blue(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)), alpha(lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l))])
+  t = 0.5; l = @l < t ? 0 : map(@l, t, 1, 0, 1)
+  bg = lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)
+  background(*[red(bg), green(bg), blue(bg), alpha(bg)])
   @l += 1.0 / @sf
 end
 
 def h
   if @l >= 1
-    @l = 0; @cs, @ns = @ns, @s[(@s.index(@cs) + 1) % @s.length]; f
+    @l = 0 ; @cs = @ns; @ns = @s[(@s.index(@cs) + 1) % @s.length]; f
   end
 end
 
 def f
-  @n.times { @f << Flake.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
+  sa = @d[@cs]
+  @n.times { @f << Flake.new(rand(width), rand(-height * 1.2..0), sa[:c], sa[:co], sa[:s], sa[:r]) }
 end
 
 def uf
@@ -39,9 +41,9 @@ end
 class Flake
   attr_reader :x, :y, :c, :co, :s
   def initialize(x, y, c, co, s, r)
-    @x, @y, @c, @co, @s = x, y, c, co, s
-    @r = r ? rand(TWO_PI) : 0
-    @sp, @v = rand(2..6), r ? rand(-2..2) : 0
+    @x, @y, @c, @co, @s, @r = x, y, c, co, s, r ? rand(0..TWO_PI) : 0
+    @sp = rand(2.0..6.0)
+    @v = r ? rand(-2.0..2.0) : 0
   end
 
   def u
