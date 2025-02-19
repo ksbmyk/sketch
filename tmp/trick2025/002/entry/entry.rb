@@ -30,8 +30,7 @@ def h
 end
 
 def f
-  sa = @d[@cs]
-  @n.times { @f << F.new(rand(width), rand(-height * 1.2..0), sa[:c], sa[:co], sa[:s], sa[:r]) }
+  @n.times { |i| @f << F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
 end
 
 def uf
