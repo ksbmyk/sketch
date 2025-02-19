@@ -2,18 +2,18 @@ require 'processing'
 using Processing
 
 setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
-draw { u; h; uf }
+draw { u; h; r }
 
 private
 
 def i
   @f = []; @n = 150
-  @s = [:spring, :summer, :autumn, :winter]
-  @d = { spring: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
-         summer: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
-         autumn: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
-         winter: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
-  @cs, @ns, @l, @sf = :spring, :summer, 0.0, 600
+  @s = [:s, :u, :a, :w]
+  @d = { s: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
+         u: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
+         a: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
+         w: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
+  @cs, @ns, @l, @sf = :s, :u, 0.0, 600
 end
 
 def u
@@ -31,7 +31,7 @@ def f
   @n.times { |i| @f << F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
 end
 
-def uf
+def r
   @f.reject! { |x| x.u; x.d; x.o }
 end
 
