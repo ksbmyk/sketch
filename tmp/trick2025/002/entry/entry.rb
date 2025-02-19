@@ -38,7 +38,7 @@ end
 class F
   attr_reader :x, :y, :c, :co, :s
   def initialize(x, y, c, co, s, r)
-    @x, @y, @c, @co, @s, @r = x, y, c, co, s, r ? rand(0..TWO_PI) : 0
+    @x, @y, @c, @co, @s, @r = x, y, c, co, s, r ? rand(TWO_PI) : 0
     @sp = rand(2.0..6.0)
     @v = r ? rand(-2.0..2.0) : 0
   end
