@@ -19,7 +19,7 @@ def u
 end
 
 def h
-  @l >= 1 && (@l = 0; @cs, @ns = @ns, @s[(@s.index(@ns) + 1) % @s.length]; f)
+  @l >= 1 && (@l = 0; @cs, @ns = @ns, @s[(@s.index(@ns) + 1) % 4]; f)
 end
 
 def f
