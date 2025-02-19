@@ -24,9 +24,7 @@ def u
 end
 
 def h
-  if @l >= 1
-    @l = 0 ; @cs = @ns; @ns = @s[(@s.index(@cs) + 1) % @s.length]; f
-  end
+  @l >= 1 && (@l = 0; @cs = @ns; @ns = @s[(@s.index(@cs) + 1) % @s.length]; f)
 end
 
 def f
