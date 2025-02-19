@@ -4,8 +4,6 @@ using Processing
 setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
 draw { u; h; r }
 
-private
-
 def i
   @f = []; @n = 150
   @s = [:s, :u, :a, :w]
@@ -17,14 +15,13 @@ def i
 end
 
 def u
-  t = 0.5; l = @l < t ? 0 : map(@l, t, 1, 0, 1)
-  bg = lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), l)
+  bg = lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), @l < 0.5 ? 0 : map(@l, 0.5, 1, 0, 1))
   background(*[red(bg), green(bg), blue(bg), alpha(bg)])
   @l += 1.0 / @sf
 end
 
 def h
-  @l >= 1 && (@l = 0; @cs = @ns; @ns = @s[(@s.index(@cs) + 1) % @s.length]; f)
+  @l >= 1 && (@l = 0; @cs, @ns = @ns, @s[(@s.index(@ns) + 1) % @s.length]; f)
 end
 
 def f
@@ -38,9 +35,7 @@ end
 class F
   attr_reader :x, :y, :c, :co, :s
   def initialize(x, y, c, co, s, r)
-    @x, @y, @c, @co, @s, @r = x, y, c, co, s, r ? rand(TWO_PI) : 0
-    @sp = rand(2.0..6.0)
-    @v = r ? rand(-2.0..2.0) : 0
+    @x, @y, @c, @co, @s, @r, @sp, @v = x, y, c, co, s, r ? rand(TWO_PI) : 0, rand(2.0..6.0), r ? rand(-2.0..2.0) : 0
   end
 
   def u
