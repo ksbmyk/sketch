@@ -31,14 +31,14 @@ end
 
 def f
   sa = @d[@cs]
-  @n.times { @f << Flake.new(rand(width), rand(-height * 1.2..0), sa[:c], sa[:co], sa[:s], sa[:r]) }
+  @n.times { @f << F.new(rand(width), rand(-height * 1.2..0), sa[:c], sa[:co], sa[:s], sa[:r]) }
 end
 
 def uf
   @f.reject! { |x| x.u; x.d; x.o }
 end
 
-class Flake
+class F
   attr_reader :x, :y, :c, :co, :s
   def initialize(x, y, c, co, s, r)
     @x, @y, @c, @co, @s, @r = x, y, c, co, s, r ? rand(0..TWO_PI) : 0
