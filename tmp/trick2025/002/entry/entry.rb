@@ -5,13 +5,12 @@ setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
 draw { u; h; r }
 
 def i
-  @f = []; @n = 150
+  @f, @n, @cs, @ns, @l, @sf = [], 150, :s, :u, 0.0, 600
   @s = [:s, :u, :a, :w]
   @d = { s: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
          u: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
          a: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
          w: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
-  @cs, @ns, @l, @sf = :s, :u, 0.0, 600
 end
 
 def u
@@ -33,7 +32,6 @@ def r
 end
 
 class F
-  attr_reader :x, :y, :c, :co, :s
   def initialize(x, y, c, co, s, r)
     @x, @y, @c, @co, @s, @r, @sp, @v = x, y, c, co, s, r ? rand(TWO_PI) : 0, rand(2.0..6.0), r ? rand(-2.0..2.0) : 0
   end
