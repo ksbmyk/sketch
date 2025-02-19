@@ -9,7 +9,7 @@ def i
          u: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
          a: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
          w: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
-  @n, @l, @s, @cs, @ns,  = 150, 0.0, @d.keys, :s, :u
+  @f, @n, @l, @s, @cs, @ns,  = [], 150, 0.0, @d.keys, :s, :u
 end
 
 def u
@@ -23,7 +23,7 @@ def h
 end
 
 def f
-  @f = @n.times.map { F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
+  @n.times { |i| @f << F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
 end
 
 def r
@@ -44,6 +44,6 @@ class F
   end
 
   def o
-    @y > height + 10
+    @y > height + 20
   end
 end
