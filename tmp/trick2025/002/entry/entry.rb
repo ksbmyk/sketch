@@ -4,19 +4,18 @@ using Processing
 setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
 draw { u; h; r }
 
-def i
-  @f, @n, @cs, @ns, @l, @sf = [], 150, :s, :u, 0.0, 600
-  @s = [:s, :u, :a, :w]
+def i 
   @d = { s: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
          u: { c: ';', r: false, s: 32, co: [30, 144, 255], bg: [135, 206, 250] },
          a: { c: '♠', r: true, s: 32, co: [204, 85, 0], bg: [204, 163, 0] },
          w: { c: '*', r: false, s: 50, co: [255, 255, 255], bg: [0, 31, 63] } }
+  @n, @l, @s, @cs, @ns,  = 150, 0.0, @d.keys, :s, :u
 end
 
 def u
   bg = lerpColor(color(*@d[@cs][:bg]), color(*@d[@ns][:bg]), @l < 0.5 ? 0 : map(@l, 0.5, 1, 0, 1))
   background(*[red(bg), green(bg), blue(bg), alpha(bg)])
-  @l += 1.0 / @sf
+  @l += 1.0 / 600
 end
 
 def h
@@ -24,7 +23,7 @@ def h
 end
 
 def f
-  @n.times { |i| @f << F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
+  @f = @n.times.map { F.new(rand(width), rand(-height * 1.2..0), @d[@cs][:c], @d[@cs][:co], @d[@cs][:s], @d[@cs][:r]) }
 end
 
 def r
