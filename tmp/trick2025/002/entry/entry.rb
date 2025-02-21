@@ -1,8 +1,7 @@
 require 'processing'
 using Processing
 
-setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }
-draw { u; h; r }
+setup { createCanvas(600, 600); textAlign(CENTER, CENTER); i; f }; draw { u; h; r }
 
 def i 
   @d = { s: { c: '✿', r: true, s: 32, co: [255, 105, 180], bg: [255, 182, 193] },
