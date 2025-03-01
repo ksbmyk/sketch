@@ -2,12 +2,14 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>グリッド</title>
+  <title>Tangible Code</title>
   <style>
     body {
       margin: 0;
       display: flex;
       font-family: Arial, sans-serif;
+      overflow-x: hidden; /* 横スクロールを無効化 */
+      max-width: 100vw; /* 画面幅を超えないように */
     }
     #code-container {
       width: 50%;
@@ -112,11 +114,7 @@
         alphaValue = <input type="range" id="alphaValue" min="50" max="255" value="150"> <span id="alpha" class="highlight">150</span>; // 透明度        
         fill(hueValue, 80, 100, alphaValue); // 塗り色を設定(色相、彩度、明度、透明度)
         translate(width / 2, height / 2); // 中心を画面の真ん中にする
-        circleCount = <span class="stepper-container">
-          <button class="stepper-button" id="countDecrement">-</button>
-          <span id="countValue" class="stepper-value">50</span>
-          <button class="stepper-button" id="countIncrement">+</button>
-        </span> // 円の数
+        circleCount = <input type="range" id="circleCount" min="1" max="200" value="50"> <span id="countValue" class="highlight">50</span>; // 円の数
         for (let i = 0; i < circleCount; i++) { // circleCountの数だけ繰り返す
           let angle = TWO_PI / circleCount * i // 円周上に並べるための角度を計算する
           distance = <input type="range" id="distance" min="1" max="400" value="200"> <span id="diameterValue" class="highlight">200</span>; // 距離
@@ -143,8 +141,9 @@
     let isDarkMode, circleCount, circleSize, hueValue, alphaValue, distance;
 
     const sketch = (p) => {
+      let scaleFactor = 1;
       p.setup = () => {
-        p.createCanvas(600, 600);
+        p.createCanvas(p.windowWidth/2, p.windowWidth/2);
         p.colorMode(p.HSB, 360, 100, 100, 255);
         p.noStroke();
       };
@@ -169,6 +168,15 @@
           p.circle(x, y, circleSize + (i % 2 === 0 ? 30 : -30));
         }
       };
+
+      p.windowResized = () => {
+        p.resizeCanvas(p.windowWidth / 2, p.windowWidth / 2);
+        updateScaleFactor();
+      };
+
+      function updateScaleFactor() {
+        scaleFactor = p.constrain(p.windowWidth / 1000, 0.5, 1); // 最小0.5倍, 最大1倍
+      }
     };
 
     window.onload = () => {
@@ -187,10 +195,8 @@
       const distanceSlider = document.getElementById("distance");
       distance = Number(distanceSlider.value);
 
-      const countIncrementButton = document.getElementById("countIncrement");
-      const countDecrementButton = document.getElementById("countDecrement");
-      const countValueButton = document.getElementById("countValue");
-      circleCount = Number(countValueButton.textContent);
+      const circleCountSlider = document.getElementById("circleCount");
+      circleCount = Number(circleCountSlider.value);
 
       const circleSizeSlider = document.getElementById("circleSize");
       circleSize = Number(circleSizeSlider.value);
@@ -212,18 +218,9 @@
         document.getElementById("diameterValue").textContent = distance;
       });
 
-      countIncrementButton.addEventListener("click", () => {
-        if (circleCount < 200) {
-          circleCount++;
-          countValue.textContent = circleCount;
-        }
-      });
-
-      countDecrementButton.addEventListener("click", () => {
-        if (circleCount > 1) {
-          circleCount--;
-          countValue.textContent = circleCount;
-        }
+      circleCountSlider.addEventListener("input", (event) => {
+        circleCount = Number(event.target.value);
+        document.getElementById("countValue").textContent = circleCount;
       });
 
       circleSizeSlider.addEventListener("input", (event) => {
