@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <meta charset="utf-8" />
+    <title>広告募集中</title>
+  </head>
+  <body>
+    <div>
+        <div>
+            <div>
+                <script>
+let circles = [];
+let words = ["広", "告", "募", "集", "中"];
+
+function setup() {
+  createCanvas(windowWidth,windowHeight);
+  
+  let startX = 50;
+  for (let i = 0; i < words.length; i++) {
+    circles.push({
+      word: words[i],
+      x: startX,
+      y: random(50, height / 2),
+      diameter: 50,
+      speedX: 0,
+      speedY: random(1, 2),
+    });
+    startX += circles[i].diameter + random(30, 100);
+  }
+}
+
+function draw() {
+  background(0);
+  
+  for (let i = 0; i < circles.length; i++) {
+    let circle = circles[i];
+    
+    circle.y += circle.speedY;
+
+    // 上下の端で反発
+    if (circle.y - circle.diameter / 2 < 0 || circle.y + circle.diameter / 2 > height) {
+      circle.speedY *= -1; // 速度反転
+    }
+
+    fill("#32f8fd");
+    noStroke();
+    ellipse(circle.x, circle.y, circle.diameter);
+
+    fill(255);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text(circle.word, circle.x, circle.y);
+  }
+}
+
+
+                </script>        
+            </div>
+        </div>    
+    </div>
+  </body>
+</html>
+
