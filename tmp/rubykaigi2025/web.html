@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Tangible Code</title>
+  <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+  <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
+</head>
+<body>
+  <main></main>
+  <label for="slider">スライダーの値:</label>
+  <input type="range" id="slider" min="0" max="100" value="50">
+  <span id="slider-value">50</span>
+  
+  <div id="output"></div>
+  
+  <script type="text/ruby">
+    require 'js'
+    slider_element = JS.global[:document].getElementById("slider")
+    $slider_value = slider_element[:value].to_i # スライダーの値を整数に変換
+  
+    def setup
+      createCanvas(400, 400)  # キャンバスの作成
+    end
+
+    def draw
+      # スライダーの値を取得
+      $radius = $slider_value
+
+      background(255)
+      noStroke
+      fill(100, 150, 255)
+      ellipse(200, 200, $radius * 2, $radius * 2)
+    end
+  P5::init()
+
+  # スライダーが動かされた時に円のサイズを更新
+  slider_element.addEventListener("input") do
+    $slider_value = slider_element[:value].to_i
+    $radius = $slider_value
+    JS.global[:document].getElementById("slider-value")[:innerText] = $slider_value.to_s
+    JS.global[:document].getElementById("output")[:innerText] = "円の半径: #{$slider_value}"
+  end
+  </script>
+</body>
+</html>
