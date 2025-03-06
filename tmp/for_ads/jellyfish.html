@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <meta charset="utf-8" />
+    <title>広告募集中</title>
+  </head>
+  <body>
+    <div>
+        <div>
+            <div>
+                <script>
+let font;
+let points = [];
+let waveOffset = 0;
+let fontSize;
+
+function preload() {
+  font = loadFont('https://stat.neort.io/externalResource/cv4j2asn70rs0t8mre3g.otf');
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  textFont(font);
+  calculateFontSize();
+  textAlign(CENTER, CENTER);
+  updateTextPoints();
+}
+
+function calculateFontSize() {
+  fontSize = min(width * 0.2, height * 0.3); // 画面幅と高さに基づき適切なフォントサイズを設定
+  textSize(fontSize);
+}
+
+function updateTextPoints() {
+  let bbox = font.textBounds("広告募集中", 0, 0, fontSize);
+  let x = (width - bbox.w) / 2;  // 横の中心に合わせる
+  let y = (height + fontSize) / 2; // 縦の中心に合わせる
+  points = font.textToPoints("広告募集中", x, y, fontSize, {
+    sampleFactor: 0.15
+  });
+}
+
+function draw() {
+  background(0);
+  noStroke();
+  
+  for (let i = 0; i < points.length; i++) {
+    let pt = points[i];
+    let waveY = sin(waveOffset + pt.x * 0.03) * 20 + cos(waveOffset * 0.5 + pt.y * 0.03) * 10; 
+    let noiseX = noise(pt.x * 0.005, frameCount * 0.01) * 6 - 3;
+    let noiseY = noise(pt.y * 0.005, frameCount * 0.01) * 6 - 3;
+    let xOffset = noiseX;
+    let yOffset = waveY + noiseY;
+    
+    let colorOffset = map(sin(waveOffset * 0.2 + pt.x * 0.01), -1, 1, 0, 255);
+    fill(100 + colorOffset, 150, 255 - colorOffset);
+    ellipse(pt.x + xOffset, pt.y + yOffset, 6);
+  }
+  
+  waveOffset += 0.05;
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  calculateFontSize();
+  updateTextPoints();
+}
+
+                </script>        
+            </div>
+        </div>    
+    </div>
+  </body>
+</html>
+
