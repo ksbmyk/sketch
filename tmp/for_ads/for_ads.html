@@ -72,12 +72,14 @@ function initializeObjects() {
   circles = [];
   particles = [];
 
-  let totalWidth = words.length * 50 * scaleFactor + random(30, 100) * scaleFactor * (words.length - 1);
-  let startX = (width - totalWidth) / 2;
+  let totalDiameter = words.length * (50 * scaleFactor);
+  let maxWidth = min(width * 0.8, baseWidth * scaleFactor); // 最大幅を決める
+  let spacing = (maxWidth - totalDiameter) / (words.length - 1); // 等間隔を計算
+  let startX = (width - maxWidth) / 2; // 左端の開始位置
 
   for (let i = 0; i < words.length; i++) {
     let speedY = random(1, 3) * scaleFactor;
-    let xPos = startX + i * (50 * scaleFactor + random(30, 100) * scaleFactor);
+    let xPos = startX + i * (50 * scaleFactor + spacing); // 等間隔で配置
 
     circles.push({
       word: words[i],
