@@ -16,7 +16,7 @@ let waveOffset = 0;
 let fontSize;
 
 function preload() {
-  font = loadFont('https://stat.neort.io/externalResource/cv4j2asn70rs0t8mre3g.otf');
+  font = loadFont('https://stat.neort.io/externalResource/cv4pb14n70rs0t8mrji0.ttf');
 }
 
 function setup() {
@@ -36,15 +36,16 @@ function updateTextPoints() {
   let bbox = font.textBounds("広告募集中", 0, 0, fontSize);
   let x = (width - bbox.w) / 2;  // 横の中心に合わせる
   let y = (height + fontSize) / 2; // 縦の中心に合わせる
+
   points = font.textToPoints("広告募集中", x, y, fontSize, {
-    sampleFactor: 0.15
+    sampleFactor: map(sin(waveOffset), -1, 1, 0.01, 0.5)
   });
 }
 
 function draw() {
-  background(0);
+  background(0, 80, 150);
   noStroke();
-  
+
   for (let i = 0; i < points.length; i++) {
     let pt = points[i];
     let waveY = sin(waveOffset + pt.x * 0.03) * 20 + cos(waveOffset * 0.5 + pt.y * 0.03) * 10; 
@@ -53,12 +54,13 @@ function draw() {
     let xOffset = noiseX;
     let yOffset = waveY + noiseY;
     
-    let colorOffset = map(sin(waveOffset * 0.2 + pt.x * 0.01), -1, 1, 0, 255);
-    fill(100 + colorOffset, 150, 255 - colorOffset);
-    ellipse(pt.x + xOffset, pt.y + yOffset, 6);
+    let gradientColor = lerpColor(color(100, 200, 255, 180), color(255, 255, 255, 0), dist(pt.x, pt.y, width / 2, height / 2) / width);
+    fill(gradientColor);
+    ellipse(pt.x + xOffset, pt.y + yOffset, 12);
   }
   
-  waveOffset += 0.05;
+  waveOffset += 0.03;
+  updateTextPoints();
 }
 
 function windowResized() {
