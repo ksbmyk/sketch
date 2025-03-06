@@ -42,17 +42,7 @@ function draw() {
       circle.speedY *= -1;
     }
     changeCircleColor(circle);
-
-    // 円を描画
-    fill(circle.baseColor);
-    noStroke();
-    ellipse(circle.x, circle.y, circle.diameter);
-
-    // 文字を描画
-    fill(255);
-    textSize(32 * scaleFactor);
-    textAlign(CENTER, CENTER);
-    text(circle.word, circle.x, circle.y);
+    drawCircleWithGlow(circle);
   }
 }
 
@@ -62,12 +52,10 @@ function windowResized() {
   initializeObjects();
 }
 
-// **スケール計算**
 function calculateScale() {
   scaleFactor = min(windowWidth / baseWidth, windowHeight / baseHeight);
 }
 
-// **オブジェクトの初期化**
 function initializeObjects() {
   circles = [];
   particles = [];
@@ -152,6 +140,21 @@ function changeCircleColor(circle) {
   let g = lerp(160, 62, ratio);
   let b = lerp(255, 80, ratio);
   circle.baseColor = color(r, g, b);
+}
+
+function drawCircleWithGlow(circle) {
+  for (let i = 10; i > 0; i--) {
+    let alpha = map(i, 0, 10, 0, 100);
+    let size = map(i, 0, 10, circle.diameter * 1.5, circle.diameter);
+    fill(red(circle.baseColor), green(circle.baseColor), blue(circle.baseColor), alpha);
+    ellipse(circle.x, circle.y, size);
+  }
+  fill(circle.baseColor);
+  ellipse(circle.x, circle.y, circle.diameter);
+  fill(255);
+  textSize(32 * scaleFactor);
+  textAlign(CENTER, CENTER);
+  text(circle.word, circle.x, circle.y);
 }
 
                 </script>        
