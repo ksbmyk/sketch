@@ -12,10 +12,15 @@
                 <script>
 let circles = [];
 let words = ["広", "告", "募", "集", "中"];
+let fonts;
 let particles = [];
 
-let baseWidth = 1118.5;
-let baseHeight = 540;
+function preload() {
+	fonts = loadFont("https://stat.neort.io/externalResource/cv4j2asn70rs0t8mre3g.otf")
+}
+
+let baseWidth = 2238 / 2;
+let baseHeight = 1080 / 2;
 let scaleFactor;
 
 function setup() {
@@ -59,6 +64,7 @@ function calculateScale() {
 function initializeObjects() {
   circles = [];
   particles = [];
+  textFont(fonts);
 
   let totalDiameter = words.length * (50 * scaleFactor);
   let maxWidth = min(width * 0.8, baseWidth * scaleFactor); // 最大幅を決める
@@ -154,7 +160,7 @@ function drawCircleWithGlow(circle) {
   fill(255);
   textSize(32 * scaleFactor);
   textAlign(CENTER, CENTER);
-  text(circle.word, circle.x, circle.y);
+  text(circle.word, circle.x, circle.y - (3.5 * scaleFactor));
 }
 
                 </script>        
