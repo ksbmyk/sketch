@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
+    <meta charset="utf-8" />
+    <title>広告募集中</title>
+  </head>
+  <body>
+    <div>
+        <div>
+            <div>
+                <script>
+/*
+#広告募集広告
+https://neort.io/challenge/cuupks4n70rs0t8mq2g0
+font HannariMincho-Regular.otf(はんなり明朝)
+*/
+
+let circles = [];
+let words = ["広", "告", "募", "集", "中"];
+let fonts;
+let particles = [];
+
+function preload() {
+	fonts = loadFont("https://stat.neort.io/externalResource/cv4j2asn70rs0t8mre3g.otf")
+}
+
+let baseWidth = 2238 / 2;
+let baseHeight = 1080 / 2;
+let scaleFactor;
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  calculateScale();
+  initializeObjects();
+}
+
+function draw() {
+  let c1 = color(20, 30, 80);
+  let c2 = color(0, 20, 40);
+  setGradient(0, 0, width, height, c1, c2, 1);
+
+  for (let particle of particles) {
+    particle.update();
+    particle.show();
+  }
+
+  for (let circle of circles) {
+    circle.y += circle.speedY;
+
+    // 上下の端で反発
+    if (circle.y - circle.diameter / 2 < 0 || circle.y + circle.diameter / 2 > height) {
+      circle.speedY *= -1;
+    }
+    changeCircleColor(circle);
+    drawCircleWithGlow(circle);
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  calculateScale();
+  initializeObjects();
+}
+
+function calculateScale() {
+  scaleFactor = min(windowWidth / baseWidth, windowHeight / baseHeight);
+}
+
+function initializeObjects() {
+  circles = [];
+  particles = [];
+  textFont(fonts);
+
+  let totalDiameter = words.length * (50 * scaleFactor);
+  let maxWidth = min(width * 0.8, baseWidth * scaleFactor); // 最大幅を決める
+  let spacing = (maxWidth - totalDiameter) / (words.length - 1); // 等間隔を計算
+  let startX = (width - maxWidth) / 2; // 左端の開始位置
+
+  for (let i = 0; i < words.length; i++) {
+    let speedY = random(1, 3) * scaleFactor;
+    let xPos = startX + i * (50 * scaleFactor + spacing); // 等間隔で配置
+
+    circles.push({
+      word: words[i],
+      x: xPos,
+      y: random(50 * scaleFactor, height / 2),
+      diameter: 50 * scaleFactor,
+      speedX: 0,
+      speedY: speedY,
+      baseColor: color(50, 150, 255)
+    });
+  }
+
+  for (let i = 0; i < 200; i++) {
+    particles.push(new Particle(random(width), random(height)));
+  }
+}
+
+function setGradient(x, y, w, h, c1, c2, axis) {
+  noFill();
+  if (axis == 1) { // 垂直グラデーション
+    for (let i = y; i <= y + h; i++) {
+      let inter = map(i, y, y + h, 0, 1);
+      let c = lerpColor(c1, c2, inter);
+      stroke(c);
+      line(x, i, x + w, i);
+    }
+  } else { // 水平グラデーション
+    for (let i = x; i <= x + w; i++) {
+      let inter = map(i, x, x + w, 0, 1);
+      let c = lerpColor(c1, c2, inter);
+      stroke(c);
+      line(i, y, i, y + h);
+    }
+  }
+}
+
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = random(5, 15) * scaleFactor;
+    this.speedX = random(-0.5, 0.5) * scaleFactor;
+    this.speedY = random(-0.5, 0.5) * scaleFactor;
+    this.alpha = random(50, 255);
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    // 画面外に出たら戻す
+    if (this.x > width || this.x < 0) {
+      this.speedX *= -1;
+    }
+    if (this.y > height || this.y < 0) {
+      this.speedY *= -1;
+    }
+  }
+
+  show() {
+    fill(255, this.alpha);
+    noStroke();
+    ellipse(this.x, this.y, this.size);
+  }
+}
+
+function changeCircleColor(circle) {
+  let ratio = map(circle.y, 0, height, 0, 1);
+  let r = lerp(100, 44, ratio);
+  let g = lerp(160, 62, ratio);
+  let b = lerp(255, 80, ratio);
+  circle.baseColor = color(r, g, b);
+}
+
+function drawCircleWithGlow(circle) {
+  for (let i = 10; i > 0; i--) {
+    let alpha = map(i, 0, 10, 0, 100);
+    let size = map(i, 0, 10, circle.diameter * 1.5, circle.diameter);
+    fill(red(circle.baseColor), green(circle.baseColor), blue(circle.baseColor), alpha);
+    ellipse(circle.x, circle.y, size);
+  }
+  fill(circle.baseColor);
+  ellipse(circle.x, circle.y, circle.diameter);
+  fill(255);
+  textSize(32 * scaleFactor);
+  textAlign(CENTER, CENTER);
+  text(circle.word, circle.x, circle.y - (3.5 * scaleFactor));
+}
+
+                </script>        
+            </div>
+        </div>    
+    </div>
+  </body>
+</html>
+
