@@ -1,8 +1,10 @@
 require "uart"
 
 # ポートを指定
-port = "/dev/cu.usbmodem1101"  # Mac ls /dev/cu.* で確認
-baud = 9600  # Arduino 側と合わせる
+# port = "/dev/cu.usbmodem1101"  # Mac ls /dev/cu.* で確認
+# baud = 9600  # Arduino 側と合わせる
+port = "/dev/cu.usbmodem1234567890121"
+baud = 9600
 
 # UART 通信を開始
 uart = UART.open(port, baud)
