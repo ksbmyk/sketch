@@ -21,9 +21,6 @@ last_toggle_state = false
 uart = UART.new(unit: :RP2040_UART0, txd_pin: 0, rxd_pin: 1, baudrate: 115200)
 
 loop do
-  uart.write("Hello from Pico!\n")
-  sleep 0.5
-
   toggle_state = toggle.read == 0  # LOW の場合 ON
   # トグルスイッチの変化があれば送信
   if toggle_state != last_toggle_state
@@ -36,15 +33,13 @@ loop do
 
   # ポテンショメータの値をチェック
   sensors.each_with_index do |sensor, i|
-    if (Time.now.to_f.to_i % 2) == 0 # 2秒に1回
-      value = sensor.read_raw # 0〜4095 の値を取得
-      if (value - last_sensor_values[i]).abs > 20 # 変化が大きければ送信
-        puts "#{i},#{value}"
-        message = "#{i},#{value}\n"
-        uart.write(message)  # シリアル送信
-        sleep 0.5
-        last_sensor_values[i] = value
-      end
+    value = sensor.read_raw # 0〜4095 の値を取得
+    if (value - last_sensor_values[i]).abs > 20 # 変化が大きければ送信
+      puts "#{i},#{value}"
+      message = "#{i},#{value}\n"
+      uart.write(message)  # シリアル送信
+      sleep 0.5
+      last_sensor_values[i] = value
     end
   end
 end
