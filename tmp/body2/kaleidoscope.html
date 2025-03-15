@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>rbCanvas/p5</title>
+<!-- rbCanvas/p5 editor v0.5.1 -->
+</head>
+<body>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/opal_patched.min.js"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/opal-parser_patched.min.js" onload="Opal.load('opal-parser'); Opal.load('parser/ruby31');"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/native.min.js" onload="Opal.load('native')"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/opal/date.min.js" onload="Opal.load('date')"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/p5/p5.min.js"></script>
+<script type="text/javascript" src="https://rbcanvas.net/p5/0.5.1/runtime/rbcanvasp5/rbcanvasp5.js"></script>
+<script type="text/ruby" section="s00" name="main">
+$PROGRAM_NAME = "main"
+def setup
+  createCanvas(700, 700)
+  background(0)
+  blendMode(ADD)
+  noStroke
+
+  800.times do
+    x1 = rand(50..width - 50)
+    y1 = rand(50..height - 50)
+    x2 = x1 + rand(-50..50)
+    y2 = y1 + rand(-50..50)
+    x3 = x1 + rand(-50..50)
+    y3 = y1 + rand(-50..50)
+
+    fill(rand(0..100), rand(0..100), rand(150..255), 100)
+    triangle(x1, y1, x2, y2, x3, y3)
+
+    fill(rand(50..150), rand(50..150), rand(200..255), 100)
+    triangle(width - x1, y1, width - x2, y2, width - x3, y3)
+  end
+end
+
+$PROGRAM_NAME = "main"
+</script>
+
+</body>
+</html>
