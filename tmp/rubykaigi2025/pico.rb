@@ -9,7 +9,8 @@ pin.write 1
 sensor_pins = [26, 27, 28]  # GP26～GP28
 sensors = sensor_pins.map { |pin| ADC.new(pin) }
 
-# ポテンショメータより先に設定するとトグルスイッチの値がとれない
+# トグルスイッチ
+# ADCより先に定義するとトグルスイッチの値がとれない
 toggle_pin = 2 # GP2（物理4）
 toggle = GPIO.new(toggle_pin, GPIO::IN|GPIO::PULL_UP) # 内部プルアップに設定
 
@@ -18,6 +19,7 @@ last_sensor_values = Array.new(sensor_pins.size, 0)
 last_toggle_state = false
 
 # UART0 を使用（GP0: TX, GP1: RX）
+# ADCより先に定義すると送信されない
 uart = UART.new(unit: :RP2040_UART0, txd_pin: 0, rxd_pin: 1, baudrate: 115200)
 
 loop do
