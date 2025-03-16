@@ -15,19 +15,36 @@ puts "pico からのデータを待機中..."
 
 # 継続的にデータを受信
 loop do
-  if (line = uart.gets)
-    line.chomp!
-    puts "受信: #{line}"
+  data = uart.gets
 
-#     if line.start_with?("T,")  # トグルスイッチ
-#       toggle_state = line.split(",")[1].to_i
-#       # puts "#{toggle_state == 1 ? 'ON' : 'OFF'}"
-#     else
-#       sensor_id, sensor_value = line.split(",").map(&:to_i)
+  # return if data.nil? || data.empty?
+  if data
+    line = data.chomp!
+    # puts "line: #{line}"
 
-#       if sensor_id == 0
-#         puts "#{sensor_id} の値: #{sensor_value}"
-#       end
-#     end
+    values = line.split(',')
+    # puts "values: #{values}"
+
+    if values.length == 2
+      case values[0]
+      when "T"
+        # @is_dark_mode = values[1] == "1"
+        puts "T: #{values[1]}"
+      when "0"
+        # @circle_count = map(values[1].to_i, 0, 1023, 1, 100)
+        # puts "circleCount: #{@circle_count}"
+        puts "0: #{values[1]}"
+      when "1"
+        # @circle_size = map(values[1].to_i, 0, 1023, 31, 800)
+        # puts "circleSize: #{@circle_size}"
+        puts "1: #{values[1]}"
+      when "2"
+        # @hue_value = map(values[1].to_i, 0, 1023, 0, 360)
+        # puts "hueValue: #{@hue_value}"
+        puts "2: #{values[1]}"
+      else
+        puts "Error"
+      end
+    end
   end
 end
