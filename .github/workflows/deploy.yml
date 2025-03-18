@@ -23,7 +23,7 @@ jobs:
 
       # npm install の際にキャッシュを使うよう設定
       - name: Cache dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
