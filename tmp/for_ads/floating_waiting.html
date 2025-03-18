@@ -16,6 +16,7 @@ https://neort.io/challenge/cuupks4n70rs0t8mq2g0
 font HannariMincho-Regular.otf(はんなり明朝)
 */
 
+
 let circles = [];
 let words = ["広", "告", "募", "集", "中"];
 let fonts;
@@ -72,27 +73,27 @@ function initializeObjects() {
   particles = [];
   textFont(fonts);
 
-  let totalDiameter = words.length * (50 * scaleFactor);
-  let maxWidth = min(width * 0.8, baseWidth * scaleFactor); // 最大幅を決める
-  let spacing = (maxWidth - totalDiameter) / (words.length - 1); // 等間隔を計算
-  let startX = (width - maxWidth) / 2; // 左端の開始位置
+  let diameter = 100 * scaleFactor;
+  let spacing = constrain(width / 12, diameter * 0.5, diameter * 2);
+  let centerX = width / 2;
+  let startX = centerX - (diameter + spacing) * 2;
 
   for (let i = 0; i < words.length; i++) {
     let speedY = random(1, 3) * scaleFactor;
-    let xPos = startX + i * (50 * scaleFactor + spacing); // 等間隔で配置
+    let xPos = startX + i * (diameter + spacing);
 
     circles.push({
       word: words[i],
       x: xPos,
       y: random(50 * scaleFactor, height / 2),
-      diameter: 50 * scaleFactor,
+      diameter: diameter,
       speedX: 0,
       speedY: speedY,
       baseColor: color(50, 150, 255)
     });
   }
 
-  for (let i = 0; i < 200; i++) {
+  for (let i = 0; i < 300; i++) {
     particles.push(new Particle(random(width), random(height)));
   }
 }
@@ -164,9 +165,9 @@ function drawCircleWithGlow(circle) {
   fill(circle.baseColor);
   ellipse(circle.x, circle.y, circle.diameter);
   fill(255);
-  textSize(32 * scaleFactor);
+  textSize(48 * scaleFactor);
   textAlign(CENTER, CENTER);
-  text(circle.word, circle.x, circle.y - (3.5 * scaleFactor));
+  text(circle.word, circle.x, circle.y - (5 * scaleFactor));
 }
 
                 </script>        
