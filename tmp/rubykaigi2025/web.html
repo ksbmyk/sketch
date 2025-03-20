@@ -87,6 +87,59 @@
     #slider-container {
       margin-top: 10px;
     }
+    .slider-container {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      vertical-align: middle;
+    }
+    .slider-container input[type="range"] {
+      margin: 0;
+      vertical-align: middle;
+      width: 100px;
+      -webkit-appearance: none;
+      height: 20px;
+      background: transparent;
+    }
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -8px;
+    }
+    .slider-container input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      background: #666;
+      border-radius: 2px;
+    }
+    .slider-container input[type="range"]:focus {
+      outline: none;
+    }
+    .slider-container input[type="range"]:active::-webkit-slider-thumb {
+      background: #cccccc;
+    }
+    @media (max-width: 768px) {
+      .slider-container input[type="range"] {
+        width: 120px;
+        height: 24px;
+      }
+      .slider-container input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+        margin-top: -10px;
+      }
+      .slider-container input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+      }
+    }
+    .slider-container span {
+      min-width: 40px;
+      text-align: right;
+    }
 
   </style>
 </head>
@@ -112,19 +165,19 @@ def draw
   end
 
   translate(width / 2, height / 2)
-  $hue_value = <input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span>
-  $alpha_value = <input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span>
+  $hue_value = <div class="slider-container"><input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span></div>
+  $alpha_value = <div class="slider-container"><input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span></div>
   fill($hue_value, 80, 100, $alpha_value)
-  $speed = <input type="range" id="speed" min="1" max="20" value="5"><span id="speed-value">0.05</span>
+  $speed = <div class="slider-container"><input type="range" id="speed" min="1" max="20" value="5"><span id="speed-value">0.05</span></div>
   $angle_offset += $speed
 
-  $circle_count = <input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span>
+  $circle_count = <div class="slider-container"><input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span></div>
   $circle_count.times do |i|
     angle = TWO_PI / $circle_count * i + $angle_offset
-    $distance = <input type="range" id="distance" min="1" max="300" value="100"><span id="distance-value">100</span>
+    $distance = <div class="slider-container"><input type="range" id="distance" min="1" max="300" value="100"><span id="distance-value">100</span></div>
     x = cos(angle) * $distance
     y = sin(angle) * $distance
-    $circle_size = <input type="range" id="size" min="31" max="500" value="150"><span id="size-value">150</span>
+    $circle_size = <div class="slider-container"><input type="range" id="size" min="31" max="500" value="150"><span id="size-value">150</span></div>
     circle(x, y, $circle_size + (i.even? ? 30 : -30))
   end
 end
