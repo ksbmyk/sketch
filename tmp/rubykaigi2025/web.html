@@ -111,6 +111,7 @@
     require 'js'
     slider_element = JS.global[:document].getElementById("slider")
     $slider_value = slider_element[:value].to_i # スライダーの値を整数に変換
+
     $is_dark_mode = false
     $hue_value = 100
     $alpha_Value = 150
@@ -143,17 +144,15 @@
       fill($hue_value, 80, 100, $alpha_balue)
     
       $circle_count.times do |i|
-      angle = TWO_PI / $circle_count * i + $angle_offset
-      x = cos(angle) * $distance
-      y = sin(angle) * $distance
-      circle(x, y, $circle_size + (i.even? ? 30 : -30))
-    end
-
+        angle = TWO_PI / $circle_count * i + $angle_offset
+        x = cos(angle) * $distance
+        y = sin(angle) * $distance
+        circle(x, y, $circle_size + (i.even? ? 30 : -30))
+      end
 
       # スライダーの値を取得
       $radius = $slider_value
 
-      
       fill(100, 150, 255)
       ellipse(200, 200, $radius * 2, $radius * 2)
     end
