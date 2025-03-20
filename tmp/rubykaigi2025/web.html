@@ -96,6 +96,7 @@
       def setup
       hue_value:<input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span>
       alpha_value:<input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span>
+      circle_count:<input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span>
       speed:<input type="range" id="speed" min="1" max="50" value="5"><span id="speed-value">0.05</span>
     </code>
   </div>
@@ -109,12 +110,13 @@
     require 'js'
     hue_element = JS.global[:document].getElementById("hue")
     alpha_element = JS.global[:document].getElementById("alpha")
+    circle_element = JS.global[:document].getElementById("circle")
     speed_element = JS.global[:document].getElementById("speed")
 
     $is_dark_mode = false
     $hue_value = hue_element[:value].to_i
     $alpha_value = alpha_element[:value].to_i
-    $circle_count = 10
+    $circle_count = circle_element[:value].to_i
     $distance = 50
     $circle_size = 100
     $speed = speed_element[:value].to_i * 0.01
@@ -159,6 +161,11 @@
     alpha_element.addEventListener("input") do
       $alpha_value = alpha_element[:value].to_i
       JS.global[:document].getElementById("alpha-value")[:innerText] = $alpha_value.to_s
+    end
+
+    circle_element.addEventListener("input") do
+      $circle_count = circle_element[:value].to_i
+      JS.global[:document].getElementById("circle-value")[:innerText] = $circle_count.to_s
     end
 
     speed_element.addEventListener("input") do
