@@ -24,7 +24,7 @@ def setup
   @angle_offset = 0
 
   # fullScreen() # 全画面に表示
-  size(600, 600)
+  size(1000, 1000)
   colorMode(HSB, 360, 100, 100, 255) # 色の指定をHBSモードに
   noStroke # 円の枠は表示しない
 end
@@ -58,10 +58,7 @@ def handle_serial_data
   return if data.nil? || data.empty?
   if data
     line = data.chomp!
-    # puts "line: #{line}"
-
     values = line.split(',')
-    # puts "values: #{values}"
 
     if values.length == 2
       case values[0]
@@ -69,19 +66,16 @@ def handle_serial_data
         @is_dark_mode = values[1] == "1"
         puts "T: #{values[1]}"
       when "0"
-        # @circle_count = map(values[1].to_i, 0, 1023, 1, 100)
-        # puts "circleCount: #{@circle_count}"
-        puts "0: #{values[1]}"
+        @circle_count = map(values[1].to_i, 0, 4095, 1, 100).to_i
+        puts "circleCount: #{@circle_count}"
       when "1"
-        # @circle_size = map(values[1].to_i, 0, 1023, 31, 800)
-        # puts "circleSize: #{@circle_size}"
-        puts "1: #{values[1]}"
+        @circle_size = map(values[1].to_i, 0, 4095, 31, 500).to_i
+        puts "circleSize: #{@circle_size}"
       when "2"
-        # @hue_value = map(values[1].to_i, 0, 1023, 0, 360)
-        # puts "hueValue: #{@hue_value}"
-        puts "2: #{values[1]}"
+        @hue_value = map(values[1].to_i, 0, 4095, 0, 360).to_i
+        puts "hueValue: #{@hue_value}"
       else
-        puts "Error"
+        puts "Error #{values}"
       end
     end
   end
