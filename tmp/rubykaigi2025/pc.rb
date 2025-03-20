@@ -14,19 +14,18 @@ def setup
   # UART 通信を開始
   @uart = UART.open(port, baud)
 
-  @circle_count = 10  # 円の個数
-  @circle_size = 150  # 円のサイズ
-  @hue_value = 200    # 色相
-  @alpha_value = 150  # 透明度
-  @distance = 200    # 距離
-  # @speed = 10      # アニメーションの速度
-  @is_dark_mode = false # トグルスイッチの状態
+  @circle_count = 10
+  @circle_size = 150
+  @hue_value = 200
+  @alpha_value = 150
+  @distance = 200
+  # @speed = 10
+  @is_dark_mode = false
   @angle_offset = 0
 
-  # fullScreen() # 全画面に表示
   size(1000, 1000)
-  colorMode(HSB, 360, 100, 100, 255) # 色の指定をHBSモードに
-  noStroke # 円の枠は表示しない
+  colorMode(HSB, 360, 100, 100, 255)
+  noStroke
 end
 
 def draw
