@@ -16,9 +16,13 @@ def setup
 end
 
 def draw
-  data = @uart.gets
+  handle_serial_data
 
-  # return if data.nil? || data.empty?
+end
+
+def handle_serial_data
+  data = @uart.gets
+  return if data.nil? || data.empty?
   if data
     line = data.chomp!
     # puts "line: #{line}"
