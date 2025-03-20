@@ -127,10 +127,10 @@
     $distance = distance_element[:value].to_i
     $circle_size = size_element[:value].to_i
     $speed = speed_element[:value].to_i * 0.01
-    $angle_offset = 0; 
+    $angle_offset = 0
 
     def setup
-      createCanvas(windowWidth/2, windowWidth/2)  # キャンバスの作成
+      createCanvas(windowWidth / 2, windowWidth / 2)
       colorMode(HSB, 360, 100, 100, 255)
       noStroke
     end
