@@ -95,7 +95,8 @@
     <code>
       def setup
       hue_value:<input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span>
-      alpha_balue:<input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span>
+      alpha_value:<input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span>
+      speed:<input type="range" id="speed" min="1" max="50" value="5"><span id="speed-value">0.05</span>
     </code>
   </div>
   <div id="result-container">
@@ -108,6 +109,7 @@
     require 'js'
     hue_element = JS.global[:document].getElementById("hue")
     alpha_element = JS.global[:document].getElementById("alpha")
+    speed_element = JS.global[:document].getElementById("speed")
 
     $is_dark_mode = false
     $hue_value = hue_element[:value].to_i
@@ -115,9 +117,8 @@
     $circle_count = 10
     $distance = 50
     $circle_size = 100
-    $speed = 0.05
+    $speed = speed_element[:value].to_i * 0.01
     $angle_offset = 0; 
- 
 
     def setup
       createCanvas(windowWidth/2, windowWidth/2)  # キャンバスの作成
@@ -136,6 +137,7 @@
       end
 
       $angle_offset += $speed
+
       
       translate(width / 2, height / 2)
       fill($hue_value, 80, 100, $alpha_value)
@@ -158,6 +160,11 @@
       $alpha_value = alpha_element[:value].to_i
       JS.global[:document].getElementById("alpha-value")[:innerText] = $alpha_value.to_s
     end
+
+    speed_element.addEventListener("input") do
+    $speed = speed_element[:value].to_i * 0.01
+    JS.global[:document].getElementById("speed-value")[:innerText] = $speed.to_s
+  end
   </script>
 </body>
 </html>
