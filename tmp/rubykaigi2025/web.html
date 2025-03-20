@@ -94,11 +94,7 @@
   <div id="code-container">
     <code>
       def setup
-      <label for="slider">スライダーの値:</label>
-      <input type="range" id="slider" min="0" max="100" value="50">
-      <span id="slider-value">50</span>
-
-      <div id="output"></div>
+      hue_value:<input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">50</span>
     </code>
   </div>
   <div id="result-container">
@@ -109,11 +105,11 @@
   
   <script type="text/ruby">
     require 'js'
-    slider_element = JS.global[:document].getElementById("slider")
-    $slider_value = slider_element[:value].to_i # スライダーの値を整数に変換
+    hue_element = JS.global[:document].getElementById("hue")
+    #$slider_value = slider_element[:value].to_i # スライダーの値を整数に変換
 
     $is_dark_mode = false
-    $hue_value = 100
+    $hue_value = hue_element[:value].to_i
     $alpha_Value = 150
     $circle_count = 10
     $distance = 50
@@ -149,22 +145,13 @@
         y = sin(angle) * $distance
         circle(x, y, $circle_size + (i.even? ? 30 : -30))
       end
-
-      # スライダーの値を取得
-      $radius = $slider_value
-
-      fill(100, 150, 255)
-      ellipse(200, 200, $radius * 2, $radius * 2)
     end
-  P5::init()
+    P5::init()
 
-  # スライダーが動かされた時に円のサイズを更新
-  slider_element.addEventListener("input") do
-    $slider_value = slider_element[:value].to_i
-    $radius = $slider_value
-    JS.global[:document].getElementById("slider-value")[:innerText] = $slider_value.to_s
-    JS.global[:document].getElementById("output")[:innerText] = "円の半径: #{$slider_value}"
-  end
+    hue_element.addEventListener("input") do
+      $hue_value = hue_element[:value].to_i
+      JS.global[:document].getElementById("hue-value")[:innerText] = $hue_value.to_s
+    end
   </script>
 </body>
 </html>
