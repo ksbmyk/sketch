@@ -6,14 +6,106 @@
   <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
   <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden; /* 横スクロールを無効化 */
+      max-width: 100vw; /* 画面幅を超えないように */
+    }
+    #code-container {
+      width: 50%;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      line-height: 1.2;
+    }
+    .stepper-container {
+      display: inline-flex; /* 改行を防ぐ */
+      align-items: center;
+      margin-right: 10px;
+    }
+    .stepper-button {
+      background-color: #ddd;
+      border: 1px solid #ccc;
+      padding: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .stepper-value {
+      width: 30px;
+      text-align: center;
+      font-size: 16px;
+      margin: 0 10px;
+    }
+    code {
+      color: #fff;
+    }
+    .identifier {
+      color: #679ad1;
+    }
+    .control-structure {
+      color: #bc89bd;
+    }
+    .function{
+      color: #dcdcaf;
+    }
+    .variable {
+      color: #aadafa;
+    }
+    .first-parentheses{
+      color: #f9d849;
+    }
+    .second-parentheses{
+      color: #cc76d1;
+    }
+    .third-parentheses{
+      color: #4a9df8;
+    }
+    .string{
+      color: #c5947c;
+    }
+    .integer{
+      color: #bacdab
+    }
+    .comment{
+      color: #74985d
+    }
+
+    #result-container {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+    }
+    #slider-container {
+      margin-top: 10px;
+    }
+
+  </style>
 </head>
 <body>
-  <main></main>
-  <label for="slider">スライダーの値:</label>
-  <input type="range" id="slider" min="0" max="100" value="50">
-  <span id="slider-value">50</span>
+  <div id="code-container">
+    <code>
+      def setup
+      <label for="slider">スライダーの値:</label>
+      <input type="range" id="slider" min="0" max="100" value="50">
+      <span id="slider-value">50</span>
+
+      <div id="output"></div>
+    </code>
+  </div>
+  <div id="result-container">
+    <div id="sketch-holder"><main></main></div>
+  </div>
   
-  <div id="output"></div>
+
   
   <script type="text/ruby">
     require 'js'
