@@ -13,11 +13,44 @@ def setup
 
   # UART 通信を開始
   @uart = UART.open(port, baud)
+
+  @circle_count = 10  # 円の個数
+  @circle_size = 150  # 円のサイズ
+  @hue_value = 200    # 色相
+  @alpha_value = 150  # 透明度
+  @distance = 200    # 距離
+  # @speed = 10      # アニメーションの速度
+  @is_dark_mode = false # トグルスイッチの状態
+  @angle_offset = 0
+
+  # fullScreen() # 全画面に表示
+  size(600, 600)
+  colorMode(HSB, 360, 100, 100, 255) # 色の指定をHBSモードに
+  noStroke # 円の枠は表示しない
 end
 
 def draw
   handle_serial_data
 
+  # blendMode(BLEND)
+  if (@is_dark_mode)
+    background(0, 0, 0)
+    blendMode(ADD)
+  else
+    background(0, 0, 100)
+    blendMode(MULTIPLY)
+  end
+
+  translate(width / 2, height / 2)
+  fill(@hue_value, 80, 100, @alpha_value)
+  # @angle_offset += @speed
+
+  @circle_count.times do |i|
+    angle = TWO_PI / @circle_count * i #+ @angle_offset
+    x = cos(angle) * @distance
+    y = sin(angle) * @distance
+    circle(x, y, @circle_size + (i.even? ? 30 : -30))
+  end
 end
 
 def handle_serial_data
@@ -33,7 +66,7 @@ def handle_serial_data
     if values.length == 2
       case values[0]
       when "T"
-        # @is_dark_mode = values[1] == "1"
+        @is_dark_mode = values[1] == "1"
         puts "T: #{values[1]}"
       when "0"
         # @circle_count = map(values[1].to_i, 0, 1023, 1, 100)
