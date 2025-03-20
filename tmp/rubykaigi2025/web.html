@@ -94,6 +94,7 @@
   <div id="code-container">
     <code>
       def setup
+      is_dark_mode: <button id="mode-toggle">false</button>
       hue_value:<input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span>
       alpha_value:<input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span>
       circle_count:<input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span>
@@ -110,6 +111,8 @@
   
   <script type="text/ruby">
     require 'js'
+
+    mode_toggle = JS.global[:document].getElementById("mode-toggle")
     hue_element = JS.global[:document].getElementById("hue")
     alpha_element = JS.global[:document].getElementById("alpha")
     circle_element = JS.global[:document].getElementById("circle")
@@ -117,7 +120,7 @@
     size_element = JS.global[:document].getElementById("size")
     speed_element = JS.global[:document].getElementById("speed")
 
-    $is_dark_mode = false
+    $is_dark_mode = mode_toggle[:innerText].to_s == "true"
     $hue_value = hue_element[:value].to_i
     $alpha_value = alpha_element[:value].to_i
     $circle_count = circle_element[:value].to_i
@@ -156,6 +159,11 @@
       end
     end
     P5::init()
+
+    mode_toggle.addEventListener("click") do
+      $is_dark_mode = !$is_dark_mode
+      mode_toggle[:innerText] = $is_dark_mode.to_s
+    end
 
     hue_element.addEventListener("input") do
       $hue_value = hue_element[:value].to_i
