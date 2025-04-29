@@ -12,8 +12,8 @@ idf_component_register(
     ${COMPONENT_DIR}/picoruby/mrbgems/picoruby-pwm/ports/esp32/pwm.c
     ${COMPONENT_DIR}/picoruby/mrbgems/picoruby-rmt/ports/esp32/rmt.c
     ${COMPONENT_DIR}/picoruby/mrbgems/picoruby-watchdog/ports/esp32/watchdog.c
-    ${COMPONENT_DIR}/atom_matrix_led.c
-    ${COMPONENT_DIR}/mrbc_atom_matrix_led.c
+    ${COMPONENT_DIR}/ws2812.c
+    ${COMPONENT_DIR}/mrbc_ws2812.c
   INCLUDE_DIRS
     ${COMPONENT_DIR}
     ${COMPONENT_DIR}/picoruby/include
