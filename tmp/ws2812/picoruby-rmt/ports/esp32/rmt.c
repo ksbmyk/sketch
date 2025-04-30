@@ -11,6 +11,7 @@
 static rmt_channel_handle_t rmt_channel = NULL;
 static rmt_encoder_handle_t rmt_encoder = NULL;
 static RMT_symbol_dulation_t rmt_symbol_dulation;
+static uint32_t rmt_max_bytes = UINT32_MAX;
 
 static size_t
 encoder_callback(const void *data, size_t data_size,
@@ -41,26 +42,33 @@ encoder_callback(const void *data, size_t data_size,
 
   size_t data_pos = symbols_written / 8;
   uint8_t *data_bytes = (uint8_t*)data;
-  if (data_pos < data_size) {
-    size_t symbol_pos = 0;
-    for (int bitmask = 0x80; bitmask != 0; bitmask >>= 1) {
-      if (data_bytes[data_pos]&bitmask) {
-        symbols[symbol_pos++] = symbol_one;
-      } else {
-        symbols[symbol_pos++] = symbol_zero;
-      }
-    }
-    return symbol_pos;
-  } else {
+  if (data_pos >= data_size) {
+    // 送信済み → リセットシンボルを送る（1シンボル分必要）
+    if (symbols_free < 1) return 0;
     symbols[0] = symbol_reset;
-    *done = 1;
+    *done = true;
     return 1;
   }
+
+  // 1バイト分送信（8シンボル必要）
+  if (symbols_free < 8) return 0;
+
+  uint8_t byte = data_bytes[data_pos];
+  for (int i = 0; i < 8; ++i) {
+    symbols[i] = (byte & (0x80 >> i)) ? symbol_one : symbol_zero;
+  }
+
+  return 8;
 }
 
 int
-RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
-{
+RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd, uint32_t max_pixels)
+ {
+
+  if (max_pixels > 0) {
+    rmt_max_bytes = max_pixels * 3;
+  }
+
   if (gpio >= GPIO_NUM_MAX) return -1;
 
   rmt_symbol_dulation = *rsd;
@@ -96,6 +104,10 @@ RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
 int
 RMT_write(uint8_t *buffer, uint32_t nbytes)
 {
+  if (nbytes > rmt_max_bytes) {
+    return -1;
+  }
+
   rmt_transmit_config_t tx_config = {
     .loop_count = 0,
   };
@@ -108,6 +120,7 @@ RMT_write(uint8_t *buffer, uint32_t nbytes)
   if(ret != ESP_OK) {
     return -1;
   }
+  rmt_disable(rmt_channel);
 
   return 0;
 }
