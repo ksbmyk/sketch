@@ -11,47 +11,18 @@
 static rmt_channel_handle_t rmt_channel = NULL;
 static rmt_encoder_handle_t rmt_encoder = NULL;
 static RMT_symbol_dulation_t rmt_symbol_dulation;
-static uint32_t rmt_max_bytes = UINT32_MAX;
 
 static size_t
 encoder_callback(const void *data, size_t data_size,
   size_t symbols_written, size_t symbols_free, rmt_symbol_word_t *symbols, bool *done, void *arg)
 {
   // デバッグログを追加
-  printf("encoder_callback: data=%p, size=%zu, symbols_written=%zu, symbols_free=%zu, symbols=%p, done=%p\n",
-         data, data_size, symbols_written, symbols_free, symbols, done);
-  
-         if (!data || !symbols || !done) {
-    printf("Error: Null pointer detected in encoder_callback\n");
+  // printf("encoder_callback start: data=%p, size=%zu, symbols_written=%zu, symbols_free=%zu, symbols=%p, done=%p\n",
+  //        data, data_size, symbols_written, symbols_free, symbols, done);
+  // DEBUG_PRINT("encoder_callback Start\n");
+  if (!data || !symbols || !done) {
     return 0;  // 防御的リターン
   }
-
-  if (symbols_free < 8) {
-    printf("Error: Not enough symbols_free (%zu) in encoder_callback\n", symbols_free);
-    return 0;
-  }
-
-  size_t data_pos = symbols_written / 8;
-  printf("Data position: %zu, Data size: %zu\n", data_pos, data_size);
-
-  if (data_pos >= data_size) {
-    // 送信済み → リセットシンボルを送る（1シンボル分必要）
-    if (symbols_free < 1) {
-      printf("Error: Not enough symbols_free for reset symbol\n");
-      *done = false;
-      return 0;
-    }
-    symbols[0] = (rmt_symbol_word_t){
-      .level0 = 0,
-      .duration0 = (uint16_t)((float)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
-      .level1 = 0,
-      .duration1 = (uint16_t)((float)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
-    };
-    *done = true;
-    printf("Reset symbol sent\n");
-    return 1;
-  }
-
   // 1バイト分送信（8シンボル必要）
   if (symbols_free < 8) {
     printf("Error: Not enough symbols_free for 1 byte transmission\n");
@@ -59,9 +30,59 @@ encoder_callback(const void *data, size_t data_size,
     return 0;
   }
 
+  size_t data_pos = symbols_written / 8;
+  printf("data_size=%zu, symbols_written=%zu, symbols_free=%zu, symbols=%p, data_pos=%zu\n",
+         data_size, symbols_written, symbols_free, symbols, data_pos);
+  if (data_pos >= data_size) {
+    // 送信済み → リセットシンボルを送る（1シンボル分必要）
+    if (symbols_free < 1) {
+      // DEBUG_PRINT("Error: Not enough symbols_free for reset symbol\n");
+      *done = false;
+      return 0;
+    }
+
+    // ここで範囲チェックを追加
+    // if (rmt_symbol_dulation.reset_ns <= 0) {
+    //   DEBUG_PRINT("Error: Invalid reset_ns value (%ld), using default value\n", rmt_symbol_dulation.reset_ns);
+    //   rmt_symbol_dulation.reset_ns = 1000000;  // デフォルトの値（適切なナノ秒に設定）
+    // }
+
+    int ns = rmt_symbol_dulation.reset_ns;
+    if (ns <= 0 || ns > 60000) {  // 例: 上限10ms
+      printf("Error: Invalid reset_ns value (%d), using default value\n", ns);
+      ns = 60000;
+    }
+    uint16_t duration = (uint16_t)((float)ns * RMT_RESOLUTION_HZ / 1000000000);
+    if (duration == 0) {
+      printf("Warning: Calculated duration is zero, forcing minimum value 1\n");
+      duration = 1;
+    }
+    printf("Reset symbol duration: %d ns, calculated duration: %d\n", ns, duration);
+    // symbols[0] = (rmt_symbol_word_t){
+    //   .level0 = 0,
+    //   .duration0 = (uint16_t)((float)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+    //   .level1 = 0,
+    //   .duration1 = (uint16_t)((float)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+    // };
+    symbols[0] = (rmt_symbol_word_t){
+      .level0 = 0,
+      .duration0 = duration,
+      .level1 = 0,
+      .duration1 = duration,
+    };
+    *done = true;
+    return 1;
+  }
+
+  // // 1バイト分送信（8シンボル必要）
+  // if (symbols_free < 8) {
+  //   // printf("Error: Not enough symbols_free for 1 byte transmission\n");
+  //   *done = false;
+  //   return 0;
+  // }
+
   const uint8_t *data_bytes = (const uint8_t *)data;
   uint8_t byte = data_bytes[data_pos];
-  printf("Transmitting byte: 0x%02x\n", byte);
 
   for (int i = 0; i < 8; ++i) {
     symbols[i] = (byte & (0x80 >> i)) ? (rmt_symbol_word_t){
@@ -76,18 +97,13 @@ encoder_callback(const void *data, size_t data_size,
       .duration1 = (uint16_t)((float)rmt_symbol_dulation.t0l_ns * RMT_RESOLUTION_HZ / 1000000000),
     };
   }
-  printf("encoder_callback: symbols_written=%zu, symbols_free=%zu, data_pos=%zu, data_size=%zu\n",
-    symbols_written, symbols_free, data_pos, data_size);
-  printf("8 symbols written for byte: 0x%02x\n", byte);
+
   return 8;
 }
 
 int
-RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd, uint32_t max_pixels)
+RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
 {
-  if (max_pixels > 0) {
-    rmt_max_bytes = max_pixels * 3; // 1 LED = 3 バイト
-  }
 
   if (gpio >= GPIO_NUM_MAX) return -1;
 
@@ -124,14 +140,9 @@ RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd, uint32_t max_pixels)
 int
 RMT_write(uint8_t *buffer, uint32_t nbytes)
 {
-  if (nbytes > rmt_max_bytes) {
-    printf("Error: Data size exceeds maximum allowed bytes\n");
-
-    return -1;
-  }
-
   // 1 チャンクで送信可能な最大バイト数を計算
-  const uint32_t max_symbols = RMT_MEM_BLOCK_SYMBOLS; // 設定されたシンボル数
+  const uint32_t max_symbols = RMT_MEM_BLOCK_SYMBOLS - 8; // 最後にリセット用の8シンボルを予約
+  // const uint32_t max_symbols = RMT_MEM_BLOCK_SYMBOLS ; // 設定されたシンボル数
   const uint32_t max_bytes_per_chunk = max_symbols / 8; // 1 バイト = 8 シンボル
   uint32_t offset = 0;
   rmt_transmit_config_t tx_config = {
@@ -141,23 +152,21 @@ RMT_write(uint8_t *buffer, uint32_t nbytes)
   while (offset < nbytes) {
     uint32_t remaining = nbytes - offset;
     uint32_t send_size = remaining > max_bytes_per_chunk ? max_bytes_per_chunk : remaining;
-  
-    printf("RMT_write: offset=%lu, send_size=%lu, remaining=%lu\n", offset, send_size, remaining);
-  
+    printf("rmt_transmit\n");
     esp_err_t ret = rmt_transmit(rmt_channel, rmt_encoder, buffer + offset, send_size, &tx_config);
     if (ret != ESP_OK) {
-      printf("Error: rmt_transmit failed\n");
+      // printf("Error: rmt_transmit failed");
+      return -1;
+    }
+    printf("rmt_tx_wait_all_done\n");
+    // 送信完了を待機
+    ret = rmt_tx_wait_all_done(rmt_channel, portMAX_DELAY);
+    if (ret != ESP_OK) {
+      printf("Error: rmt_tx_wait_all_done failed\n");
       return -1;
     }
   
     offset += send_size;
-  }
-  
-  // すべて送った後に待機
-  esp_err_t ret = rmt_tx_wait_all_done(rmt_channel, portMAX_DELAY);
-  if (ret != ESP_OK) {
-    printf("Error: rmt_tx_wait_all_done failed\n");
-    return -1;
   }
 
   return 0;

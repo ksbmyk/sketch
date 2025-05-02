@@ -1,6 +1,6 @@
 class RMT
   def initialize(pin, t0h_ns: 0, t0l_ns: 0, t1h_ns: 0, t1l_ns: 0, reset_ns: 0, max_pixels: 1)
-    _init(pin, t0h_ns, t0l_ns, t1h_ns, t1l_ns, reset_ns, max_pixels)
+    _init(pin, t0h_ns, t0l_ns, t1h_ns, t1l_ns, reset_ns)
   end
 
   def write(*params)
