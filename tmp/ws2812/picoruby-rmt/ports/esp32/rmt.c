@@ -61,7 +61,6 @@ encoder_callback(const void *data, size_t data_size,
 int
 RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
 {
-
   if (gpio >= GPIO_NUM_MAX) return -1;
 
   rmt_symbol_dulation = *rsd;
@@ -69,12 +68,12 @@ RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
   rmt_tx_channel_config_t tx_chan_config = {
     .clk_src = RMT_CLK_SRC_DEFAULT,
     .gpio_num = gpio,
-    .mem_block_symbols = RMT_MEM_BLOCK_SYMBOLS, // 固定値
+    .mem_block_symbols = RMT_MEM_BLOCK_SYMBOLS,
     .resolution_hz = RMT_RESOLUTION_HZ,
     .trans_queue_depth = RMT_TRANS_QUEUE_DEPTH,
   };
   esp_err_t ret = rmt_new_tx_channel(&tx_chan_config, &rmt_channel);
-  if (ret != ESP_OK) {
+  if(ret != ESP_OK) {
     return -1;
   }
 
@@ -87,30 +86,28 @@ RMT_init(uint32_t gpio, RMT_symbol_dulation_t *rsd)
   }
 
   ret = rmt_enable(rmt_channel);
-  if (ret != ESP_OK) {
+  if(ret != ESP_OK) {
     return -1;
   }
 
   return 0;
 }
 
-int RMT_write(uint8_t *buffer, uint32_t nbytes) {
+int
+RMT_write(uint8_t *buffer, uint32_t nbytes)
+{
   rmt_transmit_config_t tx_config = {
     .loop_count = 0,
   };
-
   esp_err_t ret = rmt_transmit(rmt_channel, rmt_encoder, buffer, nbytes, &tx_config);
-  if (ret != ESP_OK) {
-    printf("Error: rmt_transmit failed\n");
+  if(ret != ESP_OK) {
     return -1;
   }
 
   ret = rmt_tx_wait_all_done(rmt_channel, portMAX_DELAY);
-  if (ret != ESP_OK) {
-    printf("Error: rmt_tx_wait_all_done failed\n");
+  if(ret != ESP_OK) {
     return -1;
   }
 
-  printf("Sent %lu bytes\n", nbytes);
   return 0;
 }
