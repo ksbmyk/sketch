@@ -17,60 +17,54 @@ encoder_callback(const void *data, size_t data_size,
   size_t symbols_written, size_t symbols_free, rmt_symbol_word_t *symbols, bool *done, void *arg)
 {
   if (!data || !symbols || !done) {
-    return 0;  // 防御的リターン
+    return 0;  // 安全防御
   }
 
+  const rmt_symbol_word_t symbol_zero = {
+    .level0 = 1,
+    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.t0h_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .level1 = 0,
+    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.t0l_ns * RMT_RESOLUTION_HZ / 1000000000),
+  };
+  const rmt_symbol_word_t symbol_one = {
+    .level0 = 1,
+    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.t1h_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .level1 = 0,
+    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.t1l_ns * RMT_RESOLUTION_HZ / 1000000000),
+  };
+  const rmt_symbol_word_t symbol_reset = {
+    .level0 = 0,
+    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .level1 = 0,
+    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+  };
+
   size_t data_pos = symbols_written / 8;
-  // printf("data_size=%zu, symbols_written=%zu, symbols_free=%zu, symbols=%p, data_pos=%zu\n",
-  //        data_size, symbols_written, symbols_free, symbols, data_pos);
-  if (data_pos >= data_size) {
-    // 送信済み → リセットシンボルを送る（1シンボル分必要）
-    if (symbols_free < 1) {
-      // DEBUG_PRINT("Error: Not enough symbols_free for reset symbol\n");
+  const uint8_t *data_bytes = (const uint8_t*)data;
+
+  if (data_pos < data_size) {
+    if (symbols_free < 8) {
       *done = false;
       return 0;
     }
 
-    // int ns = rmt_symbol_dulation.reset_ns;
-    // if (ns <= 0 || ns > 60000) {  // 例: 上限10ms
-    //   printf("Error: Invalid reset_ns value (%d), using default value\n", ns);
-    //   ns = 60000;
-    // }
-    // uint16_t duration = (uint16_t)((float)ns * RMT_RESOLUTION_HZ / 1000000000);
-    // if (duration == 0) {
-    //   printf("Warning: Calculated duration is zero, forcing minimum value 1\n");
-    //   duration = 1;
-    // }
-    // printf("Reset symbol duration: %d ns, calculated duration: %d\n", ns, duration);
+    for (int i = 0; i < 8; i++) {
+      symbols[i] = (data_bytes[data_pos] & (0x80 >> i)) ? symbol_one : symbol_zero;
+    }
 
-    // symbols[0] = (rmt_symbol_word_t){
-    //   .level0 = 0,
-    //   .duration0 = duration,
-    //   .level1 = 0,
-    //   .duration1 = duration,
-    // };
+    *done = false;
+    return 8;
+
+  } else {
+    if (symbols_free < 1) {
+      *done = false;
+      return 0;
+    }
+
+    symbols[0] = symbol_reset;
     *done = true;
     return 1;
   }
-
-  const uint8_t *data_bytes = (const uint8_t *)data;
-  uint8_t byte = data_bytes[data_pos];
-
-  for (int i = 0; i < 8; ++i) {
-    symbols[i] = (byte & (0x80 >> i)) ? (rmt_symbol_word_t){
-      .level0 = 1,
-      .duration0 = (uint16_t)((float)rmt_symbol_dulation.t1h_ns * RMT_RESOLUTION_HZ / 1000000000),
-      .level1 = 0,
-      .duration1 = (uint16_t)((float)rmt_symbol_dulation.t1l_ns * RMT_RESOLUTION_HZ / 1000000000),
-    } : (rmt_symbol_word_t){
-      .level0 = 1,
-      .duration0 = (uint16_t)((float)rmt_symbol_dulation.t0h_ns * RMT_RESOLUTION_HZ / 1000000000),
-      .level1 = 0,
-      .duration1 = (uint16_t)((float)rmt_symbol_dulation.t0l_ns * RMT_RESOLUTION_HZ / 1000000000),
-    };
-  }
-
-  return 8;
 }
 
 int
