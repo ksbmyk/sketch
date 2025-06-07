@@ -16,53 +16,44 @@ static size_t
 encoder_callback(const void *data, size_t data_size,
   size_t symbols_written, size_t symbols_free, rmt_symbol_word_t *symbols, bool *done, void *arg)
 {
-  if (!data || !symbols || !done) {
-    return 0;  // 安全防御
+  if (symbols_free < 8) {
+    return 0;
   }
 
   const rmt_symbol_word_t symbol_zero = {
     .level0 = 1,
-    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.t0h_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration0 = (uint16_t)(((uint64_t)rmt_symbol_dulation.t0h_ns * RMT_RESOLUTION_HZ) / 1000000000),
     .level1 = 0,
-    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.t0l_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration1 = (uint16_t)(((uint64_t)rmt_symbol_dulation.t0l_ns * RMT_RESOLUTION_HZ) / 1000000000),
   };
   const rmt_symbol_word_t symbol_one = {
     .level0 = 1,
-    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.t1h_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration0 = (uint16_t)(((uint64_t)rmt_symbol_dulation.t1h_ns * RMT_RESOLUTION_HZ) / 1000000000),
     .level1 = 0,
-    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.t1l_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration1 = (uint16_t)(((uint64_t)rmt_symbol_dulation.t1l_ns * RMT_RESOLUTION_HZ) / 1000000000),
   };
   const rmt_symbol_word_t symbol_reset = {
     .level0 = 0,
-    .duration0 = (uint16_t)((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration0 = (uint16_t)(((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ) / 1000000000),
     .level1 = 0,
-    .duration1 = (uint16_t)((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ / 1000000000),
+    .duration1 = (uint16_t)(((uint64_t)rmt_symbol_dulation.reset_ns * RMT_RESOLUTION_HZ) / 1000000000),
   };
 
   size_t data_pos = symbols_written / 8;
-  const uint8_t *data_bytes = (const uint8_t*)data;
-
+  uint8_t *data_bytes = (uint8_t*)data;
   if (data_pos < data_size) {
-    if (symbols_free < 8) {
-      *done = false;
-      return 0;
+    size_t symbol_pos = 0;
+    for (int bitmask = 0x80; bitmask != 0; bitmask >>= 1) {
+      if (data_bytes[data_pos]&bitmask) {
+        symbols[symbol_pos++] = symbol_one;
+      } else {
+        symbols[symbol_pos++] = symbol_zero;
+      }
     }
-
-    for (int i = 0; i < 8; i++) {
-      symbols[i] = (data_bytes[data_pos] & (0x80 >> i)) ? symbol_one : symbol_zero;
-    }
-
-    *done = false;
-    return 8;
-
+    return symbol_pos;
   } else {
-    if (symbols_free < 1) {
-      *done = false;
-      return 0;
-    }
-
     symbols[0] = symbol_reset;
-    *done = true;
+    *done = 1;
     return 1;
   }
 }
