@@ -304,9 +304,9 @@ end
     end
 
     speed_element.addEventListener("input") do
-    $speed = speed_element[:value].to_i * 0.01
-    JS.global[:document].getElementById("speed-value")[:innerText] = $speed.to_s
-  end
+      $speed = speed_element[:value].to_i * 0.01
+      JS.global[:document].getElementById("speed-value")[:innerText] = $speed.to_s
+    end
   </script>
 </body>
 </html>
