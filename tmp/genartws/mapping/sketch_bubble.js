@@ -144,19 +144,109 @@ class GraphicsLayer {
     this.index = index;
     this.shape = shape;
     this.isActive = false;
-    //ここに初期化のコードを書く
-
+    
+    // 時間帯設定を取得
+    this.timeSettings = this.getTimeBasedSettings();
+    
     // 泡の配列と設定
     this.bubbles = [];
-    this.bubbleCount = random(30, 50); // 泡の数
+    this.bubbleCount = this.timeSettings.bubbleCount;
     
     // 泡を初期化
     this.initBubbles();
   }
 
+  // 時間帯に基づく設定を取得
+  getTimeBasedSettings() {
+    let h = hour();
+    
+    let settings = {
+      bubbleCount: 30,
+      speedMultiplier: 1,
+      hueRange: [170, 240],
+      saturationRange: [60, 100],
+      brightnessRange: [80, 100],
+      // HSB形式で背景色を指定 [色相, 彩度, 明度]
+      backgroundTopHSB: [220, 60, 15],   // デフォルト：暗い青
+      backgroundBottomHSB: [220, 70, 8], // デフォルト：より暗い青
+      wobbleMultiplier: 1,
+      glowIntensity: 1,
+      specialMode: null
+    };
+    
+    // 朝（6:00-10:00）
+    if (h >= 6 && h < 10) {
+      settings.bubbleCount = random(25, 40);
+      settings.speedMultiplier = 0.7;
+      settings.hueRange = [20, 60]; // 暖色系（オレンジ〜黄色）
+      settings.saturationRange = [70, 90];
+      settings.brightnessRange = [85, 100];
+      settings.backgroundTopHSB = [30, 40, 35];    // 朝焼けの上空（オレンジがかった）
+      settings.backgroundBottomHSB = [25, 50, 20]; // 朝焼けの地平線
+      settings.wobbleMultiplier = 0.8;
+      settings.glowIntensity = 1.2;
+      settings.specialMode = 'morning';
+    }
+    // 昼（10:00-16:00）
+    else if (h >= 10 && h < 16) {
+      settings.bubbleCount = random(40, 60);
+      settings.speedMultiplier = 1.2;
+      settings.hueRange = [180, 220]; // 青系〜シアン
+      settings.saturationRange = [50, 80];
+      settings.brightnessRange = [90, 100];
+      settings.backgroundTopHSB = [200, 30, 70];   // 明るい昼の空
+      settings.backgroundBottomHSB = [200, 25, 50]; // 少し暗めの青
+      settings.wobbleMultiplier = 1.2;
+      settings.glowIntensity = 0.8;
+      settings.specialMode = 'noon';
+    }
+    // 夕方（16:00-20:00）
+    else if (h >= 16 && h < 20) {
+      settings.bubbleCount = random(30, 45);
+      settings.speedMultiplier = 0.9;
+      settings.hueRange = [270, 330]; // 紫〜赤紫
+      settings.saturationRange = [80, 100];
+      settings.brightnessRange = [70, 90];
+      settings.backgroundTopHSB = [280, 50, 35];   // 夕焼けの空（紫がかった）
+      settings.backgroundBottomHSB = [290, 60, 20]; // 深い紫
+      settings.wobbleMultiplier = 1.5; // 夕方は横揺れを強調
+      settings.glowIntensity = 1.5;
+      settings.specialMode = 'evening';
+    }
+    // 夜（20:00-24:00）
+    else if (h >= 20) {
+      settings.bubbleCount = random(20, 35);
+      settings.speedMultiplier = 0.5;
+      settings.hueRange = [220, 280]; // 深い青〜紫
+      settings.saturationRange = [70, 100];
+      settings.brightnessRange = [60, 80];
+      settings.backgroundTopHSB = [240, 70, 10];   // 夜空（深い青）
+      settings.backgroundBottomHSB = [240, 80, 5]; // より暗い青
+      settings.wobbleMultiplier = 0.6;
+      settings.glowIntensity = 2.0; // 夜は光を強調
+      settings.specialMode = 'night';
+    }
+    // 深夜（0:00-6:00）
+    else {
+      settings.bubbleCount = random(15, 25);
+      settings.speedMultiplier = 0.3;
+      settings.hueRange = [240, 260]; // インディゴ〜深い紫
+      settings.saturationRange = [40, 70];
+      settings.brightnessRange = [50, 70];
+      settings.backgroundTopHSB = [250, 50, 8];    // 深夜の空（インディゴ）
+      settings.backgroundBottomHSB = [250, 60, 3]; // ほぼ黒に近い
+      settings.wobbleMultiplier = 0.4;
+      settings.glowIntensity = 2.5;
+      settings.specialMode = 'midnight';
+    }
+    
+    return settings;
+  }
+
   // 泡を初期化
   initBubbles() {
     this.bubbles = [];
+    let settings = this.timeSettings;
     
     for (let i = 0; i < this.bubbleCount; i++) {
       this.bubbles.push({
@@ -164,36 +254,65 @@ class GraphicsLayer {
         x: random(this.graphics.width),
         y: random(this.graphics.height),
         
-        // サイズ
-        size: random(this.graphics.width / 40, this.graphics.width / 20),
+        // サイズ（時間帯によって調整）
+        size: random(this.graphics.width / 45, this.graphics.width / 20) * 
+              (settings.specialMode === 'midnight' ? 0.8 : 1),
         
-        // 上昇速度（少しゆっくりめに）
-        speed: random(0.3, 1.5),
+        // 上昇速度
+        speed: random(0.3, 1.5) * settings.speedMultiplier,
         
         // 横揺れの設定
-        wobbleAmount: random(30, 60), // 横揺れの幅を大きめに
-        wobbleSpeed: random(0.01, 0.04), // 横揺れの速度
-        wobbleOffset: random(TWO_PI), // 横揺れの初期位相
+        wobbleAmount: random(30, 60) * settings.wobbleMultiplier,
+        wobbleSpeed: random(0.01, 0.04),
+        wobbleOffset: random(TWO_PI),
         
         // 色と透明度
-        hue: random(170, 240), // シアン〜青〜紫系に拡張
-        saturation: random(60, 100), // 彩度を高めに
-        brightness: random(80, 100), // 明度を高めに
-        opacity: random(150, 255) // 透明度を上げて視認性向上
+        hue: random(settings.hueRange[0], settings.hueRange[1]),
+        saturation: random(settings.saturationRange[0], settings.saturationRange[1]),
+        brightness: random(settings.brightnessRange[0], settings.brightnessRange[1]),
+        opacity: random(150, 255)
       });
+    }
+  }
+
+  // 時間変化をチェックして必要に応じて再初期化
+  checkTimeChange() {
+    let previousTimeMode = this.timeSettings.specialMode;
+    this.timeSettings = this.getTimeBasedSettings();
+    
+    // 時間帯が変わったら泡を再初期化
+    if (previousTimeMode !== this.timeSettings.specialMode) {
+      this.bubbleCount = this.timeSettings.bubbleCount;
+      this.initBubbles();
     }
   }
 
   // このレイヤーの計算処理
   update() {
+    // 時間変化をチェック
+    this.checkTimeChange();
+    
+    let settings = this.timeSettings;
+    
+    // 通常の泡の更新
     for (let bubble of this.bubbles) {
       // 上に移動
       bubble.y -= bubble.speed;
       
+      // 時間帯による速度の動的調整
+      if (settings.specialMode === 'noon') {
+        // 昼は少し加速
+        bubble.y -= sin(frameCount * 0.01) * 0.2;
+      }
+      
       // 画面上端を超えたら下から再出現
       if (bubble.y + bubble.size < 0) {
         bubble.y = this.graphics.height + bubble.size;
-        bubble.x = random(this.graphics.width); // X位置をリセット
+        bubble.x = random(this.graphics.width);
+        // 色も時間帯に合わせて更新
+        bubble.hue = random(settings.hueRange[0], settings.hueRange[1]);
+        bubble.saturation = random(settings.saturationRange[0], settings.saturationRange[1]);
+        bubble.brightness = random(settings.brightnessRange[0], settings.brightnessRange[1]);
       }
     }
   }
@@ -201,20 +320,37 @@ class GraphicsLayer {
   // このレイヤーの描画処理
   draw() {
     let g = this.graphics;
+    let settings = this.timeSettings;
     
-    // 背景を暗い青系のグラデーション
+    // 背景を時間帯に応じたグラデーション
     g.push();
-    // グラデーション背景
+    g.colorMode(HSB, 360, 100, 100);
+    
     for (let i = 0; i <= g.height; i++) {
       let inter = map(i, 0, g.height, 0, 1);
-      let c = lerpColor(
-        color(0, 10, 30), // 上部：暗い青
-        color(0, 5, 20),  // 下部：より暗い青
-        inter
-      );
-      g.stroke(c);
+      
+      // HSB値を補間
+      let h = lerp(settings.backgroundTopHSB[0], settings.backgroundBottomHSB[0], inter);
+      let s = lerp(settings.backgroundTopHSB[1], settings.backgroundBottomHSB[1], inter);
+      let b = lerp(settings.backgroundTopHSB[2], settings.backgroundBottomHSB[2], inter);
+      
+      g.stroke(h, s, b);
       g.line(0, i, g.width, i);
     }
+    
+    // 夜間は星を追加
+    if (settings.specialMode === 'night' || settings.specialMode === 'midnight') {
+      g.colorMode(RGB, 255);
+      g.strokeWeight(1);
+      for (let i = 0; i < 30; i++) {
+        let starX = (i * 137 + frameCount * 0.01) % g.width;
+        let starY = (i * 89) % g.height;
+        let starBright = sin(frameCount * 0.05 + i) * 50 + 150;
+        g.stroke(255, starBright);
+        g.point(starX, starY);
+      }
+    }
+    
     g.pop();
     
     // 泡を描画
@@ -224,7 +360,9 @@ class GraphicsLayer {
   drawBubbles(g) {
     g.push();
     g.colorMode(HSB, 360, 100, 100, 255);
-    g.blendMode(ADD); // 加算合成で光るような効果
+    g.blendMode(ADD);
+    
+    let settings = this.timeSettings;
     
     for (let bubble of this.bubbles) {
       // 横揺れを計算
@@ -232,27 +370,33 @@ class GraphicsLayer {
                     * bubble.wobbleAmount;
       let x = bubble.x + wobbleX;
       
+      let currentSize = bubble.size;
+      
       // 外側の大きな光彩
       g.noStroke();
-      g.fill(bubble.hue, bubble.saturation * 0.5, bubble.brightness, bubble.opacity * 0.15);
-      g.ellipse(x, bubble.y, bubble.size * 2.5);
+      g.fill(bubble.hue, bubble.saturation * 0.5, bubble.brightness, 
+             bubble.opacity * 0.15 * settings.glowIntensity);
+      g.ellipse(x, bubble.y, currentSize * 2.5);
 
       // 中間の光彩
-      g.fill(bubble.hue, bubble.saturation * 0.7, bubble.brightness, bubble.opacity * 0.3);
-      g.ellipse(x, bubble.y, bubble.size * 1.5);
+      g.fill(bubble.hue, bubble.saturation * 0.7, bubble.brightness, 
+             bubble.opacity * 0.3 * settings.glowIntensity);
+      g.ellipse(x, bubble.y, currentSize * 1.5);
 
       // メインの泡
-      g.fill(bubble.hue, bubble.saturation, bubble.brightness, bubble.opacity * 0.7);
-      g.ellipse(x, bubble.y, bubble.size);
+      g.fill(bubble.hue, bubble.saturation, bubble.brightness, 
+             bubble.opacity * 0.7);
+      g.ellipse(x, bubble.y, currentSize);
 
       // 内側の輪郭
-      g.stroke(bubble.hue, bubble.saturation * 0.3, 100, bubble.opacity * 0.9);
+      g.stroke(bubble.hue, bubble.saturation * 0.3, 100, 
+               bubble.opacity * 0.9);
       g.strokeWeight(2);
       g.noFill();
-      g.ellipse(x, bubble.y, bubble.size * 0.9);
+      g.ellipse(x, bubble.y, currentSize * 0.9);
     }
     
-    g.blendMode(BLEND); // 通常の合成モードに戻す
+    g.blendMode(BLEND);
     g.pop();
   }
 
