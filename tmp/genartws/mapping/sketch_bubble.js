@@ -148,7 +148,7 @@ class GraphicsLayer {
 
     // 泡の配列と設定
     this.bubbles = [];
-    this.bubbleCount = random(15, 30); // 泡の数
+    this.bubbleCount = random(30, 50); // 泡の数
     
     // 泡を初期化
     this.initBubbles();
@@ -164,21 +164,23 @@ class GraphicsLayer {
         x: random(this.graphics.width),
         y: random(this.graphics.height),
         
-        // サイズ（小さめから中くらいまで）
-        baseSize: random(this.graphics.width / 40, this.graphics.width / 15),
+        // サイズ
+        baseSize: random(this.graphics.width / 40, this.graphics.width / 20),
         size: 0, // 実際のサイズ（アニメーション用）
         
-        // 上昇速度
-        speed: random(0.5, 2),
+        // 上昇速度（少しゆっくりめに）
+        speed: random(0.3, 1.5),
         
         // 横揺れの設定
-        wobbleAmount: random(20, 40), // 横揺れの幅
-        wobbleSpeed: random(0.02, 0.05), // 横揺れの速度
+        wobbleAmount: random(30, 60), // 横揺れの幅を大きめに
+        wobbleSpeed: random(0.01, 0.04), // 横揺れの速度
         wobbleOffset: random(TWO_PI), // 横揺れの初期位相
         
         // 色と透明度
-        hue: random(180, 220), // 青〜水色系
-        opacity: random(100, 200),
+        hue: random(170, 240), // シアン〜青〜紫系に拡張
+        saturation: random(60, 100), // 彩度を高めに
+        brightness: random(80, 100), // 明度を高めに
+        opacity: random(150, 255), // 透明度を上げて視認性向上
         
         // サイズの脈動
         pulseSpeed: random(0.03, 0.06),
@@ -251,45 +253,34 @@ class GraphicsLayer {
   drawBubbles(g) {
     g.push();
     g.colorMode(HSB, 360, 100, 100, 255);
+    g.blendMode(ADD); // 加算合成で光るような効果
     
     for (let bubble of this.bubbles) {
       // 横揺れを計算
       let wobbleX = sin(frameCount * bubble.wobbleSpeed + bubble.wobbleOffset) * bubble.wobbleAmount;
       let x = bubble.x + wobbleX;
       
-      // 外側の光彩
+      // 外側の大きな光彩
       g.noStroke();
-      g.fill(bubble.hue, 30, 100, bubble.opacity * 0.2);
+      g.fill(bubble.hue, bubble.saturation * 0.5, bubble.brightness, bubble.opacity * 0.15);
+      g.ellipse(x, bubble.y, bubble.size * 3);
+
+      // 中間の光彩
+      g.fill(bubble.hue, bubble.saturation * 0.7, bubble.brightness, bubble.opacity * 0.3);
       g.ellipse(x, bubble.y, bubble.size * 1.5);
-      
+
       // メインの泡
-      g.fill(bubble.hue, 40, 90, bubble.opacity * 0.5);
+      g.fill(bubble.hue, bubble.saturation, bubble.brightness, bubble.opacity * 0.7);
       g.ellipse(x, bubble.y, bubble.size);
       
       // 内側の輪郭
-      g.stroke(bubble.hue, 20, 100, bubble.opacity * 0.8);
-      g.strokeWeight(1);
+      g.stroke(bubble.hue, bubble.saturation * 0.3, 100, bubble.opacity * 0.9);
+      g.strokeWeight(2);
       g.noFill();
       g.ellipse(x, bubble.y, bubble.size * 0.9);
-      
-      // ハイライト（光の反射）
-      // g.noStroke();
-      // g.fill(0, 0, 100, bubble.opacity * 0.6);
-      // g.ellipse(
-      //   x - bubble.size * 0.2, 
-      //   bubble.y - bubble.size * 0.2, 
-      //   bubble.size * 0.3
-      // );
-      
-      // 小さなハイライト
-      // g.fill(0, 0, 100, bubble.opacity * 0.4);
-      // g.ellipse(
-      //   x + bubble.size * 0.15, 
-      //   bubble.y + bubble.size * 0.15, 
-      //   bubble.size * 0.15
-      // );
     }
     
+    g.blendMode(BLEND); // 通常の合成モードに戻す
     g.pop();
   }
 
