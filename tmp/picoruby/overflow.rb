@@ -1,8 +1,9 @@
-require 'ws2812'
+require 'ws2812' # 自作gem
 
 rmt = RMTDriver.new(27)
 led = WS2812.new(rmt)
 
+# 線形合同法による乱数生成器
 class SimpleRand
   def initialize(seed = 12345)
     @seed = seed
@@ -75,9 +76,8 @@ class AtomMatrix
         bubbles << { x: @randgen.rand(5), y: 4 }
       end
   
-      # 泡を描画
       bubbles.each do |b|
-        set_pixel(b[:x], b[:y], 0xC53E73)  # 白[150, 150, 255]
+        set_pixel(b[:x], b[:y], 0xC53E73)
       end
   
       show
