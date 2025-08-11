@@ -19,16 +19,78 @@ let currentSize = "";
 // プロジェクトの基本設定 ここまで
 //-------------------------------------
 
+let grid_size;
+let x;
+let y;
+
 function setup() {
   createCanvasSetup();
+  grid_size = height/10;
+  x = 0;
+  y = 0;
+  background(0);
+  frameRate(5); 
 }
 
 function draw() {
-  background(220);
-  drawDebugMode(); // デバッグ用LEDキューブのレイアウト参考画像の描画
+  // background(220);
+  // drawDebugMode(); // デバッグ用LEDキューブのレイアウト参考画像の描画
 
-  //描画
-  circle(width / 2, height / 2, (frameCount * 10) % max(width, height)); // 中央に円を配置
+  // draw()が実行されるたびに、パターンを1つ描画する
+  draw_pattern(x, y, grid_size);
+
+  // 次の描画位置に移動する
+  x += grid_size;
+  if (x >= width) {
+    x = 0;
+    y += grid_size;
+  }
+
+  // キャンバス全体を描画し終えたら、座標をリセットする
+  if (y >= height) {
+    // 画面全体を新しい背景色でリセット
+    background(0);
+    // 座標を最初に戻す
+    x = 0;
+    y = 0;
+  }
+}
+
+function draw_pattern(x, y, size) {
+  let colors = [
+    color(random(100, 200), random(150, 255), random(200, 255)),
+    color(random(50, 150), random(100, 200), random(150, 255)),
+    color(random(200, 255), random(200, 255), random(240, 255))
+  ];
+  
+  let pattern = floor(random(4));
+  noStroke();
+  switch (pattern) {
+    case 0:
+      fill(colors[0]);
+      triangle(x, y, x + size, y, x, y + size);
+      fill(colors[1]);
+      triangle(x + size, y, x + size, y + size, x, y + size);
+      break;
+    case 1:
+      fill(colors[1]);
+      triangle(x + size, y, x + size, y + size, x, y);
+      fill(colors[2]);
+      triangle(x, y, x, y + size, x + size, y + size);
+      break;
+    case 2:
+      fill(colors[0]);
+      rect(x, y, size, size / 2);
+      fill(colors[2]);
+      rect(x, y + size / 2, size, size / 2);
+      break;
+    case 3:
+      fill(colors[1]);
+      rect(x, y, size / 2, size);
+      fill(colors[0]);
+      rect(x + size / 2, y, size / 2, size);
+      break;
+  }
 }
 
 //-------------------------------------
