@@ -136,7 +136,6 @@ function draw() {
   }
 }
 
-// 個別Graphics管理クラス
 // 形状タイプのシャッフル配列を保持（全レイヤーで共有）
 let shuffledShapeTypes = null;
 let shuffledColorThemes = null;
@@ -151,8 +150,9 @@ class GraphicsLayer {
     this.isActive = false;
     
     //グリッドアニメーション用のプロパティ
-    this.rows = 12;
-    this.cols = 12;
+    // グリッド数を減らして形状を大きく表示
+    this.rows = 6;  // 12から6に減らす（固定値）
+    this.cols = 6;  // 12から6に減らす（固定値）
     this.tileSize = size / this.cols;
     
     // 形状のバリエーションを選択
@@ -185,9 +185,9 @@ class GraphicsLayer {
     this.shapeType = shuffledShapeTypes[index];
     
     // 各レイヤーで異なるアニメーション速度やオフセットを設定
-    this.animSpeed = random(0.015, 0.025);
+    this.animSpeed = random(0.01, 0.02);  // 少し遅めに調整
     this.phaseOffset = random(TWO_PI);
-    this.waveScale = random(0.08, 0.12);
+    this.waveScale = random(0.15, 0.25);  // 波のスケールを大きく（大きな形状に合わせて）
     
     // カラーテーマの定義
     this.colorThemes = [
@@ -241,8 +241,8 @@ class GraphicsLayer {
         let xPos = x * this.tileSize + this.tileSize / 2;
         let yPos = y * this.tileSize + this.tileSize / 2;
         
-        // サイズを波に基づいて変化
-        let size = map(wave, -1, 1, this.tileSize * 0.2, this.tileSize * 0.8);
+        // サイズを波に基づいて変化（より大きめに）
+        let size = map(wave, -1, 1, this.tileSize * 0.3, this.tileSize * 0.95);
         
         // 形状タイプに応じて描画
         g.push();
