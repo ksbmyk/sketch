@@ -221,26 +221,6 @@ class GraphicsLayer {
     this.drawBubbles(g);
   }
 
-  // ボールの描画と物理演算
-  drawBalls(g) {
-    g.push();
-    g.noStroke();
-
-    for (let i = 0; i < this.balls.length; i++) {
-      let ball = this.balls[i];
-
-      // ボールの描画
-      g.fill(ball.color);
-      g.ellipse(ball.x, ball.y, ball.size);
-
-      // ボールの影を描画
-      g.fill(0, 50);
-      g.ellipse(ball.x + 2, ball.y + 2, ball.size);
-    }
-
-    g.pop();
-  }
-
   drawBubbles(g) {
     g.push();
     g.colorMode(HSB, 360, 100, 100, 255);
