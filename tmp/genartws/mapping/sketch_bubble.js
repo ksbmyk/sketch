@@ -263,7 +263,7 @@ class GraphicsLayer {
       // 外側の大きな光彩
       g.noStroke();
       g.fill(bubble.hue, bubble.saturation * 0.5, bubble.brightness, bubble.opacity * 0.15);
-      g.ellipse(x, bubble.y, bubble.size * 3);
+      g.ellipse(x, bubble.y, bubble.size * 2.5);
 
       // 中間の光彩
       g.fill(bubble.hue, bubble.saturation * 0.7, bubble.brightness, bubble.opacity * 0.3);
