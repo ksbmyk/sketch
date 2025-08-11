@@ -165,8 +165,7 @@ class GraphicsLayer {
         y: random(this.graphics.height),
         
         // サイズ
-        baseSize: random(this.graphics.width / 40, this.graphics.width / 20),
-        size: 0, // 実際のサイズ（アニメーション用）
+        size: random(this.graphics.width / 40, this.graphics.width / 20),
         
         // 上昇速度（少しゆっくりめに）
         speed: random(0.3, 1.5),
@@ -180,11 +179,7 @@ class GraphicsLayer {
         hue: random(170, 240), // シアン〜青〜紫系に拡張
         saturation: random(60, 100), // 彩度を高めに
         brightness: random(80, 100), // 明度を高めに
-        opacity: random(150, 255), // 透明度を上げて視認性向上
-        
-        // サイズの脈動
-        pulseSpeed: random(0.03, 0.06),
-        pulseAmount: random(0.8, 1.2)
+        opacity: random(150, 255) // 透明度を上げて視認性向上
       });
     }
   }
@@ -196,14 +191,10 @@ class GraphicsLayer {
       bubble.y -= bubble.speed;
       
       // 画面上端を超えたら下から再出現
-      if (bubble.y + bubble.baseSize < 0) {
-        bubble.y = this.graphics.height + bubble.baseSize;
+      if (bubble.y + bubble.size < 0) {
+        bubble.y = this.graphics.height + bubble.size;
         bubble.x = random(this.graphics.width); // X位置をリセット
       }
-      
-      // サイズの脈動アニメーション
-      bubble.size = bubble.baseSize * 
-        (1 + sin(frameCount * bubble.pulseSpeed) * bubble.pulseAmount * 0.1);
     }
   }
 
@@ -257,7 +248,8 @@ class GraphicsLayer {
     
     for (let bubble of this.bubbles) {
       // 横揺れを計算
-      let wobbleX = sin(frameCount * bubble.wobbleSpeed + bubble.wobbleOffset) * bubble.wobbleAmount;
+      let wobbleX = sin(frameCount * bubble.wobbleSpeed + bubble.wobbleOffset) 
+                    * bubble.wobbleAmount;
       let x = bubble.x + wobbleX;
       
       // 外側の大きな光彩
@@ -272,7 +264,7 @@ class GraphicsLayer {
       // メインの泡
       g.fill(bubble.hue, bubble.saturation, bubble.brightness, bubble.opacity * 0.7);
       g.ellipse(x, bubble.y, bubble.size);
-      
+
       // 内側の輪郭
       g.stroke(bubble.hue, bubble.saturation * 0.3, 100, bubble.opacity * 0.9);
       g.strokeWeight(2);
