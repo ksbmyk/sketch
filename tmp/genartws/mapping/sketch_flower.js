@@ -164,6 +164,10 @@ class GraphicsLayer {
     this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
     this.speed = this.base_speed; // 現在の速度
     
+    // 現在の時間を保存する変数
+    this.currentHour = new Date().getHours();
+    this.currentTimeSlot = floor(this.currentHour / 2);
+    
     // 2時間ごとのパターン設定
     this.updateTimeBasedPattern(size); // 初期設定
     
@@ -194,20 +198,11 @@ class GraphicsLayer {
     this.speed_pattern = floor(random(3)); // 0: sin波, 1: 加速減速, 2: ランダム変化
     
     // 前回の時間帯を記録
-    this.lastTimeSlot = this.getCurrentTimeSlot();
-  }
-  
-  // 現在の2時間枠を取得（0-11の値を返す）
-  getCurrentTimeSlot() {
-    const now = new Date();
-    const hour = now.getHours();
-    return floor(hour / 2); // 0-23時を0-11の値に変換
+    this.lastTimeSlot = this.currentTimeSlot;
   }
   
   // 2時間ごとのパターンを更新
   updateTimeBasedPattern(size) {
-    const timeSlot = this.getCurrentTimeSlot();
-    
     // 12個の異なるパターン（2時間ごと）
     const patterns = [
       // 0-2時：少ない円、近い距離
@@ -237,13 +232,13 @@ class GraphicsLayer {
     ];
     
     // 現在の時間帯のパターンを適用
-    const currentPattern = patterns[timeSlot];
+    const currentPattern = patterns[this.currentTimeSlot];
     this.circle_count = currentPattern.count;
     this.base_distance = size * currentPattern.distance;
     
     // パターンが変わったときにログを出力
-    if (this.lastTimeSlot !== undefined && this.lastTimeSlot !== timeSlot) {
-      const timeRangeStart = timeSlot * 2;
+    if (this.lastTimeSlot !== undefined && this.lastTimeSlot !== this.currentTimeSlot) {
+      const timeRangeStart = this.currentTimeSlot * 2;
       const timeRangeEnd = timeRangeStart + 2;
       console.log(
         `Layer ${this.index}: パターン変更 (${timeRangeStart}:00-${timeRangeEnd}:00) - ` +
@@ -254,23 +249,22 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
-    // 2時間ごとのパターン更新をチェック
-    const currentTimeSlot = this.getCurrentTimeSlot();
-    if (this.lastTimeSlot !== currentTimeSlot) {
-      this.updateTimeBasedPattern(this.graphics.width);
-      this.lastTimeSlot = currentTimeSlot;
-    }
+    // 時間を一度だけ取得して保存
+    this.currentHour = new Date().getHours();
+    this.currentTimeSlot = floor(this.currentHour / 2);
     
-    // 現在の時刻を取得して時間帯による速度調整
-    const now = new Date();
-    const hour = now.getHours();
+    // 2時間ごとのパターン更新をチェック
+    if (this.lastTimeSlot !== this.currentTimeSlot) {
+      this.updateTimeBasedPattern(this.graphics.width);
+      this.lastTimeSlot = this.currentTimeSlot;
+    }
     
     // 時間帯による速度倍率を計算
     // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
     // 夜間（18時〜6時）: ゆっくり回転（0.3〜0.5倍）
     // 12時が最速、0時が最遅
-    const dayPhase = (hour - 6) / 12 * PI; // 6時を起点にPI周期
-    if (hour >= 6 && hour < 18) {
+    const dayPhase = (this.currentHour - 6) / 12 * PI; // 6時を起点にPI周期
+    if (this.currentHour >= 6 && this.currentHour < 18) {
       // 昼間（6時〜18時）：速く
       this.timeSpeedMultiplier = 1.0 + sin(dayPhase) * 1.0; // 1.0〜2.0倍
     } else {
@@ -360,9 +354,8 @@ class GraphicsLayer {
   draw() {
     let g = this.graphics;
     
-    // 現在の時間を取得して偶数時か奇数時か判定
-    const currentHour = new Date().getHours();
-    const isEvenHour = currentHour % 2 === 0;
+    // update()で更新されたcurrentHourを使用
+    const isEvenHour = this.currentHour % 2 === 0;
     
     // カラーモードを毎フレーム設定
     g.push();
