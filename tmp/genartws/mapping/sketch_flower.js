@@ -159,8 +159,8 @@ class GraphicsLayer {
     
     // サイズ変化用の変数
     this.size_phase = random(TWO_PI); // サイズ変化の初期位相
-    this.size_freq = random(0.008, 0.015); // サイズ変化の周波数（ゆっくり）
-    this.size_amplitude = 0.7; // サイズ変化の振幅（0.7 = 30%〜170%）
+    this.size_freq = random(0.03, 0.05); // サイズ変化の周波数（もっと速く）
+    this.size_amplitude = 0.8; // サイズ変化の振幅（0.8 = 20%〜180%）
     
     // グリッド設定（時間で自動変化）
     // 各レイヤーで開始時間をずらすことで、面ごとに異なるタイミングで変化
@@ -291,10 +291,6 @@ class GraphicsLayer {
         const direction = ((row + col) % 2 === 0) ? 1 : -1;
         const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
         
-        // セルごとに少し異なるサイズ変化（位相をずらす）
-        const cellSizePhase = this.size_phase + cellIndex * 0.3;
-        const cellSizeMultiplier = 1 + sin(cellSizePhase) * this.size_amplitude * 0.5;
-        
         // 色を設定（HSBで指定）
         g.fill(localHue, 80, 100, 155);
         
@@ -306,14 +302,14 @@ class GraphicsLayer {
           const angle = (TWO_PI / this.circle_count) * i + localAngleOffset;
           
           // 円の中心座標を計算 (cos, sin) - 変化するdistanceを使用
-          const x = cos(angle) * this.distance * scale * cellSizeMultiplier;
-          const y = sin(angle) * this.distance * scale * cellSizeMultiplier;
+          const x = cos(angle) * this.distance * scale;
+          const y = sin(angle) * this.distance * scale;
           
           // iが偶数か奇数かで円のサイズを変更
           const size_modifier = (i % 2 === 0) ? g.width * 0.04 * scale : -g.width * 0.04 * scale;
           
-          // 変化する円のサイズを使用
-          g.circle(x, y, (this.current_circle_size + size_modifier) * scale * cellSizeMultiplier);
+          // 変化する円のサイズを使用（全セル同じタイミング）
+          g.circle(x, y, (this.current_circle_size + size_modifier) * scale);
         }
         
         g.pop();
