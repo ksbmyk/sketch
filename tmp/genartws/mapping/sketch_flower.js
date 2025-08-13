@@ -163,8 +163,10 @@ class GraphicsLayer {
     this.hue_value = random(360); // ランダムな初期色相
     this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
     this.speed = this.base_speed; // 現在の速度
-    this.circle_count = 10;
-    this.base_distance = size * 0.14; // 基本の距離
+    
+    // 2時間ごとのパターン設定
+    this.updateTimeBasedPattern(size); // 初期設定
+    
     this.distance = this.base_distance; // 現在の距離
     this.base_circle_size = size * 0.26; // 基本の円サイズ
     this.current_circle_size = this.base_circle_size; // 現在の円サイズ
@@ -190,22 +192,85 @@ class GraphicsLayer {
     this.speed_freq = random(0.01, 0.03); // 速度変化の周波数
     this.speed_amplitude = random(0.5, 1.5); // 速度変化の振幅
     this.speed_pattern = floor(random(3)); // 0: sin波, 1: 加速減速, 2: ランダム変化
+    
+    // 前回の時間帯を記録
+    this.lastTimeSlot = this.getCurrentTimeSlot();
+  }
+  
+  // 現在の2時間枠を取得（0-11の値を返す）
+  getCurrentTimeSlot() {
+    const now = new Date();
+    const hour = now.getHours();
+    return floor(hour / 2); // 0-23時を0-11の値に変換
+  }
+  
+  // 2時間ごとのパターンを更新
+  updateTimeBasedPattern(size) {
+    const timeSlot = this.getCurrentTimeSlot();
+    
+    // 12個の異なるパターン（2時間ごと）
+    const patterns = [
+      // 0-2時：少ない円、近い距離
+      { count: 6, distance: 0.08 },
+      // 2-4時：やや少ない円、やや近い
+      { count: 8, distance: 0.10 },
+      // 4-6時：朝の始まり、活発に
+      { count: 12, distance: 0.12 },
+      // 6-8時：朝、多めの円
+      { count: 15, distance: 0.14 },
+      // 8-10時：午前中、最も活発
+      { count: 20, distance: 0.16 },
+      // 10-12時：昼前、複雑なパターン
+      { count: 18, distance: 0.18 },
+      // 12-14時：昼、バランスの取れた
+      { count: 10, distance: 0.14 },
+      // 14-16時：午後、やや活発
+      { count: 14, distance: 0.15 },
+      // 16-18時：夕方、動的
+      { count: 16, distance: 0.13 },
+      // 18-20時：夜の始まり、落ち着き始める
+      { count: 9, distance: 0.11 },
+      // 20-22時：夜、静かに
+      { count: 7, distance: 0.09 },
+      // 22-24時：深夜、最小限
+      { count: 5, distance: 0.07 }
+    ];
+    
+    // 現在の時間帯のパターンを適用
+    const currentPattern = patterns[timeSlot];
+    this.circle_count = currentPattern.count;
+    this.base_distance = size * currentPattern.distance;
+    
+    // パターンが変わったときにログを出力
+    if (this.lastTimeSlot !== undefined && this.lastTimeSlot !== timeSlot) {
+      const timeRangeStart = timeSlot * 2;
+      const timeRangeEnd = timeRangeStart + 2;
+      console.log(
+        `Layer ${this.index}: パターン変更 (${timeRangeStart}:00-${timeRangeEnd}:00) - ` +
+        `円の数: ${this.circle_count}, 距離係数: ${currentPattern.distance}`
+      );
+    }
   }
 
   // このレイヤーの計算処理
   update() {
+    // 2時間ごとのパターン更新をチェック
+    const currentTimeSlot = this.getCurrentTimeSlot();
+    if (this.lastTimeSlot !== currentTimeSlot) {
+      this.updateTimeBasedPattern(this.graphics.width);
+      this.lastTimeSlot = currentTimeSlot;
+    }
+    
     // 現在の時刻を取得して時間帯による速度調整
     const now = new Date();
     const hour = now.getHours();
-    const minute = now.getMinutes();
-    const timeInHours = hour + minute / 60; // 小数を含む時間
     
     // 時間帯による速度倍率を計算
     // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
     // 夜間（18時〜6時）: ゆっくり回転（0.3〜0.5倍）
     // 12時が最速、0時が最遅
-    const dayPhase = (timeInHours - 6) / 12 * PI; // 6時を起点にPI周期
-    if (timeInHours >= 6 && timeInHours < 18) {
+    const dayPhase = (hour - 6) / 12 * PI; // 6時を起点にPI周期
+    if (hour >= 6 && hour < 18) {
       // 昼間（6時〜18時）：速く
       this.timeSpeedMultiplier = 1.0 + sin(dayPhase) * 1.0; // 1.0〜2.0倍
     } else {
