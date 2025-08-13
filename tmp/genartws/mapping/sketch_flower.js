@@ -235,16 +235,6 @@ class GraphicsLayer {
     const currentPattern = patterns[this.currentTimeSlot];
     this.circle_count = currentPattern.count;
     this.base_distance = size * currentPattern.distance;
-    
-    // パターンが変わったときにログを出力
-    if (this.lastTimeSlot !== undefined && this.lastTimeSlot !== this.currentTimeSlot) {
-      const timeRangeStart = this.currentTimeSlot * 2;
-      const timeRangeEnd = timeRangeStart + 2;
-      console.log(
-        `Layer ${this.index}: パターン変更 (${timeRangeStart}:00-${timeRangeEnd}:00) - ` +
-        `円の数: ${this.circle_count}, 距離係数: ${currentPattern.distance}`
-      );
-    }
   }
 
   // このレイヤーの計算処理
@@ -277,11 +267,10 @@ class GraphicsLayer {
     const cycleTime = elapsedTime % (this.gridDuration * this.gridSizes.length); // 全体のサイクル時間（4ステップ）
     const currentStep = floor(cycleTime / this.gridDuration); // 現在のステップ（0〜3）
     const newGridSize = this.gridSizes[currentStep]; // グリッドサイズ（1, 2, 4, 8）
-    
-    // グリッドサイズが変わった時だけログ出力
+
+    // グリッドサイズが変わった
     if (this.gridSize !== newGridSize) {
       this.gridSize = newGridSize;
-      console.log('Layer ' + this.index + ': Grid size changed to ' + this.gridSize + 'x' + this.gridSize);
     }
     
     // サイズ変化の位相を更新
@@ -369,7 +358,7 @@ class GraphicsLayer {
       g.background(0, 0, 0); // 黒背景（HSBで黒）
     }
     
-    // ブレンドモードを設定（偶数時はMULTIPLY、奇数時はADD）
+    // ブレンドモードを設定
     if (isEvenHour) {
       g.blendMode(MULTIPLY); // 乗算合成（白背景用）
     } else {
@@ -402,11 +391,10 @@ class GraphicsLayer {
         const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
         
         // 色を設定（HSBで指定）
-        // 偶数時（白背景）は彩度を高く、奇数時（黒背景）は通常
         if (isEvenHour) {
-          g.fill(localHue, 100, 180, 100); // MULTIPLYモード用（彩度高め、明度低め）
+          g.fill(localHue, 100, 180, 100); // MULTIPLYモード用
         } else {
-          g.fill(localHue, 80, 100, 200); // ADDモード用（通常）
+          g.fill(localHue, 80, 100, 200); // ADDモード用
         }
         
         // スケールを調整（セルサイズに合わせて縮小）
