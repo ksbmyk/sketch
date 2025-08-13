@@ -55,7 +55,8 @@ function setup() {
     // 時刻情報を定期的に表示（デバッグ用）
     if (frameCount % 3600 === 0 && this.index === 0) { // 約1分ごと、最初のレイヤーのみ
       const minutesStr = minute < 10 ? '0' + minute : minute;
-      console.log('時刻: ' + hour + ':' + minutesStr + ' - 速度倍率: ' + this.timeSpeedMultiplier.toFixed(2) + 'x');
+      const modeStr = hour % 2 === 0 ? '偶数時(白+MULTIPLY)' : '奇数時(黒+ADD)';
+      console.log('時刻: ' + hour + ':' + minutesStr + ' - 速度倍率: ' + this.timeSpeedMultiplier.toFixed(2) + 'x - ' + modeStr);
     }
   });
     console.log(`タイル配置範囲: X(${minX} to ${maxX}), Y(${minY} to ${maxY})`);
@@ -64,7 +65,17 @@ function setup() {
 }
 
 function draw() {
-  background(0); // 背景を完全に黒にする
+  // 現在の時間を取得して偶数時か奇数時か判定
+  const currentHour = new Date().getHours();
+  const isEvenHour = currentHour % 2 === 0;
+  
+  // 偶数時は白背景、奇数時は黒背景
+  if (isEvenHour) {
+    background(255); // 白背景
+  } else {
+    background(0); // 黒背景
+  }
+  
   drawDebugMode(); // デバッグ用LEDキューブのレイアウト参考画像の描画
 
   if (graphicsLayers.length > 0) {
@@ -295,16 +306,28 @@ class GraphicsLayer {
   draw() {
     let g = this.graphics;
     
+    // 現在の時間を取得して偶数時か奇数時か判定
+    const currentHour = new Date().getHours();
+    const isEvenHour = currentHour % 2 === 0;
+    
     // カラーモードを毎フレーム設定
     g.push();
     g.colorMode(HSB, 360, 100, 100, 255);
     g.noStroke();
     
-    // 背景を完全に黒にリセット（これで色の蓄積を防ぐ）
-    g.background(0, 0, 0);
+    // 偶数時は白背景、奇数時は黒背景
+    if (isEvenHour) {
+      g.background(0, 0, 100); // 白背景（HSBで白）
+    } else {
+      g.background(0, 0, 0); // 黒背景（HSBで黒）
+    }
     
-    // ブレンドモードを加算合成に設定（光る効果）
-    g.blendMode(ADD);
+    // ブレンドモードを設定（偶数時はMULTIPLY、奇数時はADD）
+    if (isEvenHour) {
+      g.blendMode(MULTIPLY); // 乗算合成（白背景用）
+    } else {
+      g.blendMode(ADD); // 加算合成（黒背景用）
+    }
     
     // グリッドのサイズ（update()で更新される値を使用）
     const gridSize = this.gridSize;
@@ -332,7 +355,12 @@ class GraphicsLayer {
         const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
         
         // 色を設定（HSBで指定）
-        g.fill(localHue, 80, 100, 155);
+        // 偶数時（白背景）は彩度を高く、奇数時（黒背景）は通常
+        if (isEvenHour) {
+          g.fill(localHue, 100, 80, 200); // MULTIPLYモード用（彩度高め、明度低め）
+        } else {
+          g.fill(localHue, 80, 100, 155); // ADDモード用（通常）
+        }
         
         // スケールを調整（セルサイズに合わせて縮小）
         const scale = 1 / gridSize * 0.8; // 少し余白を持たせる
