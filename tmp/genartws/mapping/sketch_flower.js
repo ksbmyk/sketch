@@ -27,6 +27,14 @@ function setup() {
   createCanvasSetup();
   console.log("Setup完了 - active:", active);
   console.log("currentSize:", currentSize);
+  
+  // 現在時刻を表示
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const isDaytime = hours >= 6 && hours < 18;
+  console.log(`現在時刻: ${hours}:${minutes < 10 ? '0' : ''}${minutes} - ${isDaytime ? '昼間モード（速い）' : '夜間モード（ゆっくり）'}`);
+  
   createGraphicsLayers();
   console.log("GraphicsLayers作成完了 - 数:", graphicsLayers.length);
 
@@ -44,7 +52,12 @@ function setup() {
       maxX = max(maxX, shape.img_x + shape.w);
       minY = min(minY, shape.img_y);
       maxY = max(maxY, shape.img_y + shape.h);
-    });
+    // 時刻情報を定期的に表示（デバッグ用）
+    if (frameCount % 3600 === 0 && this.index === 0) { // 約1分ごと、最初のレイヤーのみ
+      const minutesStr = minute < 10 ? '0' + minute : minute;
+      console.log('時刻: ' + hour + ':' + minutesStr + ' - 速度倍率: ' + this.timeSpeedMultiplier.toFixed(2) + 'x');
+    }
+  });
     console.log(`タイル配置範囲: X(${minX} to ${maxX}), Y(${minY} to ${maxY})`);
     console.log(`Canvasサイズ: ${width}x${height}`);
   }
@@ -157,6 +170,9 @@ class GraphicsLayer {
     this.current_circle_size = this.base_circle_size; // 現在の円サイズ
     this.is_dark_mode = true; // ダークモード設定
     
+    // 時間帯による速度調整
+    this.timeSpeedMultiplier = 1; // 時間帯による速度倍率
+    
     // サイズ変化用の変数
     this.size_phase = random(TWO_PI); // サイズ変化の初期位相
     this.size_freq = random(0.03, 0.05); // サイズ変化の周波数（もっと速く）
@@ -178,6 +194,25 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
+    // 現在の時刻を取得して時間帯による速度調整
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const timeInHours = hour + minute / 60; // 小数を含む時間
+    
+    // 時間帯による速度倍率を計算
+    // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
+    // 夜間（18時〜6時）: ゆっくり回転（0.3〜0.5倍）
+    // 12時が最速、0時が最遅
+    const dayPhase = (timeInHours - 6) / 12 * PI; // 6時を起点にPI周期
+    if (timeInHours >= 6 && timeInHours < 18) {
+      // 昼間（6時〜18時）：速く
+      this.timeSpeedMultiplier = 1.0 + sin(dayPhase) * 1.0; // 1.0〜2.0倍
+    } else {
+      // 夜間（18時〜6時）：ゆっくり
+      this.timeSpeedMultiplier = 0.3 + abs(sin(dayPhase)) * 0.2; // 0.3〜0.5倍
+    }
+    
     // グリッドサイズを時間経過で自動更新
     const elapsedTime = millis() - this.gridStartTime;
     const cycleTime = elapsedTime % (this.gridDuration * this.gridSizes.length); // 全体のサイクル時間（4ステップ）
@@ -187,7 +222,7 @@ class GraphicsLayer {
     // グリッドサイズが変わった時だけログ出力
     if (this.gridSize !== newGridSize) {
       this.gridSize = newGridSize;
-      console.log(`Layer ${this.index}: Grid size changed to ${this.gridSize}x${this.gridSize}`);
+      console.log('Layer ' + this.index + ': Grid size changed to ' + this.gridSize + 'x' + this.gridSize);
     }
     
     // サイズ変化の位相を更新
@@ -202,14 +237,15 @@ class GraphicsLayer {
     this.speed_phase += this.speed_freq;
     
     // 速度パターンに応じて速度を変化させる
+    let baseCalculatedSpeed = this.base_speed;
     switch(this.speed_pattern) {
       case 0: // sin波による滑らかな変化（時々停止）
         const sinValue = sin(this.speed_phase);
         // sin値が特定の範囲で速度を極端に落とす（擬似的な停止）
         if (abs(sinValue) < 0.1) {
-          this.speed = this.base_speed * 0.01; // ほぼ停止
+          baseCalculatedSpeed = this.base_speed * 0.01; // ほぼ停止
         } else {
-          this.speed = this.base_speed * (1 + sinValue * this.speed_amplitude);
+          baseCalculatedSpeed = this.base_speed * (1 + sinValue * this.speed_amplitude);
         }
         break;
         
@@ -217,13 +253,13 @@ class GraphicsLayer {
         const cycle = this.speed_phase % TWO_PI;
         if (cycle < PI * 0.3) {
           // 急加速フェーズ
-          this.speed = this.base_speed * (1 + pow(cycle / (PI * 0.3), 2) * this.speed_amplitude * 2);
+          baseCalculatedSpeed = this.base_speed * (1 + pow(cycle / (PI * 0.3), 2) * this.speed_amplitude * 2);
         } else if (cycle < PI * 1.7) {
           // ゆっくり減速フェーズ
-          this.speed = this.base_speed * (1 + cos((cycle - PI * 0.3) / (PI * 1.4) * PI) * this.speed_amplitude);
+          baseCalculatedSpeed = this.base_speed * (1 + cos((cycle - PI * 0.3) / (PI * 1.4) * PI) * this.speed_amplitude);
         } else {
           // 一時停止フェーズ
-          this.speed = this.base_speed * 0.05;
+          baseCalculatedSpeed = this.base_speed * 0.05;
         }
         break;
         
@@ -233,13 +269,16 @@ class GraphicsLayer {
         
         if (pulse > 0.5) {
           // パルス時は急加速
-          this.speed = this.base_speed * (1 + pulse * this.speed_amplitude * 3);
+          baseCalculatedSpeed = this.base_speed * (1 + pulse * this.speed_amplitude * 3);
         } else {
           // 通常時はゆっくり
-          this.speed = this.base_speed * (0.3 + pulse);
+          baseCalculatedSpeed = this.base_speed * (0.3 + pulse);
         }
         break;
     }
+    
+    // 時間帯による速度調整を適用
+    this.speed = baseCalculatedSpeed * this.timeSpeedMultiplier;
     
     // 速度の範囲を制限（逆回転しないように）
     this.speed = max(this.speed, 0.001);
@@ -248,7 +287,8 @@ class GraphicsLayer {
     this.angle_offset += this.speed;
     
     // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
-    this.hue_value = (this.hue_value + 0.2 + this.speed * 2) % 360;
+    // 夜は色変化も遅くする
+    this.hue_value = (this.hue_value + 0.2 * this.timeSpeedMultiplier + this.speed * 2) % 360;
   }
 
   // このレイヤーの描画処理
