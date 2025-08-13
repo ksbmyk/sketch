@@ -148,7 +148,8 @@ class GraphicsLayer {
     // 回転円パターン用の変数を初期化
     this.angle_offset = random(TWO_PI); // 各レイヤーで異なる初期角度
     this.hue_value = random(360); // ランダムな初期色相
-    this.speed = 0.05 + random(-0.02, 0.02); // 微妙に速度を変える
+    this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
+    this.speed = this.base_speed; // 現在の速度
     this.circle_count = 31;
     this.distance = size * 0.14; // グラフィックスサイズに応じて調整
     this.base_circle_size = size * 0.26; // グラフィックスサイズに応じて調整
@@ -157,15 +158,67 @@ class GraphicsLayer {
     // グリッド設定（1=単体、2=2x2、3=3x3、4=4x4など）
     // ランダムに1〜4のグリッドサイズを選択
     this.gridSize = floor(random(1, 5));
+    
+    // 速度変化用の変数
+    this.speed_phase = random(TWO_PI); // 速度変化の初期位相
+    this.speed_freq = random(0.01, 0.03); // 速度変化の周波数
+    this.speed_amplitude = random(0.5, 1.5); // 速度変化の振幅
+    this.speed_pattern = floor(random(3)); // 0: sin波, 1: 加速減速, 2: ランダム変化
   }
 
   // このレイヤーの計算処理
   update() {
-    // 角度を更新して回転させる
+    // 速度変化の位相を更新
+    this.speed_phase += this.speed_freq;
+    
+    // 速度パターンに応じて速度を変化させる
+    switch(this.speed_pattern) {
+      case 0: // sin波による滑らかな変化（時々停止）
+        const sinValue = sin(this.speed_phase);
+        // sin値が特定の範囲で速度を極端に落とす（擬似的な停止）
+        if (abs(sinValue) < 0.1) {
+          this.speed = this.base_speed * 0.01; // ほぼ停止
+        } else {
+          this.speed = this.base_speed * (1 + sinValue * this.speed_amplitude);
+        }
+        break;
+        
+      case 1: // 加速と減速を繰り返す（急激な変化）
+        const cycle = this.speed_phase % TWO_PI;
+        if (cycle < PI * 0.3) {
+          // 急加速フェーズ
+          this.speed = this.base_speed * (1 + pow(cycle / (PI * 0.3), 2) * this.speed_amplitude * 2);
+        } else if (cycle < PI * 1.7) {
+          // ゆっくり減速フェーズ
+          this.speed = this.base_speed * (1 + cos((cycle - PI * 0.3) / (PI * 1.4) * PI) * this.speed_amplitude);
+        } else {
+          // 一時停止フェーズ
+          this.speed = this.base_speed * 0.05;
+        }
+        break;
+        
+      case 2: // パルス的な動き（急に速くなったり遅くなったり）
+        const pulsePhase = (this.speed_phase * 2) % TWO_PI;
+        const pulse = pow(sin(pulsePhase), 8); // 8乗することで鋭いパルスを作る
+        
+        if (pulse > 0.5) {
+          // パルス時は急加速
+          this.speed = this.base_speed * (1 + pulse * this.speed_amplitude * 3);
+        } else {
+          // 通常時はゆっくり
+          this.speed = this.base_speed * (0.3 + pulse);
+        }
+        break;
+    }
+    
+    // 速度の範囲を制限（逆回転しないように）
+    this.speed = max(this.speed, 0.001);
+    
+    // 角度を更新して回転させる（変化する速度を使用）
     this.angle_offset += this.speed;
     
-    // 色相を徐々に変化させる
-    this.hue_value = (this.hue_value + 0.2) % 360;
+    // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
+    this.hue_value = (this.hue_value + 0.2 + this.speed * 2) % 360;
   }
 
   // このレイヤーの描画処理
@@ -201,9 +254,12 @@ class GraphicsLayer {
         const cellIndex = row * gridSize + col;
         const localHue = (this.hue_value + cellIndex * 30) % 360;
         
+        // セルごとに異なる速度変化を適用
+        const cellSpeedModifier = 1 + sin(this.speed_phase + cellIndex * 0.5) * 0.3;
+        
         // セルごとに回転方向を変える（チェッカーボードパターン）
         const direction = ((row + col) % 2 === 0) ? 1 : -1;
-        const localAngleOffset = this.angle_offset * direction + cellIndex * 0.5;
+        const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
         
         // 色を設定（HSBで指定）
         g.fill(localHue, 80, 100, 155);
