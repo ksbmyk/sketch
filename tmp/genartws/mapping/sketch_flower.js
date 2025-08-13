@@ -51,7 +51,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 20);
+  background(0); // 背景を完全に黒にする
   drawDebugMode(); // デバッグ用LEDキューブのレイアウト参考画像の描画
 
   if (graphicsLayers.length > 0) {
@@ -144,32 +144,63 @@ class GraphicsLayer {
     this.index = index;
     this.shape = shape;
     this.isActive = false;
-    //ここに初期化のコードを書く
+
+    // 回転円パターン用の変数を初期化
+    this.angle_offset = random(TWO_PI); // 各レイヤーで異なる初期角度
+    this.hue_value = random(360); // ランダムな初期色相
+    this.speed = 0.05 + random(-0.02, 0.02); // 微妙に速度を変える
+    this.circle_count = 31;
+    this.distance = size * 0.14; // グラフィックスサイズに応じて調整
+    this.base_circle_size = size * 0.26; // グラフィックスサイズに応じて調整
+    this.is_dark_mode = true; // ダークモード設定
   }
 
   // このレイヤーの計算処理
-  update() {}
+  update() {
+    // 角度を更新して回転させる
+    this.angle_offset += this.speed;
+    
+    // 色相を徐々に変化させる
+    this.hue_value = (this.hue_value + 0.2) % 360;
+  }
 
   // このレイヤーの描画処理
-  draw() {}
-
-  // ボールの描画と物理演算
-  drawBalls(g) {
+  draw() {
+    let g = this.graphics;
+    
+    // カラーモードを毎フレーム設定
     g.push();
+    g.colorMode(HSB, 360, 100, 100, 255);
     g.noStroke();
-
-    for (let i = 0; i < this.balls.length; i++) {
-      let ball = this.balls[i];
-
-      // ボールの描画
-      g.fill(ball.color);
-      g.ellipse(ball.x, ball.y, ball.size);
-
-      // ボールの影を描画
-      g.fill(0, 50);
-      g.ellipse(ball.x + 2, ball.y + 2, ball.size);
+    
+    // 背景を完全に黒にリセット（これで色の蓄積を防ぐ）
+    g.background(0, 0, 0);
+    
+    // 描画の中心をキャンバス中央に移動
+    g.translate(g.width / 2, g.height / 2);
+    
+    // ブレンドモードを加算合成に設定（光る効果）
+    g.blendMode(ADD);
+    
+    // 色を設定（HSBで指定）
+    g.fill(this.hue_value, 80, 100, 155);
+    
+    // forループで円を繰り返し描画
+    for (let i = 0; i < this.circle_count; i++) {
+      const angle = (TWO_PI / this.circle_count) * i + this.angle_offset;
+      
+      // 円の中心座標を計算 (cos, sin)
+      const x = cos(angle) * this.distance;
+      const y = sin(angle) * this.distance;
+      
+      // iが偶数か奇数かで円のサイズを変更
+      const size_modifier = (i % 2 === 0) ? g.width * 0.04 : -g.width * 0.04;
+      
+      g.circle(x, y, this.base_circle_size + size_modifier);
     }
-
+    
+    // ブレンドモードを元に戻す
+    g.blendMode(BLEND);
     g.pop();
   }
 

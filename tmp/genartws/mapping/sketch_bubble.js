@@ -162,15 +162,15 @@ class GraphicsLayer {
     
     let settings = {
       bubbleCount: 30,
-      speedMultiplier: 1,
+      speedMultiplier: 1, // 速度
       hueRange: [170, 240],
       saturationRange: [60, 100],
       brightnessRange: [80, 100],
       // HSB形式で背景色を指定 [色相, 彩度, 明度]
       backgroundTopHSB: [220, 60, 15],   // デフォルト：暗い青
       backgroundBottomHSB: [220, 70, 8], // デフォルト：より暗い青
-      wobbleMultiplier: 1,
-      glowIntensity: 1,
+      wobbleMultiplier: 1, // 揺れ
+      glowIntensity: 1, // 輝き
       specialMode: null
     };
     
@@ -190,7 +190,7 @@ class GraphicsLayer {
     // 昼（10:00-16:00）
     else if (h >= 10 && h < 16) {
       settings.bubbleCount = random(40, 60);
-      settings.speedMultiplier = 1.2;
+      settings.speedMultiplier = 3.2;
       settings.hueRange = [180, 220]; // 青系〜シアン
       settings.saturationRange = [50, 80];
       settings.brightnessRange = [90, 100];
