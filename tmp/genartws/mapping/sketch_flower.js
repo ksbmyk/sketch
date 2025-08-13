@@ -157,9 +157,9 @@ class GraphicsLayer {
     
     // グリッド設定（時間で自動変化）
     // 各レイヤーで開始時間をずらすことで、面ごとに異なるタイミングで変化
-    this.gridStartTime = millis() - (index * 2000); // 各面で2秒ずつずらす
+    this.gridStartTime = millis() - (index * 3000); // 各面で3秒ずつずらす
+    this.gridSizes = [1, 2, 4, 8]; // 1x1, 2x2, 4x4, 8x8のパターン
     this.gridSize = 1; // 初期グリッドサイズ
-    this.maxGridSize = 6; // 最大グリッドサイズ
     this.gridDuration = 10000; // 10秒ごとに切り替え（ミリ秒）
     
     // 速度変化用の変数
@@ -173,9 +173,9 @@ class GraphicsLayer {
   update() {
     // グリッドサイズを時間経過で自動更新
     const elapsedTime = millis() - this.gridStartTime;
-    const cycleTime = elapsedTime % (this.gridDuration * this.maxGridSize); // 全体のサイクル時間
-    const currentStep = floor(cycleTime / this.gridDuration); // 現在のステップ（0〜5）
-    const newGridSize = currentStep + 1; // グリッドサイズ（1〜6）
+    const cycleTime = elapsedTime % (this.gridDuration * this.gridSizes.length); // 全体のサイクル時間（4ステップ）
+    const currentStep = floor(cycleTime / this.gridDuration); // 現在のステップ（0〜3）
+    const newGridSize = this.gridSizes[currentStep]; // グリッドサイズ（1, 2, 4, 8）
     
     // グリッドサイズが変わった時だけログ出力
     if (this.gridSize !== newGridSize) {
