@@ -153,6 +153,10 @@ class GraphicsLayer {
     this.distance = size * 0.14; // グラフィックスサイズに応じて調整
     this.base_circle_size = size * 0.26; // グラフィックスサイズに応じて調整
     this.is_dark_mode = true; // ダークモード設定
+    
+    // グリッド設定（1=単体、2=2x2、3=3x3、4=4x4など）
+    // ランダムに1〜4のグリッドサイズを選択
+    this.gridSize = floor(random(1, 5));
   }
 
   // このレイヤーの計算処理
@@ -176,27 +180,53 @@ class GraphicsLayer {
     // 背景を完全に黒にリセット（これで色の蓄積を防ぐ）
     g.background(0, 0, 0);
     
-    // 描画の中心をキャンバス中央に移動
-    g.translate(g.width / 2, g.height / 2);
-    
     // ブレンドモードを加算合成に設定（光る効果）
     g.blendMode(ADD);
     
-    // 色を設定（HSBで指定）
-    g.fill(this.hue_value, 80, 100, 155);
+    // グリッドのサイズ
+    const gridSize = this.gridSize;
+    const cellSize = g.width / gridSize;
     
-    // forループで円を繰り返し描画
-    for (let i = 0; i < this.circle_count; i++) {
-      const angle = (TWO_PI / this.circle_count) * i + this.angle_offset;
-      
-      // 円の中心座標を計算 (cos, sin)
-      const x = cos(angle) * this.distance;
-      const y = sin(angle) * this.distance;
-      
-      // iが偶数か奇数かで円のサイズを変更
-      const size_modifier = (i % 2 === 0) ? g.width * 0.04 : -g.width * 0.04;
-      
-      g.circle(x, y, this.base_circle_size + size_modifier);
+    // グリッド状に複数のパターンを描画
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        g.push();
+        
+        // 各セルの中心に移動
+        const centerX = cellSize * (col + 0.5);
+        const centerY = cellSize * (row + 0.5);
+        g.translate(centerX, centerY);
+        
+        // 各セルごとに少し異なる色相と角度オフセット
+        const cellIndex = row * gridSize + col;
+        const localHue = (this.hue_value + cellIndex * 30) % 360;
+        
+        // セルごとに回転方向を変える（チェッカーボードパターン）
+        const direction = ((row + col) % 2 === 0) ? 1 : -1;
+        const localAngleOffset = this.angle_offset * direction + cellIndex * 0.5;
+        
+        // 色を設定（HSBで指定）
+        g.fill(localHue, 80, 100, 155);
+        
+        // スケールを調整（セルサイズに合わせて縮小）
+        const scale = 1 / gridSize * 0.8; // 少し余白を持たせる
+        
+        // forループで円を繰り返し描画
+        for (let i = 0; i < this.circle_count; i++) {
+          const angle = (TWO_PI / this.circle_count) * i + localAngleOffset;
+          
+          // 円の中心座標を計算 (cos, sin)
+          const x = cos(angle) * this.distance * scale;
+          const y = sin(angle) * this.distance * scale;
+          
+          // iが偶数か奇数かで円のサイズを変更
+          const size_modifier = (i % 2 === 0) ? g.width * 0.04 * scale : -g.width * 0.04 * scale;
+          
+          g.circle(x, y, (this.base_circle_size + size_modifier) * scale);
+        }
+        
+        g.pop();
+      }
     }
     
     // ブレンドモードを元に戻す
