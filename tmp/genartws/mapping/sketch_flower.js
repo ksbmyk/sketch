@@ -155,9 +155,12 @@ class GraphicsLayer {
     this.base_circle_size = size * 0.26; // グラフィックスサイズに応じて調整
     this.is_dark_mode = true; // ダークモード設定
     
-    // グリッド設定（1=単体、2=2x2、3=3x3、4=4x4など）
-    // ランダムに1〜4のグリッドサイズを選択
-    this.gridSize = floor(random(1, 5));
+    // グリッド設定（時間で自動変化）
+    // 各レイヤーで開始時間をずらすことで、面ごとに異なるタイミングで変化
+    this.gridStartTime = millis() - (index * 2000); // 各面で2秒ずつずらす
+    this.gridSize = 1; // 初期グリッドサイズ
+    this.maxGridSize = 6; // 最大グリッドサイズ
+    this.gridDuration = 10000; // 10秒ごとに切り替え（ミリ秒）
     
     // 速度変化用の変数
     this.speed_phase = random(TWO_PI); // 速度変化の初期位相
@@ -168,6 +171,18 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
+    // グリッドサイズを時間経過で自動更新
+    const elapsedTime = millis() - this.gridStartTime;
+    const cycleTime = elapsedTime % (this.gridDuration * this.maxGridSize); // 全体のサイクル時間
+    const currentStep = floor(cycleTime / this.gridDuration); // 現在のステップ（0〜5）
+    const newGridSize = currentStep + 1; // グリッドサイズ（1〜6）
+    
+    // グリッドサイズが変わった時だけログ出力
+    if (this.gridSize !== newGridSize) {
+      this.gridSize = newGridSize;
+      console.log(`Layer ${this.index}: Grid size changed to ${this.gridSize}x${this.gridSize}`);
+    }
+    
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
     
@@ -236,7 +251,7 @@ class GraphicsLayer {
     // ブレンドモードを加算合成に設定（光る効果）
     g.blendMode(ADD);
     
-    // グリッドのサイズ
+    // グリッドのサイズ（update()で更新される値を使用）
     const gridSize = this.gridSize;
     const cellSize = g.width / gridSize;
     
