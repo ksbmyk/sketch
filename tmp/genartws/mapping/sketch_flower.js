@@ -151,9 +151,16 @@ class GraphicsLayer {
     this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
     this.speed = this.base_speed; // 現在の速度
     this.circle_count = 31;
-    this.distance = size * 0.14; // グラフィックスサイズに応じて調整
-    this.base_circle_size = size * 0.26; // グラフィックスサイズに応じて調整
+    this.base_distance = size * 0.14; // 基本の距離
+    this.distance = this.base_distance; // 現在の距離
+    this.base_circle_size = size * 0.26; // 基本の円サイズ
+    this.current_circle_size = this.base_circle_size; // 現在の円サイズ
     this.is_dark_mode = true; // ダークモード設定
+    
+    // サイズ変化用の変数
+    this.size_phase = random(TWO_PI); // サイズ変化の初期位相
+    this.size_freq = random(0.008, 0.015); // サイズ変化の周波数（ゆっくり）
+    this.size_amplitude = 0.7; // サイズ変化の振幅（0.7 = 30%〜170%）
     
     // グリッド設定（時間で自動変化）
     // 各レイヤーで開始時間をずらすことで、面ごとに異なるタイミングで変化
@@ -182,6 +189,14 @@ class GraphicsLayer {
       this.gridSize = newGridSize;
       console.log(`Layer ${this.index}: Grid size changed to ${this.gridSize}x${this.gridSize}`);
     }
+    
+    // サイズ変化の位相を更新
+    this.size_phase += this.size_freq;
+    
+    // sin波でサイズを滑らかに変化させる
+    const sizeMultiplier = 1 + sin(this.size_phase) * this.size_amplitude;
+    this.current_circle_size = this.base_circle_size * sizeMultiplier;
+    this.distance = this.base_distance * sizeMultiplier;
     
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
@@ -276,6 +291,10 @@ class GraphicsLayer {
         const direction = ((row + col) % 2 === 0) ? 1 : -1;
         const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
         
+        // セルごとに少し異なるサイズ変化（位相をずらす）
+        const cellSizePhase = this.size_phase + cellIndex * 0.3;
+        const cellSizeMultiplier = 1 + sin(cellSizePhase) * this.size_amplitude * 0.5;
+        
         // 色を設定（HSBで指定）
         g.fill(localHue, 80, 100, 155);
         
@@ -286,14 +305,15 @@ class GraphicsLayer {
         for (let i = 0; i < this.circle_count; i++) {
           const angle = (TWO_PI / this.circle_count) * i + localAngleOffset;
           
-          // 円の中心座標を計算 (cos, sin)
-          const x = cos(angle) * this.distance * scale;
-          const y = sin(angle) * this.distance * scale;
+          // 円の中心座標を計算 (cos, sin) - 変化するdistanceを使用
+          const x = cos(angle) * this.distance * scale * cellSizeMultiplier;
+          const y = sin(angle) * this.distance * scale * cellSizeMultiplier;
           
           // iが偶数か奇数かで円のサイズを変更
           const size_modifier = (i % 2 === 0) ? g.width * 0.04 * scale : -g.width * 0.04 * scale;
           
-          g.circle(x, y, (this.base_circle_size + size_modifier) * scale);
+          // 変化する円のサイズを使用
+          g.circle(x, y, (this.current_circle_size + size_modifier) * scale * cellSizeMultiplier);
         }
         
         g.pop();
