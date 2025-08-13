@@ -163,7 +163,7 @@ class GraphicsLayer {
     this.hue_value = random(360); // ランダムな初期色相
     this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
     this.speed = this.base_speed; // 現在の速度
-    this.circle_count = 31;
+    this.circle_count = 10;
     this.base_distance = size * 0.14; // 基本の距離
     this.distance = this.base_distance; // 現在の距離
     this.base_circle_size = size * 0.26; // 基本の円サイズ
@@ -346,9 +346,9 @@ class GraphicsLayer {
         // 色を設定（HSBで指定）
         // 偶数時（白背景）は彩度を高く、奇数時（黒背景）は通常
         if (isEvenHour) {
-          g.fill(localHue, 100, 80, 200); // MULTIPLYモード用（彩度高め、明度低め）
+          g.fill(localHue, 100, 180, 100); // MULTIPLYモード用（彩度高め、明度低め）
         } else {
-          g.fill(localHue, 80, 100, 155); // ADDモード用（通常）
+          g.fill(localHue, 80, 100, 200); // ADDモード用（通常）
         }
         
         // スケールを調整（セルサイズに合わせて縮小）
