@@ -58,24 +58,13 @@ function setup() {
       const modeStr = hour % 2 === 0 ? '偶数時(白+MULTIPLY)' : '奇数時(黒+ADD)';
       console.log('時刻: ' + hour + ':' + minutesStr + ' - 速度倍率: ' + this.timeSpeedMultiplier.toFixed(2) + 'x - ' + modeStr);
     }
-  });
+    });
     console.log(`タイル配置範囲: X(${minX} to ${maxX}), Y(${minY} to ${maxY})`);
     console.log(`Canvasサイズ: ${width}x${height}`);
   }
 }
 
 function draw() {
-  // 現在の時間を取得して偶数時か奇数時か判定
-  const currentHour = new Date().getHours();
-  const isEvenHour = currentHour % 2 === 0;
-  
-  // 偶数時は白背景、奇数時は黒背景
-  if (isEvenHour) {
-    background(255); // 白背景
-  } else {
-    background(0); // 黒背景
-  }
-  
   drawDebugMode(); // デバッグ用LEDキューブのレイアウト参考画像の描画
 
   if (graphicsLayers.length > 0) {
