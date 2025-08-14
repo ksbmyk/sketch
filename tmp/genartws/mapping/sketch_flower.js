@@ -195,7 +195,7 @@ class GraphicsLayer {
     this.speed_phase = random(TWO_PI); // 速度変化の初期位相
     this.speed_freq = random(0.01, 0.03); // 速度変化の周波数
     this.speed_amplitude = random(0.5, 1.5); // 速度変化の振幅
-    this.speed_pattern = floor(random(3)); // 0: sin波, 1: 加速減速, 2: ランダム変化
+    this.speed_pattern = floor(random(2)); // 0: sin波, 1: 加速減速
     
     // 前回の時間帯を記録
     this.lastTimeSlot = this.currentTimeSlot;
@@ -205,29 +205,29 @@ class GraphicsLayer {
   updateTimeBasedPattern(size) {
     // 12個の異なるパターン（2時間ごと）
     const patterns = [
-      // 0-2時：少ない円、近い距離
+      // 0-2時
       { count: 6, distance: 0.08 },
-      // 2-4時：やや少ない円、やや近い
+      // 2-4時
       { count: 8, distance: 0.10 },
-      // 4-6時：朝の始まり、活発に
+      // 4-6時
       { count: 12, distance: 0.12 },
-      // 6-8時：朝、多めの円
-      { count: 16, distance: 0.14 },
-      // 8-10時：午前中、最も活発
-      { count: 20, distance: 0.16 },
-      // 10-12時：昼前、複雑なパターン
-      { count: 18, distance: 0.18 },
-      // 12-14時：昼、バランスの取れた
-      { count: 16, distance: 0.14 },
-      // 14-16時：午後、やや活発
-      { count: 14, distance: 0.15 },
-      // 16-18時：夕方、動的
-      { count: 10, distance: 0.13 },
-      // 18-20時：夜の始まり、落ち着き始める
-      { count: 8, distance: 0.11 },
-      // 20-22時：夜、静かに
-      { count: 6, distance: 0.09 },
-      // 22-24時：深夜、最小限
+      // 6-8時
+      { count: 14, distance: 0.14 },
+      // 8-10時
+      { count: 16, distance: 0.16 },
+      // 10-12時
+      { count: 20, distance: 0.18 },
+      // 12-14時
+      { count: 18, distance: 0.14 },
+      // 14-16時
+      { count: 16, distance: 0.15 },
+      // 16-18時
+      { count: 14, distance: 0.13 },
+      // 18-20時
+      { count: 12, distance: 0.11 },
+      // 20-22時
+      { count: 10, distance: 0.09 },
+      // 22-24時
       { count: 4, distance: 0.07 }
     ];
     
@@ -239,7 +239,6 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
-    // 時間を一度だけ取得して保存
     this.currentHour = new Date().getHours();
     this.currentTimeSlot = floor(this.currentHour / 2);
     
@@ -310,20 +309,8 @@ class GraphicsLayer {
           baseCalculatedSpeed = this.base_speed * 0.05;
         }
         break;
-        
-      case 2: // パルス的な動き（急に速くなったり遅くなったり）
-        const pulsePhase = (this.speed_phase * 2) % TWO_PI;
-        const pulse = pow(sin(pulsePhase), 8); // 8乗することで鋭いパルスを作る
-        
-        if (pulse > 0.5) {
-          // パルス時は急加速
-          baseCalculatedSpeed = this.base_speed * (1 + pulse * this.speed_amplitude * 3);
-        } else {
-          // 通常時はゆっくり
-          baseCalculatedSpeed = this.base_speed * (0.3 + pulse);
-        }
-        break;
     }
+
     
     // 時間帯による速度調整を適用
     this.speed = baseCalculatedSpeed * this.timeSpeedMultiplier;
@@ -386,9 +373,9 @@ class GraphicsLayer {
         
         // 色を設定（HSBで指定）
         if (isEvenHour) {
-          g.fill(localHue, 100, 180, 100); // MULTIPLYモード用
+          g.fill(localHue, 100, 180, 90);
         } else {
-          g.fill(localHue, 80, 100, 200); // ADDモード用
+          g.fill(localHue, 80, 100, 150); // ADDモード用
         }
         
         // スケールを調整（セルサイズに合わせて縮小）
