@@ -27,14 +27,7 @@ function setup() {
   createCanvasSetup();
   console.log("Setup完了 - active:", active);
   console.log("currentSize:", currentSize);
-  
-  // 現在時刻を表示
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const isDaytime = hours >= 6 && hours < 18;
-  console.log(`現在時刻: ${hours}:${minutes < 10 ? '0' : ''}${minutes} - ${isDaytime ? '昼間モード（速い）' : '夜間モード（ゆっくり）'}`);
-  
+    
   createGraphicsLayers();
   console.log("GraphicsLayers作成完了 - 数:", graphicsLayers.length);
 
@@ -52,12 +45,6 @@ function setup() {
       maxX = max(maxX, shape.img_x + shape.w);
       minY = min(minY, shape.img_y);
       maxY = max(maxY, shape.img_y + shape.h);
-    // 時刻情報を定期的に表示（デバッグ用）
-    if (frameCount % 3600 === 0 && this.index === 0) { // 約1分ごと、最初のレイヤーのみ
-      const minutesStr = minute < 10 ? '0' + minute : minute;
-      const modeStr = hour % 2 === 0 ? '偶数時(白+MULTIPLY)' : '奇数時(黒+ADD)';
-      console.log('時刻: ' + hour + ':' + minutesStr + ' - 速度倍率: ' + this.timeSpeedMultiplier.toFixed(2) + 'x - ' + modeStr);
-    }
     });
     console.log(`タイル配置範囲: X(${minX} to ${maxX}), Y(${minY} to ${maxY})`);
     console.log(`Canvasサイズ: ${width}x${height}`);
