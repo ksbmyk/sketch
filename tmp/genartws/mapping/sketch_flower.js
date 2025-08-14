@@ -212,23 +212,23 @@ class GraphicsLayer {
       // 4-6時：朝の始まり、活発に
       { count: 12, distance: 0.12 },
       // 6-8時：朝、多めの円
-      { count: 15, distance: 0.14 },
+      { count: 16, distance: 0.14 },
       // 8-10時：午前中、最も活発
       { count: 20, distance: 0.16 },
       // 10-12時：昼前、複雑なパターン
       { count: 18, distance: 0.18 },
       // 12-14時：昼、バランスの取れた
-      { count: 10, distance: 0.14 },
+      { count: 16, distance: 0.14 },
       // 14-16時：午後、やや活発
       { count: 14, distance: 0.15 },
       // 16-18時：夕方、動的
-      { count: 16, distance: 0.13 },
+      { count: 10, distance: 0.13 },
       // 18-20時：夜の始まり、落ち着き始める
-      { count: 9, distance: 0.11 },
+      { count: 8, distance: 0.11 },
       // 20-22時：夜、静かに
-      { count: 7, distance: 0.09 },
+      { count: 6, distance: 0.09 },
       // 22-24時：深夜、最小限
-      { count: 5, distance: 0.07 }
+      { count: 4, distance: 0.07 }
     ];
     
     // 現在の時間帯のパターンを適用
@@ -351,17 +351,11 @@ class GraphicsLayer {
     g.colorMode(HSB, 360, 100, 100, 255);
     g.noStroke();
     
-    // 偶数時は白背景、奇数時は黒背景
+    // 偶数時はグレー背景、奇数時は黒背景
     if (isEvenHour) {
-      g.background(0, 0, 100); // 白背景（HSBで白）
+      g.background(200, 5, 75);
     } else {
       g.background(0, 0, 0); // 黒背景（HSBで黒）
-    }
-    
-    // ブレンドモードを設定
-    if (isEvenHour) {
-      g.blendMode(MULTIPLY); // 乗算合成（白背景用）
-    } else {
       g.blendMode(ADD); // 加算合成（黒背景用）
     }
     
