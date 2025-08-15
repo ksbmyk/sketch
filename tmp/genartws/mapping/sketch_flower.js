@@ -250,7 +250,7 @@ class GraphicsLayer {
       this.timeSpeedMultiplier = 1.0 + sin(dayPhase) * 1.0; // 1.0〜2.0倍
     } else {
       // 夜間（18時〜6時）：ゆっくり
-      this.timeSpeedMultiplier = 0.3 + abs(sin(dayPhase)) * 0.2; // 0.3〜0.5倍
+      this.timeSpeedMultiplier = 0.5 + abs(sin(dayPhase)) * 0.3; // 0.5〜0.8倍
     }
     
     // グリッドサイズを時間経過で自動更新
