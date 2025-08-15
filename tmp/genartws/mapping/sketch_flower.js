@@ -242,12 +242,12 @@ class GraphicsLayer {
     }
     
     // 時間帯による速度倍率を計算
-    // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
+    // 昼間（6時〜18時）: 速い回転（1.5〜3.0倍）
     // 夜間（18時〜6時）: ゆっくり回転（0.5〜0.8倍）
     const dayPhase = (this.currentHour - 6) / 12 * PI; // 6時を起点にPI周期
     if (this.currentHour >= 6 && this.currentHour < 18) {
       // 昼間（6時〜18時）：速く
-      this.timeSpeedMultiplier = 1.0 + sin(dayPhase) * 1.0; // 1.0〜2.0倍
+      this.timeSpeedMultiplier = 1.5 + sin(dayPhase) * 1.5; // 1.5〜3.0倍
     } else {
       // 夜間（18時〜6時）：ゆっくり
       this.timeSpeedMultiplier = 0.5 + abs(sin(dayPhase)) * 0.3; // 0.5〜0.8倍
@@ -333,7 +333,7 @@ class GraphicsLayer {
     }
 
     // 色相を徐々に変化させる（一定の速度で）
-    this.hue_value = (this.hue_value + 0.5 * this.timeSpeedMultiplier) % 360;
+    this.hue_value = (this.hue_value + 0.1 * this.timeSpeedMultiplier) % 360;
   }
 
   // このレイヤーの描画処理
