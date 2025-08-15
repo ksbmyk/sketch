@@ -146,9 +146,9 @@ class GraphicsLayer {
     this.isActive = false;
 
     // 回転円パターン用の変数を初期化
-    this.angle_offset = random(TWO_PI); // 各レイヤーで異なる初期角度
+    this.current_angle = random(TWO_PI); // 現在の角度（0〜TWO_PIの範囲で管理）
     this.hue_value = random(360); // ランダムな初期色相
-    this.base_speed = 0.05 + random(-0.02, 0.02); // 基本速度
+    this.base_speed = 0.02 + random(-0.01, 0.01); // 基本速度（より小さい値に調整）
     this.speed = this.base_speed; // 現在の速度
     
     // 現在の時間を保存する変数
@@ -168,7 +168,7 @@ class GraphicsLayer {
     
     // サイズ変化用の変数
     this.size_phase = random(TWO_PI); // サイズ変化の初期位相
-    this.size_freq = random(0.03, 0.05); // サイズ変化の周波数（もっと速く）
+    this.size_freq = random(0.02, 0.04); // サイズ変化の周波数
     this.size_amplitude = 0.8; // サイズ変化の振幅（0.8 = 20%〜180%）
     
     // グリッド設定（時間で自動変化）
@@ -180,12 +180,18 @@ class GraphicsLayer {
     
     // 速度変化用の変数
     this.speed_phase = random(TWO_PI); // 速度変化の初期位相
-    this.speed_freq = random(0.01, 0.03); // 速度変化の周波数
-    this.speed_amplitude = random(0.3, 0.8); // 速度変化の振幅
+    this.speed_freq = random(0.01, 0.02); // 速度変化の周波数
+    this.speed_amplitude = random(0.3, 0.6); // 速度変化の振幅
     this.speed_pattern = floor(random(2)); // 0: sin波, 1: 加速減速
     
     // 前回の時間帯を記録
     this.lastTimeSlot = this.currentTimeSlot;
+    
+    // 各セルの個別角度を管理（最大8x8=64個）
+    this.cellAngles = [];
+    for (let i = 0; i < 64; i++) {
+      this.cellAngles.push(random(TWO_PI));
+    }
   }
   
   // 2時間ごとのパターンを更新
@@ -238,7 +244,6 @@ class GraphicsLayer {
     // 時間帯による速度倍率を計算
     // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
     // 夜間（18時〜6時）: ゆっくり回転（0.3〜0.5倍）
-    // 12時が最速、0時が最遅
     const dayPhase = (this.currentHour - 6) / 12 * PI; // 6時を起点にPI周期
     if (this.currentHour >= 6 && this.currentHour < 18) {
       // 昼間（6時〜18時）：速く
@@ -250,9 +255,9 @@ class GraphicsLayer {
     
     // グリッドサイズを時間経過で自動更新
     const elapsedTime = millis() - this.gridStartTime;
-    const cycleTime = elapsedTime % (this.gridDuration * this.gridSizes.length); // 全体のサイクル時間（4ステップ）
-    const currentStep = floor(cycleTime / this.gridDuration); // 現在のステップ（0〜3）
-    const newGridSize = this.gridSizes[currentStep]; // グリッドサイズ（1, 2, 4, 8）
+    const cycleTime = elapsedTime % (this.gridDuration * this.gridSizes.length);
+    const currentStep = floor(cycleTime / this.gridDuration);
+    const newGridSize = this.gridSizes[currentStep];
 
     // グリッドサイズが変わった
     if (this.gridSize !== newGridSize) {
@@ -261,9 +266,8 @@ class GraphicsLayer {
     
     // サイズ変化の位相を更新
     this.size_phase += this.size_freq;
-    if (this.size_phase > TWO_PI) {
-      this.size_phase -= TWO_PI;
-    }
+    // 位相を0〜TWO_PIの範囲に正規化
+    this.size_phase = this.size_phase % TWO_PI;
     
     // sin波でサイズを滑らかに変化させる
     const sizeMultiplier = 1 + sin(this.size_phase) * this.size_amplitude;
@@ -272,34 +276,34 @@ class GraphicsLayer {
     
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
-    if (this.speed_phase > TWO_PI) {
-      this.speed_phase -= TWO_PI;
-    }
+    // 位相を0〜TWO_PIの範囲に正規化
+    this.speed_phase = this.speed_phase % TWO_PI;
     
     // 速度パターンに応じて速度を変化させる
     let baseCalculatedSpeed = this.base_speed;
     switch(this.speed_pattern) {
-      case 0: // sin波による滑らかな変化（時々停止）
+      case 0: // sin波による滑らかな変化
         const sinValue = sin(this.speed_phase);
-        // sin値が特定の範囲で速度を極端に落とす（擬似的な停止）
-        if (abs(sinValue) < 0.1) {
-          baseCalculatedSpeed = this.base_speed * 0.01; // ほぼ停止
-        } else {
-          baseCalculatedSpeed = this.base_speed * (1 + sinValue * this.speed_amplitude);
-        }
+        baseCalculatedSpeed = this.base_speed * (1 + sinValue * this.speed_amplitude);
+        // 最低速度を保証
+        baseCalculatedSpeed = max(baseCalculatedSpeed, this.base_speed * 0.1);
         break;
         
-      case 1: // 加速と減速を繰り返す（急激な変化）
-        const cycle = this.speed_phase % TWO_PI;
-        if (cycle < PI * 0.3) {
-          // 急加速フェーズ
-          baseCalculatedSpeed = this.base_speed * (1 + pow(cycle / (PI * 0.3), 2) * this.speed_amplitude * 2);
-        } else if (cycle < PI * 1.7) {
-          // ゆっくり減速フェーズ
-          baseCalculatedSpeed = this.base_speed * (1 + cos((cycle - PI * 0.3) / (PI * 1.4) * PI) * this.speed_amplitude);
+      case 1: // 滑らかな加速と減速
+        const normalizedPhase = this.speed_phase / TWO_PI;
+        
+        if (normalizedPhase < 0.3) {
+          // 滑らかな加速
+          const t = normalizedPhase / 0.3;
+          baseCalculatedSpeed = this.base_speed * (1 + sin(t * HALF_PI) * this.speed_amplitude * 2);
+        } else if (normalizedPhase < 0.85) {
+          // 滑らかな減速
+          const t = (normalizedPhase - 0.3) / 0.55;
+          baseCalculatedSpeed = this.base_speed * (1 + cos(t * PI) * this.speed_amplitude);
         } else {
-          // 一時停止フェーズ
-          baseCalculatedSpeed = this.base_speed * 0.05;
+          // ゆっくりフェーズ
+          const t = (normalizedPhase - 0.85) / 0.15;
+          baseCalculatedSpeed = this.base_speed * (0.2 + 0.8 * (1 - sin(t * HALF_PI)));
         }
         break;
     }
@@ -307,21 +311,29 @@ class GraphicsLayer {
     // 時間帯による速度調整を適用
     this.speed = baseCalculatedSpeed * this.timeSpeedMultiplier;
     
-    // 速度の範囲を制限（逆回転しないように）
-    this.speed = max(this.speed, 0.001);
+    // 速度の範囲を制限（最小値と最大値を設定）
+    this.speed = constrain(this.speed, 0.001, 0.2);
     
-    // 角度を更新して回転させる（変化する速度を使用）
-    this.angle_offset += this.speed;
-    // 角度を0〜TWO_PIの範囲に正規化（精度問題を防ぐ）
-    if (this.angle_offset > TWO_PI) {
-      this.angle_offset -= TWO_PI;
-    } else if (this.angle_offset < 0) {
-      this.angle_offset += TWO_PI;
+    // メインの角度を更新（0〜TWO_PIの範囲で循環）
+    this.current_angle += this.speed;
+    this.current_angle = this.current_angle % TWO_PI;
+    
+    // 各セルの角度を更新
+    const gridSize = this.gridSize;
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        const cellIndex = row * gridSize + col;
+        const direction = ((row + col) % 2 === 0) ? 1 : -1;
+        const cellSpeedModifier = 1 + sin(this.speed_phase + cellIndex * 0.5) * 0.3;
+        
+        // 各セルの角度を個別に更新
+        this.cellAngles[cellIndex] += this.speed * direction * cellSpeedModifier;
+        this.cellAngles[cellIndex] = this.cellAngles[cellIndex] % TWO_PI;
+      }
     }
 
-    // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
-    // 夜は色変化も遅くする
-    this.hue_value = (this.hue_value + 0.2 * this.timeSpeedMultiplier + this.speed * 2) % 360;
+    // 色相を徐々に変化させる（一定の速度で）
+    this.hue_value = (this.hue_value + 0.5 * this.timeSpeedMultiplier) % 360;
   }
 
   // このレイヤーの描画処理
@@ -340,11 +352,11 @@ class GraphicsLayer {
     if (isEvenHour) {
       g.background(200, 5, 75);
     } else {
-      g.background(0, 0, 0); // 黒背景（HSBで黒）
-      g.blendMode(ADD); // 加算合成（黒背景用）
+      g.background(0, 0, 0);
+      g.blendMode(ADD);
     }
     
-    // グリッドのサイズ（update()で更新される値を使用）
+    // グリッドのサイズ
     const gridSize = this.gridSize;
     const cellSize = g.width / gridSize;
     
@@ -358,41 +370,38 @@ class GraphicsLayer {
         const centerY = cellSize * (row + 0.5);
         g.translate(centerX, centerY);
         
-        // 各セルごとに少し異なる色相と角度オフセット
+        // 各セルごとに少し異なる色相
         const cellIndex = row * gridSize + col;
         const localHue = (this.hue_value + cellIndex * 30) % 360;
         
-        // セルごとに異なる速度変化を適用
-        const cellSpeedModifier = 1 + sin(this.speed_phase + cellIndex * 0.5) * 0.3;
-        
-        // セルごとに回転方向を変える（チェッカーボードパターン）
-        const direction = ((row + col) % 2 === 0) ? 1 : -1;
-        const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
+        // 各セルの現在の角度を使用
+        const localAngleOffset = this.cellAngles[cellIndex];
 
-        // 色を設定（HSBで指定）
+        // 色を設定
         if (isEvenHour) {
           const alphaValue = map(this.circle_count, 4, 18, 100, 50);
           g.fill(localHue, 100, 100, alphaValue);
         } else {
-          g.fill(localHue, 80, 100, 150); // ADDモード用
+          g.fill(localHue, 80, 100, 150);
         }
         
-        // スケールを調整（セルサイズに合わせて縮小）
-        const scale = 1 / gridSize * 0.8; // 少し余白を持たせる
+        // スケールを調整
+        const scale = 1 / gridSize * 0.8;
         
         // forループで円を繰り返し描画
         for (let i = 0; i < this.circle_count; i++) {
-          const baseAngle = (this.angle_offset % TWO_PI + TWO_PI) % TWO_PI;
-          const angle = (TWO_PI / this.circle_count) * i + baseAngle;
+          // 各円の基本角度
+          const baseCircleAngle = (TWO_PI / this.circle_count) * i;
+          const angle = baseCircleAngle + localAngleOffset;
           
-          // 円の中心座標を計算 (cos, sin) - 変化するdistanceを使用
+          // 円の中心座標を計算
           const x = cos(angle) * this.distance * scale;
           const y = sin(angle) * this.distance * scale;
           
           // iが偶数か奇数かで円のサイズを変更
           const size_modifier = (i % 2 === 0) ? g.width * 0.04 * scale : -g.width * 0.04 * scale;
           
-          // 変化する円のサイズを使用（全セル同じタイミング）
+          // 変化する円のサイズを使用
           g.circle(x, y, (this.current_circle_size + size_modifier) * scale);
         }
         
