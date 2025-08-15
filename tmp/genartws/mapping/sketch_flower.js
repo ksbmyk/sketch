@@ -181,7 +181,7 @@ class GraphicsLayer {
     // 速度変化用の変数
     this.speed_phase = random(TWO_PI); // 速度変化の初期位相
     this.speed_freq = random(0.01, 0.03); // 速度変化の周波数
-    this.speed_amplitude = random(0.5, 1.5); // 速度変化の振幅
+    this.speed_amplitude = random(0.3, 0.8); // 速度変化の振幅
     this.speed_pattern = floor(random(2)); // 0: sin波, 1: 加速減速
     
     // 前回の時間帯を記録
@@ -203,7 +203,7 @@ class GraphicsLayer {
       // 8-10時
       { count: 16, distance: 0.16 },
       // 10-12時
-      { count: 20, distance: 0.18 },
+      { count: 18, distance: 0.18 },
       // 12-14時
       { count: 18, distance: 0.14 },
       // 14-16時
@@ -226,9 +226,10 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
-    this.currentHour = new Date().getHours();
+    // this.currentHour = new Date().getHours();
+    this.currentHour = 8;
     this.currentTimeSlot = floor(this.currentHour / 2);
-    
+
     // 2時間ごとのパターン更新をチェック
     if (this.lastTimeSlot !== this.currentTimeSlot) {
       this.updateTimeBasedPattern(this.graphics.width);
@@ -261,6 +262,9 @@ class GraphicsLayer {
     
     // サイズ変化の位相を更新
     this.size_phase += this.size_freq;
+    if (this.size_phase > TWO_PI) {
+      this.size_phase -= TWO_PI;
+    }
     
     // sin波でサイズを滑らかに変化させる
     const sizeMultiplier = 1 + sin(this.size_phase) * this.size_amplitude;
@@ -269,6 +273,9 @@ class GraphicsLayer {
     
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
+    if (this.speed_phase > TWO_PI) {
+      this.speed_phase -= TWO_PI;
+    }
     
     // 速度パターンに応じて速度を変化させる
     let baseCalculatedSpeed = this.base_speed;
@@ -307,6 +314,9 @@ class GraphicsLayer {
     
     // 角度を更新して回転させる（変化する速度を使用）
     this.angle_offset += this.speed;
+    if (this.angle_offset > TWO_PI) {
+      this.angle_offset -= TWO_PI;
+    }
     
     // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
     // 夜は色変化も遅くする
