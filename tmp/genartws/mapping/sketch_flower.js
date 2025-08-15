@@ -370,7 +370,8 @@ class GraphicsLayer {
         
         // 色を設定（HSBで指定）
         if (isEvenHour) {
-          g.fill(localHue, 100, 180, 90);
+          const alphaValue = map(this.circle_count, 4, 18, 150, 50);
+          g.fill(localHue, 100, 100, alphaValue);
         } else {
           g.fill(localHue, 80, 100, 150); // ADDモード用
         }
