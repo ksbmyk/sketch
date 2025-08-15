@@ -257,7 +257,6 @@ class GraphicsLayer {
     // グリッドサイズが変わった
     if (this.gridSize !== newGridSize) {
       this.gridSize = newGridSize;
-      this.speed_pattern = (this.speed_pattern + 1) % 2; // 回転パターンの切り替え
     }
     
     // サイズ変化の位相を更新
