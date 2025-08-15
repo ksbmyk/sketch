@@ -272,9 +272,6 @@ class GraphicsLayer {
     
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
-    if (this.speed_phase > TWO_PI) {
-      this.speed_phase -= TWO_PI;
-    }
     
     // 速度パターンに応じて速度を変化させる
     let baseCalculatedSpeed = this.base_speed;
@@ -313,9 +310,6 @@ class GraphicsLayer {
     
     // 角度を更新して回転させる（変化する速度を使用）
     this.angle_offset += this.speed;
-    if (this.angle_offset > TWO_PI) {
-      this.angle_offset -= TWO_PI;
-    }
     
     // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
     // 夜は色変化も遅くする
