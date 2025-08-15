@@ -226,8 +226,7 @@ class GraphicsLayer {
 
   // このレイヤーの計算処理
   update() {
-    // this.currentHour = new Date().getHours();
-    this.currentHour = 8;
+    this.currentHour = new Date().getHours();
     this.currentTimeSlot = floor(this.currentHour / 2);
 
     // 2時間ごとのパターン更新をチェック
@@ -258,6 +257,7 @@ class GraphicsLayer {
     // グリッドサイズが変わった
     if (this.gridSize !== newGridSize) {
       this.gridSize = newGridSize;
+      this.speed_pattern = (this.speed_pattern + 1) % 2; // 回転パターンの切り替え
     }
     
     // サイズ変化の位相を更新
