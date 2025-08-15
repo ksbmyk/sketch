@@ -243,7 +243,7 @@ class GraphicsLayer {
     
     // 時間帯による速度倍率を計算
     // 昼間（6時〜18時）: 速い回転（1.0〜2.0倍）
-    // 夜間（18時〜6時）: ゆっくり回転（0.3〜0.5倍）
+    // 夜間（18時〜6時）: ゆっくり回転（0.5〜0.8倍）
     const dayPhase = (this.currentHour - 6) / 12 * PI; // 6時を起点にPI周期
     if (this.currentHour >= 6 && this.currentHour < 18) {
       // 昼間（6時〜18時）：速く
