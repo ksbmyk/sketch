@@ -193,17 +193,17 @@ class GraphicsLayer {
     // 12個の異なるパターン（2時間ごと）
     const patterns = [
       // 0-2時
-      { count: 6, distance: 0.08 },
+      { count: 4, distance: 0.08 },
       // 2-4時
-      { count: 8, distance: 0.10 },
+      { count: 6, distance: 0.10 },
       // 4-6時
-      { count: 12, distance: 0.12 },
+      { count: 8, distance: 0.12 },
       // 6-8時
-      { count: 14, distance: 0.14 },
+      { count: 12, distance: 0.14 },
       // 8-10時
-      { count: 16, distance: 0.16 },
+      { count: 14, distance: 0.16 },
       // 10-12時
-      { count: 18, distance: 0.18 },
+      { count: 16, distance: 0.18 },
       // 12-14時
       { count: 18, distance: 0.14 },
       // 14-16時
@@ -211,11 +211,11 @@ class GraphicsLayer {
       // 16-18時
       { count: 14, distance: 0.13 },
       // 18-20時
-      { count: 12, distance: 0.11 },
+      { count: 12, distance: 0.12 },
       // 20-22時
       { count: 10, distance: 0.09 },
       // 22-24時
-      { count: 4, distance: 0.07 }
+      { count: 6, distance: 0.07 }
     ];
     
     // 現在の時間帯のパターンを適用
@@ -272,6 +272,9 @@ class GraphicsLayer {
     
     // 速度変化の位相を更新
     this.speed_phase += this.speed_freq;
+    if (this.speed_phase > TWO_PI) {
+      this.speed_phase -= TWO_PI;
+    }
     
     // 速度パターンに応じて速度を変化させる
     let baseCalculatedSpeed = this.base_speed;
@@ -301,7 +304,6 @@ class GraphicsLayer {
         break;
     }
 
-    
     // 時間帯による速度調整を適用
     this.speed = baseCalculatedSpeed * this.timeSpeedMultiplier;
     
@@ -310,7 +312,13 @@ class GraphicsLayer {
     
     // 角度を更新して回転させる（変化する速度を使用）
     this.angle_offset += this.speed;
-    
+    // 角度を0〜TWO_PIの範囲に正規化（精度問題を防ぐ）
+    if (this.angle_offset > TWO_PI) {
+      this.angle_offset -= TWO_PI;
+    } else if (this.angle_offset < 0) {
+      this.angle_offset += TWO_PI;
+    }
+
     // 色相を徐々に変化させる（速度に応じて色変化速度も変える）
     // 夜は色変化も遅くする
     this.hue_value = (this.hue_value + 0.2 * this.timeSpeedMultiplier + this.speed * 2) % 360;
@@ -360,10 +368,10 @@ class GraphicsLayer {
         // セルごとに回転方向を変える（チェッカーボードパターン）
         const direction = ((row + col) % 2 === 0) ? 1 : -1;
         const localAngleOffset = this.angle_offset * direction * cellSpeedModifier + cellIndex * 0.5;
-        
+
         // 色を設定（HSBで指定）
         if (isEvenHour) {
-          const alphaValue = map(this.circle_count, 4, 18, 150, 50);
+          const alphaValue = map(this.circle_count, 4, 18, 100, 50);
           g.fill(localHue, 100, 100, alphaValue);
         } else {
           g.fill(localHue, 80, 100, 150); // ADDモード用
@@ -374,7 +382,8 @@ class GraphicsLayer {
         
         // forループで円を繰り返し描画
         for (let i = 0; i < this.circle_count; i++) {
-          const angle = (TWO_PI / this.circle_count) * i + localAngleOffset;
+          const baseAngle = (this.angle_offset % TWO_PI + TWO_PI) % TWO_PI;
+          const angle = (TWO_PI / this.circle_count) * i + baseAngle;
           
           // 円の中心座標を計算 (cos, sin) - 変化するdistanceを使用
           const x = cos(angle) * this.distance * scale;
