@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（投稿用）</title>
+    <title>詩とコンピュータ - 季節のコード詩（高解像度対応版）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -43,6 +43,17 @@
             color: #0ff;
             font-weight: bold;
         }
+        .export-status {
+            background: rgba(255,0,0,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .export-status.active {
+            display: block;
+            background: rgba(0,255,0,0.2);
+        }
         .button-group {
             display: flex;
             gap: 10px;
@@ -78,7 +89,7 @@
 <body>
     <div class="container">
         <div id="controls">
-            <h2>🌸 詩とコンピュータ - 季節のコード詩</h2>
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（高解像度対応版）</h2>
             
             <div class="info-grid">
                 <div class="info-box">
@@ -95,10 +106,16 @@
                 </div>
             </div>
             
+            <div class="export-status" id="exportStatus">
+                <div>📸 高解像度書き出し中...</div>
+                <div>フレーム: <span id="exportFrame">0</span> / <span id="totalFrames">900</span></div>
+                <div style="font-size: 12px; color: #aaa;">処理には時間がかかります</div>
+            </div>
+            
             <div class="button-group">
-                <button onclick="togglePreviewMode()" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">🔄 モード切替 (Google/NEORT)</button>
-                <button onclick="exportGoogleForm()">📤 Google Form用説明</button>
-                <button onclick="exportNeort()">📤 NEORT用説明</button>
+                <button onclick="togglePreviewMode()">🔄 モード切替 (Google/NEORT)</button>
+                <button onclick="exportHighResGoogle()" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">📸 Google Form用 高解像度書き出し</button>
+                <button onclick="exportHighResNeort()" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">📸 NEORT用 高解像度書き出し</button>
                 <button onclick="toggleGuide()">📐 ガイド表示</button>
                 <button onclick="resetAnimation()">🔄 リセット</button>
             </div>
@@ -107,8 +124,8 @@
                 <div style="color: #ffa500; font-size: 12px; margin-bottom: 5px;">📌 操作方法</div>
                 <div style="font-size: 11px; color: #aaa; line-height: 1.4;">
                     <strong>M:</strong> プレビューモード切替（Google ⇔ NEORT）<br>
-                    <strong>S:</strong> 現在のフレーム保存（モードに応じたプレフィックス付き）<br>
-                    <strong>E:</strong> 15秒分連番書き出し（900枚、処理が重い）<br>
+                    <strong>S:</strong> 現在のフレーム保存（プレビューサイズ）<br>
+                    <strong>高解像度書き出し:</strong> 上のボタンで各モード用の実サイズで書き出し<br>
                     <strong>R:</strong> アニメーションリセット | <strong>G:</strong> ガイド表示切替<br>
                     <strong>保存先:</strong> ブラウザのダウンロードフォルダ
                 </div>
@@ -143,6 +160,12 @@ let previewW, previewH, workW, workH;
 // ガイド表示
 let showGuide = true;
 
+// 高解像度書き出し用
+let exportGraphics = null;
+let isExporting = false;
+let exportFrameCount = 0;
+let exportMode = '';
+
 // ===============================================
 // 季節のコード詩の変数
 // ===============================================
@@ -156,10 +179,6 @@ let seasonStartTime;
 let frameCounter = 0;
 let generationPhase = 0;
 const SEASON_DURATION = 3750; // 各季節の長さ（ミリ秒）
-
-// 書き出し用の高解像度グラフィックス
-let exportGraphics = null;
-let isExporting = false;
 
 // ===============================================
 // p5.js メイン
@@ -195,15 +214,20 @@ function updateCanvasSize() {
 }
 
 function initSeasonData() {
-    // モードに応じたサイズスケール
-    let sizeScale = previewMode === 'google' ? 1 : 2.25; // NEORTは2.25倍大きい
+    // モードに応じたサイズスケール（実際の描画用）
+    let sizeScale = previewMode === 'google' ? 1 : 2.25;
+    
+    // 高解像度書き出し中は実サイズ用のスケールを使用
+    if (isExporting) {
+        sizeScale = exportMode === 'google' ? 4 : 9; // 実サイズ用
+    }
     
     // データ定義（季節の詩的表現）
     d = {
         s: { // 春（Spring）- 花
             c: '✿',
             r: true,
-            s: 12 * sizeScale,  // プレビューサイズに調整
+            s: 12 * sizeScale,  
             co: [255, 105, 180],
             bg: [255, 182, 193],
             code: "春.tender('✿', :bloom)",
@@ -212,7 +236,7 @@ function initSeasonData() {
         u: { // 夏（Summer）- セミコロン（水滴のメタファー）
             c: ';',
             r: false,
-            s: 10 * sizeScale,  // プレビューサイズに調整
+            s: 10 * sizeScale,  
             co: [30, 144, 255],
             bg: [135, 206, 250],
             code: "夏.sudden(';', :pour)",
@@ -221,7 +245,7 @@ function initSeasonData() {
         a: { // 秋（Autumn）- スペード（落葉のメタファー）
             c: '♠',
             r: true,
-            s: 11 * sizeScale,  // プレビューサイズに調整
+            s: 11 * sizeScale,  
             co: [204, 85, 0],
             bg: [204, 163, 0],
             code: "秋.gradual('♠', :fall)",
@@ -230,7 +254,7 @@ function initSeasonData() {
         w: { // 冬（Winter）- 雪の結晶
             c: '*',
             r: false,
-            s: 15 * sizeScale,  // プレビューサイズに調整
+            s: 15 * sizeScale,  
             co: [255, 255, 255],
             bg: [0, 31, 63],
             code: "冬.silent('*', :float)",
@@ -244,16 +268,20 @@ function initSeasonData() {
 }
 
 function draw() {
-    // 黒背景
+    if (isExporting) {
+        // 高解像度書き出しモード
+        drawHighResFrame();
+        return;
+    }
+    
+    // 通常のプレビュー描画
     background(0);
     
     // モードに応じた配置
     push();
     if (previewMode === 'google') {
-        // Google Form用: 左上配置
         translate(0, 0);
     } else {
-        // NEORT用: 全画面（配置の必要なし）
         translate(0, 0);
     }
     
@@ -277,29 +305,13 @@ function draw() {
     
     // FPS表示
     if (frameCount % 10 === 0) {
-        document.getElementById('fps').textContent = Math.round(frameRate());
-        document.getElementById('currentSeason').textContent = d[cs].name;
-        
-        let modeElement = document.getElementById('previewModeText');
-        if (modeElement) {
-            modeElement.textContent = previewMode === 'google' ? 'Google Form用' : 'NEORT用';
-        }
-        
-        let sizeElement = document.getElementById('workSizeText');
-        if (sizeElement) {
-            if (previewMode === 'google') {
-                sizeElement.textContent = `${GOOGLE_WORK_W}×${GOOGLE_WORK_H}`;
-            } else {
-                sizeElement.textContent = `${NEORT_W}×${NEORT_H}`;
-            }
-        }
+        updateUI();
     }
     
     frameCounter++;
 }
 
 function drawPoetryWork() {
-    // 作品エリアの背景
     push();
     
     // 背景の更新
@@ -322,15 +334,122 @@ function drawPoetryWork() {
     pop();
 }
 
-function updateBackground() {
-    // 時間ベースで進行度を計算
+// 高解像度フレームの描画
+function drawHighResFrame() {
+    if (!exportGraphics) return;
+    
+    exportGraphics.clear();
+    
+    if (exportMode === 'google') {
+        // Google Form用：3840×2160の黒背景
+        exportGraphics.background(0);
+        
+        // 左上に960×1620の作品を配置
+        exportGraphics.push();
+        exportGraphics.translate(0, 0);
+        
+        // 実サイズで作品を描画
+        workW = GOOGLE_WORK_W;
+        workH = GOOGLE_WORK_H;
+        drawPoetryWorkHighRes(exportGraphics);
+        
+        exportGraphics.pop();
+    } else {
+        // NEORT用：2160×3840全体
+        workW = NEORT_W;
+        workH = NEORT_H;
+        drawPoetryWorkHighRes(exportGraphics);
+    }
+    
+    // フレームを保存
+    exportGraphics.save(`${exportMode}_frame_${nf(exportFrameCount, 4)}.png`);
+    
+    exportFrameCount++;
+    
+    // 書き出し進捗を更新
+    document.getElementById('exportFrame').textContent = exportFrameCount;
+    
+    // 900フレーム（15秒分）完了したら終了
+    if (exportFrameCount >= 900) {
+        stopExport();
+    }
+    
+    frameCounter++;
+}
+
+// 高解像度用の作品描画
+function drawPoetryWorkHighRes(pg) {
+    pg.push();
+    
+    // 背景の描画
+    updateBackgroundHighRes(pg);
+    
+    // 季節の遷移処理
+    handleTransition();
+    
+    // 段階的生成の処理
+    if (generationPhase < 3) {
+        generateFlakesPhase();
+    }
+    
+    // コード詩を表示
+    displayPoetryCodeHighRes(pg);
+    
+    // 降る要素の描画
+    renderFlakesHighRes(pg);
+    
+    pg.pop();
+}
+
+// 高解像度用背景更新
+function updateBackgroundHighRes(pg) {
     let elapsed = millis() - seasonStartTime;
     l = min(elapsed / SEASON_DURATION, 1.0);
     
     let currentBg = color(...d[cs].bg);
     let nextBg = color(...d[ns].bg);
     
-    // 前半は現在の季節の色、後半から次の季節へ遷移
+    let lerpAmount = l < 0.5 ? 0 : map(l, 0.5, 1, 0, 1);
+    let bg = lerpColor(currentBg, nextBg, lerpAmount);
+    
+    pg.fill(bg);
+    pg.noStroke();
+    pg.rect(0, 0, workW, workH);
+}
+
+// 高解像度用コード詩表示
+function displayPoetryCodeHighRes(pg) {
+    pg.push();
+    let sizeScale = exportMode === 'google' ? 4 : 9;
+    
+    pg.fill(255, 255, 255, 100);
+    pg.textSize(8 * sizeScale);
+    pg.textAlign(CENTER, CENTER);
+    pg.textFont('monospace');
+    pg.text(d[cs].code, workW/2, workH/2);
+    
+    pg.textSize(5 * sizeScale);
+    pg.fill(255, 255, 255, 60);
+    pg.text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
+    pg.pop();
+}
+
+// 高解像度用要素描画
+function renderFlakesHighRes(pg) {
+    f = f.filter(flake => {
+        flake.update();
+        flake.displayHighRes(pg);
+        return !flake.isOffscreen();
+    });
+}
+
+function updateBackground() {
+    let elapsed = millis() - seasonStartTime;
+    l = min(elapsed / SEASON_DURATION, 1.0);
+    
+    let currentBg = color(...d[cs].bg);
+    let nextBg = color(...d[ns].bg);
+    
     let lerpAmount = l < 0.5 ? 0 : map(l, 0.5, 1, 0, 1);
     let bg = lerpColor(currentBg, nextBg, lerpAmount);
     
@@ -341,25 +460,19 @@ function updateBackground() {
 
 function handleTransition() {
     if (l >= 1) {
-        // 季節を切り替え
         cs = ns;
         let currentIndex = s.indexOf(cs);
         let nextIndex = (currentIndex + 1) % 4;
         ns = s[nextIndex];
         
-        // タイマーと進行度をリセット
         seasonStartTime = millis();
         l = 0;
-        
-        // 前の季節の要素をクリア
         f = [];
-        
         generateFlakes();
     }
 }
 
 function generateFlakes() {
-    // 生成フェーズをリセット
     generationPhase = 0;
     generateFlakesPhase();
 }
@@ -367,15 +480,14 @@ function generateFlakes() {
 function generateFlakesPhase() {
     let elapsed = millis() - seasonStartTime;
     
-    // モードに応じた位置スケール
-    let posScale = previewMode === 'google' ? 1 : 2.25;
+    let posScale = isExporting ? 
+        (exportMode === 'google' ? 4 : 9) : 
+        (previewMode === 'google' ? 1 : 2.25);
     
-    // 時間ベースで段階的に生成
     if (generationPhase === 0) {
-        // 第1波：即座に（50個）
         for (let i = 0; i < 50; i++) {
             f.push(new Flake(
-                random(10, workW - 10),  // 境界内に生成
+                random(10, workW - 10),
                 random(-80 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -385,10 +497,9 @@ function generateFlakesPhase() {
         }
         generationPhase = 1;
     } else if (generationPhase === 1 && elapsed > 400) {
-        // 第2波：400ms後（30個）
         for (let i = 0; i < 30; i++) {
             f.push(new Flake(
-                random(10, workW - 10),  // 境界内に生成
+                random(10, workW - 10),
                 random(-60 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -398,10 +509,9 @@ function generateFlakesPhase() {
         }
         generationPhase = 2;
     } else if (generationPhase === 2 && elapsed > 800) {
-        // 第3波：800ms後（20個）
         for (let i = 0; i < 20; i++) {
             f.push(new Flake(
-                random(10, workW - 10),  // 境界内に生成
+                random(10, workW - 10),
                 random(-40 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -409,31 +519,27 @@ function generateFlakesPhase() {
                 d[cs].r
             ));
         }
-        generationPhase = 3; // 完了
+        generationPhase = 3;
     }
 }
 
 function displayPoetryCode() {
     push();
-    // モードに応じたサイズスケール
     let sizeScale = previewMode === 'google' ? 1 : 2.25;
     
-    // コード詩を中央に表示
     fill(255, 255, 255, 100);
-    textSize(8 * sizeScale);  // モードに応じて調整
+    textSize(8 * sizeScale);
     textAlign(CENTER, CENTER);
     textFont('monospace');
     text(d[cs].code, workW/2, workH/2);
     
-    // サブテキスト
-    textSize(5 * sizeScale);  // モードに応じて調整
+    textSize(5 * sizeScale);
     fill(255, 255, 255, 60);
     text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
     pop();
 }
 
 function renderFlakes() {
-    // 画面外の要素を削除しながら描画
     f = f.filter(flake => {
         flake.update();
         flake.display();
@@ -443,7 +549,7 @@ function renderFlakes() {
 
 class Flake {
     constructor(x, y, char, col, size, rotate) {
-        this.x = constrain(x, 0, workW);  // 初期位置を境界内に制限
+        this.x = constrain(x, 0, workW);
         this.y = y;
         this.char = char;
         this.col = col;
@@ -451,34 +557,31 @@ class Flake {
         this.shouldRotate = rotate;
         this.rotation = rotate ? random(TWO_PI) : 0;
         
-        // モードに応じた速度調整
-        let speedScale = previewMode === 'google' ? 1 : 2.25;
+        let speedScale = isExporting ? 
+            (exportMode === 'google' ? 4 : 9) : 
+            (previewMode === 'google' ? 1 : 2.25);
         
-        // 3つの速度グループ（3.75秒で確実に落ち切る速度）
         let speedGroup = random();
         if (speedGroup < 0.3) {
-            this.speed = random(2.5, 3.5) * speedScale;  // ゆっくり
+            this.speed = random(2.5, 3.5) * speedScale;
         } else if (speedGroup < 0.7) {
-            this.speed = random(3.5, 4.5) * speedScale;  // 普通
+            this.speed = random(3.5, 4.5) * speedScale;
         } else {
-            this.speed = random(4.5, 6) * speedScale; // 速い
+            this.speed = random(4.5, 6) * speedScale;
         }
         
-        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;  // 横移動速度を制限
+        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
     }
     
     update() {
-        // 重力加速をシミュレート
         this.speed *= 1.002;
         this.y += this.speed;
         this.x += this.velocity;
         
-        // 横の動きに波を加える
         this.x += sin(frameCounter * 0.01 + this.y * 0.01) * 0.15;
         
-        // 左右の境界でバウンス
         if (this.x < 0) this.x = 0;
         if (this.x > workW) this.x = workW;
         
@@ -486,7 +589,6 @@ class Flake {
             this.rotation += 0.03;
         }
         
-        // 画面下部でフェードアウト
         if (this.y > workH * 0.7) {
             this.opacity = map(this.y, workH * 0.7, workH, this.baseOpacity, 0);
         } else {
@@ -495,7 +597,6 @@ class Flake {
     }
     
     display() {
-        // 作品エリア内にある場合のみ描画
         if (this.x >= -this.size && this.x <= workW + this.size && 
             this.y >= -this.size && this.y <= workH + this.size) {
             push();
@@ -510,6 +611,21 @@ class Flake {
         }
     }
     
+    displayHighRes(pg) {
+        if (this.x >= -this.size && this.x <= workW + this.size && 
+            this.y >= -this.size && this.y <= workH + this.size) {
+            pg.push();
+            pg.translate(this.x, this.y);
+            pg.rotate(this.rotation);
+            pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
+            pg.textSize(this.size);
+            pg.textFont('monospace');
+            pg.textAlign(CENTER, CENTER);
+            pg.text(this.char, 0, 0);
+            pg.pop();
+        }
+    }
+    
     isOffscreen() {
         return this.y > workH + 20;
     }
@@ -518,25 +634,20 @@ class Flake {
 function drawGuides() {
     push();
     
-    // 作品エリアの枠線
     stroke(0, 255, 255, 100);
     strokeWeight(1);
     noFill();
     
     if (previewMode === 'google') {
-        // Google Form用: 左上の作品エリア
         rect(0, 0, GOOGLE_WORK_W * WORK_SCALE, GOOGLE_WORK_H * WORK_SCALE);
     } else {
-        // NEORT用: 全画面が作品エリア
         rect(0, 0, workW, workH);
     }
     
-    // 中心線（キャンバス全体）
     stroke(255, 0, 255, 50);
     line(previewW / 2, 0, previewW / 2, previewH);
     line(0, previewH / 2, previewW, previewH / 2);
     
-    // サイズ情報
     fill(0, 255, 255);
     noStroke();
     textSize(10);
@@ -555,55 +666,92 @@ function drawGuides() {
     pop();
 }
 
-// ===============================================
-// 書き出し機能（説明）
-// ===============================================
-function exportGoogleForm() {
-    let msg = `📤 Google Form用書き出し手順\n\n`;
-    msg += `【解像度】3840×2160（横長）\n`;
-    msg += `【作品】960×1620を左上に配置（残り黒余白）\n\n`;
-    msg += `【確認方法】\n`;
-    msg += `1. Mキーで「Google Form用」モードに切り替え\n`;
-    msg += `2. 横長プレビューで左上配置を確認\n\n`;
-    msg += `【書き出し方法】\n`;
-    msg += `1. Google Formモードに切り替え（Mキー）\n`;
-    msg += `2. Rキーでアニメーションをリセット\n`;
-    msg += `3. Eキーで15秒分の連番画像を自動保存\n`;
-    msg += `   ※ファイル名に'google_'のプレフィックス付き\n`;
-    msg += `4. ダウンロードフォルダに900枚のPNGが保存されます\n\n`;
-    msg += `【動画化】\n`;
-    msg += `ffmpeg -r 60 -i google_poetry_computer_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 googleform.mp4`;
+function updateUI() {
+    document.getElementById('fps').textContent = Math.round(frameRate());
+    document.getElementById('currentSeason').textContent = d[cs].name;
     
-    alert(msg);
+    let modeElement = document.getElementById('previewModeText');
+    if (modeElement) {
+        modeElement.textContent = previewMode === 'google' ? 'Google Form用' : 'NEORT用';
+    }
     
-    console.log('=== Google Form用書き出し ===');
-    console.log('現在のモード：', previewMode === 'google' ? '✅ Google Form用' : '❌ NEORT用（Mキーで切り替えてください）');
-    console.log('画像が保存されたら、以下のコマンドで動画化：');
-    console.log('ffmpeg -r 60 -i google_poetry_computer_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 googleform.mp4');
+    let sizeElement = document.getElementById('workSizeText');
+    if (sizeElement) {
+        if (previewMode === 'google') {
+            sizeElement.textContent = `${GOOGLE_WORK_W}×${GOOGLE_WORK_H}`;
+        } else {
+            sizeElement.textContent = `${NEORT_W}×${NEORT_H}`;
+        }
+    }
 }
 
-function exportNeort() {
-    let msg = `📤 NEORT用書き出し手順\n\n`;
-    msg += `【解像度】2160×3840（縦長）\n`;
-    msg += `【作品】全画面（余白なし）\n\n`;
-    msg += `【確認方法】\n`;
-    msg += `1. Mキーで「NEORT用」モードに切り替え\n`;
-    msg += `2. 縦長プレビューで全画面表示を確認\n\n`;
-    msg += `【書き出し方法】\n`;
-    msg += `1. NEORTモードに切り替え（Mキー）\n`;
-    msg += `2. Rキーでアニメーションをリセット\n`;
-    msg += `3. Eキーで15秒分の連番画像を自動保存\n`;
-    msg += `   ※ファイル名に'neort_'のプレフィックス付き\n`;
-    msg += `4. ダウンロードフォルダに900枚のPNGが保存されます\n\n`;
-    msg += `【動画化】\n`;
-    msg += `ffmpeg -r 60 -i neort_poetry_computer_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 neort.mp4`;
+// ===============================================
+// 高解像度書き出し関数
+// ===============================================
+function exportHighResGoogle() {
+    if (isExporting) {
+        console.log('すでに書き出し中です');
+        return;
+    }
     
-    alert(msg);
+    console.log('Google Form用 高解像度書き出し開始...');
     
-    console.log('=== NEORT用書き出し ===');
-    console.log('現在のモード：', previewMode === 'neort' ? '✅ NEORT用' : '❌ Google Form用（Mキーで切り替えてください）');
-    console.log('画像が保存されたら、以下のコマンドで動画化：');
-    console.log('ffmpeg -r 60 -i neort_poetry_computer_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 neort.mp4');
+    // 書き出し設定
+    exportMode = 'google';
+    isExporting = true;
+    exportFrameCount = 0;
+    
+    // 高解像度グラフィックスを作成
+    exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
+    
+    // UIを更新
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('totalFrames').textContent = '900';
+    
+    // 季節データを再初期化（高解像度用）
+    initSeasonData();
+    resetAnimation();
+}
+
+function exportHighResNeort() {
+    if (isExporting) {
+        console.log('すでに書き出し中です');
+        return;
+    }
+    
+    console.log('NEORT用 高解像度書き出し開始...');
+    
+    // 書き出し設定
+    exportMode = 'neort';
+    isExporting = true;
+    exportFrameCount = 0;
+    
+    // 高解像度グラフィックスを作成
+    exportGraphics = createGraphics(NEORT_W, NEORT_H);
+    
+    // UIを更新
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('totalFrames').textContent = '900';
+    
+    // 季節データを再初期化（高解像度用）
+    initSeasonData();
+    resetAnimation();
+}
+
+function stopExport() {
+    isExporting = false;
+    exportGraphics.remove();
+    exportGraphics = null;
+    
+    // UIを更新
+    document.getElementById('exportStatus').classList.remove('active');
+    
+    // プレビューモードに戻す
+    initSeasonData();
+    updateCanvasSize();
+    
+    console.log(`書き出し完了：${exportFrameCount}フレーム`);
+    alert(`高解像度書き出し完了！\n${exportFrameCount}枚の画像がダウンロードフォルダに保存されました。\n\n動画化コマンド：\nffmpeg -r 60 -i ${exportMode}_frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 ${exportMode}_output.mp4`);
 }
 
 // ===============================================
@@ -614,25 +762,10 @@ function togglePreviewMode() {
     updateCanvasSize();
     resizeCanvas(previewW, previewH);
     
-    // 季節データを再初期化（サイズ調整のため）
     initSeasonData();
     
     console.log('プレビューモードを切り替えました：', previewMode === 'google' ? 'Google Form用' : 'NEORT用');
-    
-    // UIを更新
-    let modeElement = document.getElementById('previewModeText');
-    let sizeElement = document.getElementById('workSizeText');
-    
-    if (modeElement) {
-        modeElement.textContent = previewMode === 'google' ? 'Google Form用' : 'NEORT用';
-    }
-    if (sizeElement) {
-        if (previewMode === 'google') {
-            sizeElement.textContent = `${GOOGLE_WORK_W}×${GOOGLE_WORK_H}`;
-        } else {
-            sizeElement.textContent = `${NEORT_W}×${NEORT_H}`;
-        }
-    }
+    updateUI();
 }
 
 function toggleGuide() {
@@ -640,7 +773,6 @@ function toggleGuide() {
 }
 
 function resetAnimation() {
-    // アニメーションをリセット
     frameCounter = 0;
     l = 0;
     cs = 's';
@@ -654,27 +786,16 @@ function resetAnimation() {
 // キーボードショートカット
 function keyPressed() {
     if (key === 'm' || key === 'M') {
-        // プレビューモード切り替え
         togglePreviewMode();
     } else if (key === 'g' || key === 'G') {
         toggleGuide();
     } else if (key === 'r' || key === 'R') {
         resetAnimation();
     } else if (key === 's' || key === 'S') {
-        // 現在のフレームを保存（モードに応じたプレフィックス付き）
-        let prefix = previewMode === 'google' ? 'google_' : 'neort_';
+        // プレビューサイズで保存
+        let prefix = previewMode === 'google' ? 'google_preview_' : 'neort_preview_';
         saveCanvas(prefix + 'poetry_computer_' + frameCount, 'png');
-        console.log('画像を保存しました：' + prefix + 'poetry_computer_' + frameCount + '.png');
-        console.log('モード：', previewMode === 'google' ? 'Google Form用（3840×2160）' : 'NEORT用（2160×3840）');
-    } else if (key === 'e' || key === 'E') {
-        // 連番書き出しを開始（15秒分）
-        let prefix = previewMode === 'google' ? 'google_' : 'neort_';
-        console.log('15秒間の連番画像書き出しを開始します（' + (previewMode === 'google' ? 'Google Form用' : 'NEORT用') + '）...');
-        saveFrames(prefix + 'poetry_computer', 'png', 15 * 60, 60, (result) => {
-            console.log('書き出し完了！', result.length, '枚の画像を保存しました。');
-            console.log('ffmpegコマンド：');
-            console.log(`ffmpeg -r 60 -i ${prefix}poetry_computer_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 output_${previewMode}.mp4`);
-        });
+        console.log('プレビュー画像を保存しました');
     }
 }
 </script>
