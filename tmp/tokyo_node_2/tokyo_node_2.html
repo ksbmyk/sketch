@@ -620,14 +620,14 @@ function displayExportPoetryCode(pg, currentSeason) {
     pg.push();
     let sizeScale = exportMode === 'google' ? 1 : 2.25;
     
-    pg.fill(255, 255, 255, 100);
-    pg.textSize(32 * sizeScale);
+    pg.fill(255, 255, 255, 200);
+    pg.textSize(40 * sizeScale);
     pg.textAlign(CENTER, CENTER);
     pg.textFont('monospace');
     pg.text(d[currentSeason].code, workW/2, workH/2);
     
-    pg.textSize(20 * sizeScale);
-    pg.fill(255, 255, 255, 60);
+    pg.textSize(24 * sizeScale);
+    pg.fill(255, 255, 255, 200);
     pg.text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 60 * sizeScale);
     pg.pop();
 }
@@ -789,14 +789,14 @@ function displayPoetryCode() {
     push();
     let sizeScale = previewMode === 'google' ? 1 : 2.25;
     
-    fill(255, 255, 255, 100);
-    textSize(8 * sizeScale);
+    fill(255, 255, 255, 200);
+    textSize(10 * sizeScale);
     textAlign(CENTER, CENTER);
     textFont('monospace');
     text(d[cs].code, workW/2, workH/2);
     
-    textSize(5 * sizeScale);
-    fill(255, 255, 255, 60);
+    textSize(6 * sizeScale);
+    fill(255, 255, 255, 200);
     text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
     pop();
 }
