@@ -142,14 +142,14 @@
 const WORK_SCALE = 0.25; // プレビュー用スケール（25%）
 
 // Google Form用
-const GOOGLE_CANVAS_W = 3840;   // Google Form用の横幅
-const GOOGLE_CANVAS_H = 2160;   // Google Form用の高さ
+const GOOGLE_CANVAS_W = 3840;   // Google Form用のキャンバス幅
+const GOOGLE_CANVAS_H = 2160;   // Google Form用のキャンバス高さ
 const GOOGLE_WORK_W = 960;      // Google Form用の作品幅
 const GOOGLE_WORK_H = 1620;     // Google Form用の作品高さ
 
 // NEORT用
-const NEORT_W = 2160;           // NEORT用の幅（作品サイズそのまま）
-const NEORT_H = 3840;           // NEORT用の高さ（作品サイズそのまま）
+const NEORT_W = 2160;           // NEORT用の幅
+const NEORT_H = 3840;           // NEORT用の高さ
 
 // プレビューモード
 let previewMode = 'google'; // 'google' or 'neort'
@@ -188,6 +188,9 @@ let exportGenerationPhase = 0;
 // p5.js メイン
 // ===============================================
 function setup() {
+    // ピクセル密度を1に固定（Retinaディスプレイ対策）
+    pixelDensity(1);
+    
     // 初期モード設定
     previewMode = 'google';
     updateCanvasSize();
@@ -352,14 +355,29 @@ function drawHighResFrame() {
         
         // 左上に960×1620の作品を配置
         exportGraphics.push();
-        exportGraphics.translate(0, 0);
+        
+        // クリッピング領域を設定（作品エリアのみ）
+        exportGraphics.drawingContext.save();
+        exportGraphics.drawingContext.beginPath();
+        exportGraphics.drawingContext.rect(0, 0, GOOGLE_WORK_W, GOOGLE_WORK_H);
+        exportGraphics.drawingContext.clip();
         
         // 実サイズで作品を描画
         workW = GOOGLE_WORK_W;
         workH = GOOGLE_WORK_H;
         drawPoetryWorkHighRes(exportGraphics);
         
+        // クリッピングを解除
+        exportGraphics.drawingContext.restore();
         exportGraphics.pop();
+        
+        // 作品エリア外を確実に黒でマスク（念のため）
+        exportGraphics.fill(0);
+        exportGraphics.noStroke();
+        // 右側全体
+        exportGraphics.rect(GOOGLE_WORK_W, 0, GOOGLE_CANVAS_W - GOOGLE_WORK_W, GOOGLE_CANVAS_H);
+        // 下側部分
+        exportGraphics.rect(0, GOOGLE_WORK_H, GOOGLE_WORK_W, GOOGLE_CANVAS_H - GOOGLE_WORK_H);
     } else {
         // NEORT用：2160×3840全体
         workW = NEORT_W;
@@ -434,10 +452,10 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     // 各季節の開始時（0フレーム目）で第1波を生成
     if (frameInSeason === 0) {
         exportFlakes = [];  // 前の季節の要素をクリア
-        // 第1波：即座に50個
+        // 第1波：即座に50個（画面外も含めて広範囲に生成）
         for (let i = 0; i < 50; i++) {
             exportFlakes.push(new ExportFlake(
-                random(10, workW - 10),
+                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
                 random(-320 * posScale, -20 * posScale),  // 画面上部から開始
                 d[currentSeason].c,
                 d[currentSeason].co,
@@ -452,7 +470,7 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     if (frameInSeason === 24) {
         for (let i = 0; i < 30; i++) {
             exportFlakes.push(new ExportFlake(
-                random(10, workW - 10),
+                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
                 random(-240 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
@@ -467,7 +485,7 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     if (frameInSeason === 48) {
         for (let i = 0; i < 20; i++) {
             exportFlakes.push(new ExportFlake(
-                random(10, workW - 10),
+                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
                 random(-160 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
@@ -506,10 +524,10 @@ function renderExportFlakes(pg) {
     });
 }
 
-// 書き出し用Flakeクラス
+// 書き出し用Flakeクラス（プレビューと完全に同じ動作にする）
 class ExportFlake {
     constructor(x, y, char, col, size, rotate, birthFrame) {
-        this.x = constrain(x, 0, workW);
+        this.x = x;  // 制限なし
         this.y = y;
         this.char = char;
         this.col = col;
@@ -518,20 +536,20 @@ class ExportFlake {
         this.rotation = rotate ? random(TWO_PI) : 0;
         this.birthFrame = birthFrame;
         
-        // 速度の調整（実サイズに対して適切な速度）
-        let speedScale = exportMode === 'google' ? 1 : 2.25;
+        // プレビューと同じ速度計算に修正
+        let speedScale = exportMode === 'google' ? 4 : 9;  // プレビューと同じ比率
         
         let speedGroup = random();
         if (speedGroup < 0.3) {
-            this.speed = random(10, 14) * speedScale;  // ゆっくり（px/frame）
+            this.speed = random(2.5, 3.5) * speedScale;  // プレビューと同じ
         } else if (speedGroup < 0.7) {
-            this.speed = random(14, 18) * speedScale;  // 普通
+            this.speed = random(3.5, 4.5) * speedScale;  // プレビューと同じ
         } else {
-            this.speed = random(18, 24) * speedScale;  // 速い
+            this.speed = random(4.5, 6) * speedScale;  // プレビューと同じ
         }
         
         this.initialSpeed = this.speed;
-        this.velocity = rotate ? random(-2, 2) * speedScale : 0;  // 横移動
+        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;  // プレビューと同じ範囲
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
         this.wobblePhase = random(TWO_PI);
@@ -540,23 +558,21 @@ class ExportFlake {
     updateExport(currentFrame) {
         let framesSinceBirth = currentFrame - this.birthFrame;
         
-        // 重力加速をシミュレート（フレームベース）
+        // プレビューと同じ動き
         this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
         this.y += this.speed;
         this.x += this.velocity;
         
-        // 横の動きに波を加える（フレームベース）
-        this.x += sin(framesSinceBirth * 0.01 + this.wobblePhase) * 0.6;
+        // 横揺れもプレビューと同じ
+        this.x += sin(framesSinceBirth * 0.01 + this.wobblePhase) * 0.15;
         
-        // 左右の境界でバウンス
-        if (this.x < 0) this.x = 0;
-        if (this.x > workW) this.x = workW;
+        // 境界チェックなし - 自然に画面外へ
         
         if (this.shouldRotate) {
             this.rotation += 0.03;
         }
         
-        // 画面下部でフェードアウト
+        // フェードアウト
         if (this.y > workH * 0.7) {
             this.opacity = map(this.y, workH * 0.7, workH, this.baseOpacity, 0);
         } else {
@@ -565,21 +581,20 @@ class ExportFlake {
     }
     
     displayExport(pg) {
-        if (this.x >= -this.size && this.x <= workW + this.size && 
-            this.y >= -this.size && this.y <= workH + this.size) {
-            pg.push();
-            pg.translate(this.x, this.y);
-            pg.rotate(this.rotation);
-            pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
-            pg.textSize(this.size);
-            pg.textFont('monospace');
-            pg.textAlign(CENTER, CENTER);
-            pg.text(this.char, 0, 0);
-            pg.pop();
-        }
+        // 画面外でも描画（クリッピングに任せる）
+        pg.push();
+        pg.translate(this.x, this.y);
+        pg.rotate(this.rotation);
+        pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
+        pg.textSize(this.size);
+        pg.textFont('monospace');
+        pg.textAlign(CENTER, CENTER);
+        pg.text(this.char, 0, 0);
+        pg.pop();
     }
     
     isOffscreenExport() {
+        // プレビューと同じ判定
         return this.y > workH + 20;
     }
 }
@@ -628,7 +643,7 @@ function generateFlakesPhase() {
     if (generationPhase === 0) {
         for (let i = 0; i < 50; i++) {
             f.push(new Flake(
-                random(10, workW - 10),
+                random(-20, workW + 20),  // 画面外も含めて生成
                 random(-80 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -640,7 +655,7 @@ function generateFlakesPhase() {
     } else if (generationPhase === 1 && elapsed > 400) {
         for (let i = 0; i < 30; i++) {
             f.push(new Flake(
-                random(10, workW - 10),
+                random(-20, workW + 20),  // 画面外も含めて生成
                 random(-60 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -652,7 +667,7 @@ function generateFlakesPhase() {
     } else if (generationPhase === 2 && elapsed > 800) {
         for (let i = 0; i < 20; i++) {
             f.push(new Flake(
-                random(10, workW - 10),
+                random(-20, workW + 20),  // 画面外も含めて生成
                 random(-40 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -690,7 +705,7 @@ function renderFlakes() {
 
 class Flake {
     constructor(x, y, char, col, size, rotate) {
-        this.x = constrain(x, 0, workW);
+        this.x = x;  // 制限なし
         this.y = y;
         this.char = char;
         this.col = col;
@@ -721,10 +736,10 @@ class Flake {
         this.y += this.speed;
         this.x += this.velocity;
         
+        // 横の動きに波を加える
         this.x += sin(frameCounter * 0.01 + this.y * 0.01) * 0.15;
         
-        if (this.x < 0) this.x = 0;
-        if (this.x > workW) this.x = workW;
+        // 境界チェックなし - 自然に画面外へ
         
         if (this.shouldRotate) {
             this.rotation += 0.03;
@@ -738,33 +753,27 @@ class Flake {
     }
     
     display() {
-        if (this.x >= -this.size && this.x <= workW + this.size && 
-            this.y >= -this.size && this.y <= workH + this.size) {
-            push();
-            translate(this.x, this.y);
-            rotate(this.rotation);
-            fill(this.col[0], this.col[1], this.col[2], this.opacity);
-            textSize(this.size);
-            textFont('monospace');
-            textAlign(CENTER, CENTER);
-            text(this.char, 0, 0);
-            pop();
-        }
+        push();
+        translate(this.x, this.y);
+        rotate(this.rotation);
+        fill(this.col[0], this.col[1], this.col[2], this.opacity);
+        textSize(this.size);
+        textFont('monospace');
+        textAlign(CENTER, CENTER);
+        text(this.char, 0, 0);
+        pop();
     }
     
     displayHighRes(pg) {
-        if (this.x >= -this.size && this.x <= workW + this.size && 
-            this.y >= -this.size && this.y <= workH + this.size) {
-            pg.push();
-            pg.translate(this.x, this.y);
-            pg.rotate(this.rotation);
-            pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
-            pg.textSize(this.size);
-            pg.textFont('monospace');
-            pg.textAlign(CENTER, CENTER);
-            pg.text(this.char, 0, 0);
-            pg.pop();
-        }
+        pg.push();
+        pg.translate(this.x, this.y);
+        pg.rotate(this.rotation);
+        pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
+        pg.textSize(this.size);
+        pg.textFont('monospace');
+        pg.textAlign(CENTER, CENTER);
+        pg.text(this.char, 0, 0);
+        pg.pop();
     }
     
     isOffscreen() {
@@ -836,6 +845,7 @@ function exportHighResGoogle() {
     }
     
     console.log('Google Form用 高解像度書き出し開始...');
+    console.log('出力サイズ: 3840×2160（左上に960×1620の作品）');
     
     // 書き出し設定
     exportMode = 'google';
@@ -846,6 +856,7 @@ function exportHighResGoogle() {
     
     // 高解像度グラフィックスを作成
     exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
+    exportGraphics.pixelDensity(1);  // ピクセル密度を1に固定
     
     // UIを更新
     document.getElementById('exportStatus').classList.add('active');
@@ -862,6 +873,7 @@ function exportHighResNeort() {
     }
     
     console.log('NEORT用 高解像度書き出し開始...');
+    console.log('出力サイズ: 2160×3840');
     
     // 書き出し設定
     exportMode = 'neort';
@@ -872,6 +884,7 @@ function exportHighResNeort() {
     
     // 高解像度グラフィックスを作成
     exportGraphics = createGraphics(NEORT_W, NEORT_H);
+    exportGraphics.pixelDensity(1);  // ピクセル密度を1に固定
     
     // UIを更新
     document.getElementById('exportStatus').classList.add('active');
