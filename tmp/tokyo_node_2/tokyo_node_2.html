@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（高解像度対応版）</title>
+    <title>詩とコンピュータ - 季節のコード詩（連番保存対応版）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -54,6 +54,9 @@
             display: block;
             background: rgba(0,255,0,0.2);
         }
+        .export-status.saving {
+            background: rgba(255,255,0,0.2);
+        }
         .button-group {
             display: flex;
             gap: 10px;
@@ -76,6 +79,10 @@
         button:active {
             transform: translateY(0);
         }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
         #canvasContainer {
             display: flex;
             justify-content: center;
@@ -84,12 +91,26 @@
             border-radius: 10px;
             overflow: hidden;
         }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ff, #00ff88);
+            transition: width 0.3s;
+            width: 0%;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="controls">
-            <h2>🌸 詩とコンピュータ - 季節のコード詩（高解像度対応版）</h2>
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（連番保存対応版）</h2>
             
             <div class="info-grid">
                 <div class="info-box">
@@ -107,15 +128,18 @@
             </div>
             
             <div class="export-status" id="exportStatus">
-                <div>📸 高解像度書き出し中...</div>
+                <div id="exportStatusText">📸 フレーム生成中...</div>
                 <div>フレーム: <span id="exportFrame">0</span> / <span id="totalFrames">900</span></div>
-                <div style="font-size: 12px; color: #aaa;">処理には時間がかかります</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div style="font-size: 12px; color: #aaa; margin-top: 5px;" id="exportMessage">処理には時間がかかります</div>
             </div>
             
             <div class="button-group">
                 <button onclick="togglePreviewMode()">🔄 モード切替 (Google/NEORT)</button>
-                <button onclick="exportHighResGoogle()" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">📸 Google Form用 高解像度書き出し</button>
-                <button onclick="exportHighResNeort()" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">📸 NEORT用 高解像度書き出し</button>
+                <button onclick="exportHighResGoogle()" id="exportGoogleBtn" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">📸 Google Form用 高解像度書き出し</button>
+                <button onclick="exportHighResNeort()" id="exportNeortBtn" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">📸 NEORT用 高解像度書き出し</button>
                 <button onclick="toggleGuide()">📐 ガイド表示</button>
                 <button onclick="resetAnimation()">🔄 リセット</button>
             </div>
@@ -125,7 +149,7 @@
                 <div style="font-size: 11px; color: #aaa; line-height: 1.4;">
                     <strong>M:</strong> プレビューモード切替（Google ⇔ NEORT）<br>
                     <strong>S:</strong> 現在のフレーム保存（プレビューサイズ）<br>
-                    <strong>高解像度書き出し:</strong> 上のボタンで各モード用の実サイズで書き出し<br>
+                    <strong>高解像度書き出し:</strong> 900フレームを連番で確実に保存<br>
                     <strong>R:</strong> アニメーションリセット | <strong>G:</strong> ガイド表示切替<br>
                     <strong>保存先:</strong> ブラウザのダウンロードフォルダ
                 </div>
@@ -142,19 +166,19 @@
 const WORK_SCALE = 0.25; // プレビュー用スケール（25%）
 
 // Google Form用
-const GOOGLE_CANVAS_W = 3840;   // Google Form用のキャンバス幅
-const GOOGLE_CANVAS_H = 2160;   // Google Form用のキャンバス高さ
-const GOOGLE_WORK_W = 960;      // Google Form用の作品幅
-const GOOGLE_WORK_H = 1620;     // Google Form用の作品高さ
+const GOOGLE_CANVAS_W = 3840;   
+const GOOGLE_CANVAS_H = 2160;   
+const GOOGLE_WORK_W = 960;      
+const GOOGLE_WORK_H = 1620;     
 
 // NEORT用
-const NEORT_W = 2160;           // NEORT用の幅
-const NEORT_H = 3840;           // NEORT用の高さ
+const NEORT_W = 2160;           
+const NEORT_H = 3840;           
 
 // プレビューモード
-let previewMode = 'google'; // 'google' or 'neort'
+let previewMode = 'google'; 
 
-// プレビュー用サイズ（モードによって動的に変更）
+// プレビュー用サイズ
 let previewW, previewH, workW, workH;
 
 // ガイド表示
@@ -166,39 +190,41 @@ let isExporting = false;
 let exportFrameCount = 0;
 let exportMode = '';
 
+// 連番保存用の新しい変数
+let pendingFrames = [];  // 保存待ちフレーム
+let isSaving = false;     // 保存処理中フラグ
+let saveIndex = 0;        // 現在保存中のインデックス
+
 // ===============================================
 // 季節のコード詩の変数
 // ===============================================
-let d; // データ定義
-let f = []; // 降ってくる要素の配列
-let l = 0.0; // lerp用のカウンター
-let s; // 季節の配列
-let cs; // 現在の季節
-let ns; // 次の季節
+let d; 
+let f = []; 
+let l = 0.0; 
+let s; 
+let cs; 
+let ns; 
 let seasonStartTime;
 let frameCounter = 0;
 let generationPhase = 0;
-const SEASON_DURATION = 3750; // 各季節の長さ（ミリ秒）
+const SEASON_DURATION = 3750; 
 
 // 高解像度書き出し用の変数
-let exportFlakes = []; // 書き出し用の要素配列
+let exportFlakes = []; 
 let exportGenerationPhase = 0;
 
 // ===============================================
 // p5.js メイン
 // ===============================================
 function setup() {
-    // ピクセル密度を1に固定（Retinaディスプレイ対策）
     pixelDensity(1);
     
-    // 初期モード設定
     previewMode = 'google';
     updateCanvasSize();
     
     let canvas = createCanvas(previewW, previewH);
     canvas.parent('canvasContainer');
     
-    // 季節データの初期化
     initSeasonData();
     seasonStartTime = millis();
     generateFlakes();
@@ -206,34 +232,28 @@ function setup() {
 
 function updateCanvasSize() {
     if (previewMode === 'google') {
-        // Google Form用: 3840×2160の25%、作品は960×1620
         previewW = 960;
         previewH = 540;
-        workW = GOOGLE_WORK_W * WORK_SCALE;  // 240
-        workH = GOOGLE_WORK_H * WORK_SCALE;  // 405
+        workW = GOOGLE_WORK_W * WORK_SCALE;  
+        workH = GOOGLE_WORK_H * WORK_SCALE;  
     } else {
-        // NEORT用: 2160×3840の25% = 540×960（作品が全画面）
-        previewW = NEORT_W * WORK_SCALE;  // 540
-        previewH = NEORT_H * WORK_SCALE;  // 960
-        workW = previewW;  // 540（全画面）
-        workH = previewH;  // 960（全画面）
+        previewW = NEORT_W * WORK_SCALE;  
+        previewH = NEORT_H * WORK_SCALE;  
+        workW = previewW;  
+        workH = previewH;  
     }
 }
 
 function initSeasonData() {
-    // モードに応じたサイズスケール
     let sizeScale;
     if (isExporting) {
-        // 高解像度書き出し時は実サイズ
         sizeScale = exportMode === 'google' ? 4 : 9;
     } else {
-        // プレビュー時は縮小
         sizeScale = previewMode === 'google' ? 1 : 2.25;
     }
     
-    // データ定義（季節の詩的表現）
     d = {
-        s: { // 春（Spring）- 花
+        s: { // 春
             c: '✿',
             r: true,
             s: 12 * sizeScale,  
@@ -242,7 +262,7 @@ function initSeasonData() {
             code: "春.tender('✿', :bloom)",
             name: "春"
         },
-        u: { // 夏（Summer）- セミコロン（水滴のメタファー）
+        u: { // 夏
             c: ';',
             r: false,
             s: 10 * sizeScale,  
@@ -251,7 +271,7 @@ function initSeasonData() {
             code: "夏.sudden(';', :pour)",
             name: "夏"
         },
-        a: { // 秋（Autumn）- スペード（落葉のメタファー）
+        a: { // 秋
             c: '♠',
             r: true,
             s: 11 * sizeScale,  
@@ -260,7 +280,7 @@ function initSeasonData() {
             code: "秋.gradual('♠', :fall)",
             name: "秋"
         },
-        w: { // 冬（Winter）- 雪の結晶
+        w: { // 冬
             c: '*',
             r: false,
             s: 15 * sizeScale,  
@@ -272,47 +292,38 @@ function initSeasonData() {
     };
     
     s = ['s', 'u', 'a', 'w'];
-    cs = 's';  // 現在の季節：春
-    ns = 'u';  // 次の季節：夏
+    cs = 's';  
+    ns = 'u';  
 }
 
 function draw() {
-    if (isExporting) {
-        // 高解像度書き出しモード
-        drawHighResFrame();
+    if (isExporting && !isSaving) {
+        // フレーム生成モード
+        generateHighResFrame();
+        return;
+    } else if (isSaving) {
+        // 保存処理中は描画を停止
         return;
     }
     
     // 通常のプレビュー描画
     background(0);
     
-    // モードに応じた配置
     push();
-    if (previewMode === 'google') {
-        translate(0, 0);
-    } else {
-        translate(0, 0);
-    }
-    
-    // 作品の描画
     drawPoetryWork();
-    
     pop();
     
-    // Google Form用の場合のみ、作品エリア外を黒でマスク
     if (previewMode === 'google') {
         fill(0);
         noStroke();
-        rect(GOOGLE_WORK_W * WORK_SCALE, 0, previewW, previewH);  // 右側全体
-        rect(0, GOOGLE_WORK_H * WORK_SCALE, GOOGLE_WORK_W * WORK_SCALE, previewH);  // 左下部分
+        rect(GOOGLE_WORK_W * WORK_SCALE, 0, previewW, previewH);  
+        rect(0, GOOGLE_WORK_H * WORK_SCALE, GOOGLE_WORK_W * WORK_SCALE, previewH);  
     }
     
-    // ガイドの表示
     if (showGuide) {
         drawGuides();
     }
     
-    // FPS表示（書き出し中は更新しない）
     if (frameCount % 10 === 0) {
         updateUI();
     }
@@ -320,116 +331,231 @@ function draw() {
     frameCounter++;
 }
 
-function drawPoetryWork() {
-    push();
-    
-    // 背景の更新
-    updateBackground();
-    
-    // 季節の遷移処理
-    handleTransition();
-    
-    // 段階的生成の処理
-    if (generationPhase < 3) {
-        generateFlakesPhase();
-    }
-    
-    // 季節のコード詩を表示
-    displayPoetryCode();
-    
-    // 降る要素の描画
-    renderFlakes();
-    
-    pop();
-}
-
-// 高解像度フレームの描画
-function drawHighResFrame() {
+// 高解像度フレーム生成（メモリに保存）
+function generateHighResFrame() {
     if (!exportGraphics) return;
     
     exportGraphics.clear();
     
     if (exportMode === 'google') {
-        // Google Form用：3840×2160の黒背景
         exportGraphics.background(0);
-        
-        // 左上に960×1620の作品を配置
         exportGraphics.push();
-        
-        // クリッピング領域を設定（作品エリアのみ）
         exportGraphics.drawingContext.save();
         exportGraphics.drawingContext.beginPath();
         exportGraphics.drawingContext.rect(0, 0, GOOGLE_WORK_W, GOOGLE_WORK_H);
         exportGraphics.drawingContext.clip();
         
-        // 実サイズで作品を描画
         workW = GOOGLE_WORK_W;
         workH = GOOGLE_WORK_H;
         drawPoetryWorkHighRes(exportGraphics);
         
-        // クリッピングを解除
         exportGraphics.drawingContext.restore();
         exportGraphics.pop();
         
-        // 作品エリア外を確実に黒でマスク（念のため）
         exportGraphics.fill(0);
         exportGraphics.noStroke();
-        // 右側全体
         exportGraphics.rect(GOOGLE_WORK_W, 0, GOOGLE_CANVAS_W - GOOGLE_WORK_W, GOOGLE_CANVAS_H);
-        // 下側部分
         exportGraphics.rect(0, GOOGLE_WORK_H, GOOGLE_WORK_W, GOOGLE_CANVAS_H - GOOGLE_WORK_H);
     } else {
-        // NEORT用：2160×3840全体
         workW = NEORT_W;
         workH = NEORT_H;
         drawPoetryWorkHighRes(exportGraphics);
     }
     
-    // フレームを保存
-    exportGraphics.save(`${exportMode}_frame_${nf(exportFrameCount, 4)}.png`);
+    // Canvas データを保存（メモリに）
+    let imageData = exportGraphics.canvas.toDataURL('image/png');
+    pendingFrames.push({
+        data: imageData,
+        filename: `${exportMode}_frame_${nf(exportFrameCount, 4)}.png`,
+        frameNumber: exportFrameCount
+    });
     
     exportFrameCount++;
     
-    // 書き出し進捗を更新
+    // 進捗更新
     document.getElementById('exportFrame').textContent = exportFrameCount;
+    let progress = (exportFrameCount / 900) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
     
-    // 900フレーム（15秒分）完了したら終了
+    // 900フレーム生成完了
     if (exportFrameCount >= 900) {
-        stopExport();
+        console.log('フレーム生成完了。順次保存を開始します...');
+        startSequentialSave();
     }
-    
-    // frameCounterは増やさない（書き出し中は通常のアニメーションを停止）
 }
 
-// 高解像度用の作品描画
+// 順次保存処理（連番を確実に維持）
+function startSequentialSave() {
+    isSaving = true;
+    saveIndex = 0;
+    
+    // UIを更新
+    document.getElementById('exportStatus').classList.add('saving');
+    document.getElementById('exportStatusText').textContent = '💾 順次保存中...';
+    document.getElementById('exportMessage').textContent = 'ブラウザの確認ダイアログが出たら「許可」を選択してください';
+    
+    // ボタンを無効化
+    document.getElementById('exportGoogleBtn').disabled = true;
+    document.getElementById('exportNeortBtn').disabled = true;
+    
+    saveNextFrame();
+}
+
+// 次のフレームを保存
+function saveNextFrame() {
+    if (saveIndex >= pendingFrames.length) {
+        // 全フレーム保存完了
+        completeSave();
+        return;
+    }
+    
+    let frame = pendingFrames[saveIndex];
+    
+    // Data URLからBlobを作成してダウンロード
+    fetch(frame.data)
+        .then(res => res.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = frame.filename;
+            link.click();
+            
+            // メモリ解放
+            URL.revokeObjectURL(link.href);
+            
+            saveIndex++;
+            
+            // 進捗更新
+            document.getElementById('exportFrame').textContent = saveIndex;
+            document.getElementById('exportMessage').textContent = `保存中: ${frame.filename}`;
+            let progress = (saveIndex / pendingFrames.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // 次のフレームを保存（間隔を空けて）
+            setTimeout(saveNextFrame, 100);  // 100ms間隔で保存
+        })
+        .catch(error => {
+            console.error('保存エラー:', error);
+            alert(`エラーが発生しました: ${frame.filename}\n再試行してください。`);
+            completeSave();
+        });
+}
+
+// 保存完了処理
+function completeSave() {
+    console.log(`保存完了: ${saveIndex}/${pendingFrames.length}フレーム`);
+    
+    // クリーンアップ
+    pendingFrames = [];
+    isSaving = false;
+    isExporting = false;
+    exportFrameCount = 0;
+    saveIndex = 0;
+    
+    if (exportGraphics) {
+        exportGraphics.remove();
+        exportGraphics = null;
+    }
+    
+    // UIをリセット
+    document.getElementById('exportStatus').classList.remove('active', 'saving');
+    document.getElementById('exportGoogleBtn').disabled = false;
+    document.getElementById('exportNeortBtn').disabled = false;
+    
+    // プレビューモードに戻す
+    initSeasonData();
+    updateCanvasSize();
+    
+    // 完了メッセージ
+    alert(`書き出し完了！\n${saveIndex}枚の画像が保存されました。\n\n動画化コマンド：\nffmpeg -r 60 -i ${exportMode}_frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 ${exportMode}_output.mp4`);
+}
+
+// 書き出し開始（Google Form用）
+function exportHighResGoogle() {
+    if (isExporting || isSaving) {
+        console.log('処理中です');
+        return;
+    }
+    
+    console.log('Google Form用 高解像度書き出し開始...');
+    
+    exportMode = 'google';
+    isExporting = true;
+    exportFrameCount = 0;
+    pendingFrames = [];
+    exportFlakes = [];
+    exportGenerationPhase = 0;
+    
+    exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
+    exportGraphics.pixelDensity(1);
+    
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
+    document.getElementById('totalFrames').textContent = '900';
+    document.getElementById('progressFill').style.width = '0%';
+    
+    initSeasonData();
+}
+
+// 書き出し開始（NEORT用）
+function exportHighResNeort() {
+    if (isExporting || isSaving) {
+        console.log('処理中です');
+        return;
+    }
+    
+    console.log('NEORT用 高解像度書き出し開始...');
+    
+    exportMode = 'neort';
+    isExporting = true;
+    exportFrameCount = 0;
+    pendingFrames = [];
+    exportFlakes = [];
+    exportGenerationPhase = 0;
+    
+    exportGraphics = createGraphics(NEORT_W, NEORT_H);
+    exportGraphics.pixelDensity(1);
+    
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
+    document.getElementById('totalFrames').textContent = '900';
+    document.getElementById('progressFill').style.width = '0%';
+    
+    initSeasonData();
+}
+
+// 以下、既存の描画関数たち（変更なし）
+
+function drawPoetryWork() {
+    push();
+    updateBackground();
+    handleTransition();
+    if (generationPhase < 3) {
+        generateFlakesPhase();
+    }
+    displayPoetryCode();
+    renderFlakes();
+    pop();
+}
+
 function drawPoetryWorkHighRes(pg) {
     pg.push();
     
-    // フレームベースで季節を決定
-    let totalProgress = (exportFrameCount % 900) / 900.0;  // 0.0 ~ 1.0（15秒ループ）
-    let seasonIndex = Math.floor(totalProgress * 4);  // 0, 1, 2, 3
-    let seasonProgress = (totalProgress * 4) % 1;  // 各季節内での進行度
+    let totalProgress = (exportFrameCount % 900) / 900.0;
+    let seasonIndex = Math.floor(totalProgress * 4);
+    let seasonProgress = (totalProgress * 4) % 1;
     
-    // 現在の季節を設定
     let currentSeason = s[seasonIndex % 4];
     let nextSeason = s[(seasonIndex + 1) % 4];
     
-    // 背景の描画
     drawExportBackground(pg, currentSeason, nextSeason, seasonProgress);
-    
-    // 要素生成（段階的）
     generateExportFlakesPhase(currentSeason, seasonIndex);
-    
-    // コード詩を表示
     displayExportPoetryCode(pg, currentSeason);
-    
-    // 降る要素の描画
     renderExportFlakes(pg);
     
     pg.pop();
 }
 
-// 書き出し用背景描画
 function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
     let currentBg = color(...d[currentSeason].bg);
     let nextBg = color(...d[nextSeason].bg);
@@ -442,21 +568,16 @@ function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
     pg.rect(0, 0, workW, workH);
 }
 
-// 書き出し用要素生成
 function generateExportFlakesPhase(currentSeason, seasonIndex) {
-    let frameInSeason = exportFrameCount % 225;  // 各季節は225フレーム
-    
-    // 実サイズに合わせた初期位置調整
+    let frameInSeason = exportFrameCount % 225;
     let posScale = exportMode === 'google' ? 1 : 2.25;
     
-    // 各季節の開始時（0フレーム目）で第1波を生成
     if (frameInSeason === 0) {
-        exportFlakes = [];  // 前の季節の要素をクリア
-        // 第1波：即座に50個（画面外も含めて広範囲に生成）
+        exportFlakes = [];
         for (let i = 0; i < 50; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
-                random(-320 * posScale, -20 * posScale),  // 画面上部から開始
+                random(-200, workW + 200),
+                random(-320 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.8, d[currentSeason].s * 1.2),
@@ -466,11 +587,10 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
         }
     }
     
-    // 0.4秒後（24フレーム目）で第2波
     if (frameInSeason === 24) {
         for (let i = 0; i < 30; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
+                random(-200, workW + 200),
                 random(-240 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
@@ -481,11 +601,10 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
         }
     }
     
-    // 0.8秒後（48フレーム目）で第3波
     if (frameInSeason === 48) {
         for (let i = 0; i < 20; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),  // 左右に大きく余裕を持たせて生成
+                random(-200, workW + 200),
                 random(-160 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
@@ -497,25 +616,22 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     }
 }
 
-// 書き出し用コード詩表示
 function displayExportPoetryCode(pg, currentSeason) {
     pg.push();
-    // 実サイズに合わせたテキストサイズ
     let sizeScale = exportMode === 'google' ? 1 : 2.25;
     
     pg.fill(255, 255, 255, 100);
-    pg.textSize(32 * sizeScale);  // 実サイズ用に調整
+    pg.textSize(32 * sizeScale);
     pg.textAlign(CENTER, CENTER);
     pg.textFont('monospace');
     pg.text(d[currentSeason].code, workW/2, workH/2);
     
-    pg.textSize(20 * sizeScale);  // 実サイズ用に調整
+    pg.textSize(20 * sizeScale);
     pg.fill(255, 255, 255, 60);
     pg.text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 60 * sizeScale);
     pg.pop();
 }
 
-// 書き出し用要素描画
 function renderExportFlakes(pg) {
     exportFlakes = exportFlakes.filter(flake => {
         flake.updateExport(exportFrameCount);
@@ -524,10 +640,9 @@ function renderExportFlakes(pg) {
     });
 }
 
-// 書き出し用Flakeクラス（プレビューと完全に同じ動作にする）
 class ExportFlake {
     constructor(x, y, char, col, size, rotate, birthFrame) {
-        this.x = x;  // 制限なし
+        this.x = x;
         this.y = y;
         this.char = char;
         this.col = col;
@@ -536,20 +651,19 @@ class ExportFlake {
         this.rotation = rotate ? random(TWO_PI) : 0;
         this.birthFrame = birthFrame;
         
-        // プレビューと同じ速度計算に修正
-        let speedScale = exportMode === 'google' ? 4 : 9;  // プレビューと同じ比率
+        let speedScale = exportMode === 'google' ? 4 : 9;
         
         let speedGroup = random();
         if (speedGroup < 0.3) {
-            this.speed = random(2.5, 3.5) * speedScale;  // プレビューと同じ
+            this.speed = random(2.5, 3.5) * speedScale;
         } else if (speedGroup < 0.7) {
-            this.speed = random(3.5, 4.5) * speedScale;  // プレビューと同じ
+            this.speed = random(3.5, 4.5) * speedScale;
         } else {
-            this.speed = random(4.5, 6) * speedScale;  // プレビューと同じ
+            this.speed = random(4.5, 6) * speedScale;
         }
         
         this.initialSpeed = this.speed;
-        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;  // プレビューと同じ範囲
+        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
         this.wobblePhase = random(TWO_PI);
@@ -558,21 +672,15 @@ class ExportFlake {
     updateExport(currentFrame) {
         let framesSinceBirth = currentFrame - this.birthFrame;
         
-        // プレビューと同じ動き
         this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
         this.y += this.speed;
         this.x += this.velocity;
-        
-        // 横揺れもプレビューと同じ
         this.x += sin(framesSinceBirth * 0.01 + this.wobblePhase) * 0.15;
-        
-        // 境界チェックなし - 自然に画面外へ
         
         if (this.shouldRotate) {
             this.rotation += 0.03;
         }
         
-        // フェードアウト
         if (this.y > workH * 0.7) {
             this.opacity = map(this.y, workH * 0.7, workH, this.baseOpacity, 0);
         } else {
@@ -581,7 +689,6 @@ class ExportFlake {
     }
     
     displayExport(pg) {
-        // 画面外でも描画（クリッピングに任せる）
         pg.push();
         pg.translate(this.x, this.y);
         pg.rotate(this.rotation);
@@ -594,7 +701,6 @@ class ExportFlake {
     }
     
     isOffscreenExport() {
-        // プレビューと同じ判定
         return this.y > workH + 20;
     }
 }
@@ -643,7 +749,7 @@ function generateFlakesPhase() {
     if (generationPhase === 0) {
         for (let i = 0; i < 50; i++) {
             f.push(new Flake(
-                random(-20, workW + 20),  // 画面外も含めて生成
+                random(-20, workW + 20),
                 random(-80 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -655,7 +761,7 @@ function generateFlakesPhase() {
     } else if (generationPhase === 1 && elapsed > 400) {
         for (let i = 0; i < 30; i++) {
             f.push(new Flake(
-                random(-20, workW + 20),  // 画面外も含めて生成
+                random(-20, workW + 20),
                 random(-60 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -667,7 +773,7 @@ function generateFlakesPhase() {
     } else if (generationPhase === 2 && elapsed > 800) {
         for (let i = 0; i < 20; i++) {
             f.push(new Flake(
-                random(-20, workW + 20),  // 画面外も含めて生成
+                random(-20, workW + 20),
                 random(-40 * posScale, -5 * posScale),
                 d[cs].c,
                 d[cs].co,
@@ -705,7 +811,7 @@ function renderFlakes() {
 
 class Flake {
     constructor(x, y, char, col, size, rotate) {
-        this.x = x;  // 制限なし
+        this.x = x;
         this.y = y;
         this.char = char;
         this.col = col;
@@ -735,11 +841,7 @@ class Flake {
         this.speed *= 1.002;
         this.y += this.speed;
         this.x += this.velocity;
-        
-        // 横の動きに波を加える
         this.x += sin(frameCounter * 0.01 + this.y * 0.01) * 0.15;
-        
-        // 境界チェックなし - 自然に画面外へ
         
         if (this.shouldRotate) {
             this.rotation += 0.03;
@@ -762,18 +864,6 @@ class Flake {
         textAlign(CENTER, CENTER);
         text(this.char, 0, 0);
         pop();
-    }
-    
-    displayHighRes(pg) {
-        pg.push();
-        pg.translate(this.x, this.y);
-        pg.rotate(this.rotation);
-        pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
-        pg.textSize(this.size);
-        pg.textFont('monospace');
-        pg.textAlign(CENTER, CENTER);
-        pg.text(this.char, 0, 0);
-        pg.pop();
     }
     
     isOffscreen() {
@@ -836,83 +926,6 @@ function updateUI() {
 }
 
 // ===============================================
-// 高解像度書き出し関数
-// ===============================================
-function exportHighResGoogle() {
-    if (isExporting) {
-        console.log('すでに書き出し中です');
-        return;
-    }
-    
-    console.log('Google Form用 高解像度書き出し開始...');
-    console.log('出力サイズ: 3840×2160（左上に960×1620の作品）');
-    
-    // 書き出し設定
-    exportMode = 'google';
-    isExporting = true;
-    exportFrameCount = 0;
-    exportFlakes = [];  // 書き出し用要素を初期化
-    exportGenerationPhase = 0;
-    
-    // 高解像度グラフィックスを作成
-    exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
-    exportGraphics.pixelDensity(1);  // ピクセル密度を1に固定
-    
-    // UIを更新
-    document.getElementById('exportStatus').classList.add('active');
-    document.getElementById('totalFrames').textContent = '900';
-    
-    // 季節データを再初期化（高解像度用）
-    initSeasonData();
-}
-
-function exportHighResNeort() {
-    if (isExporting) {
-        console.log('すでに書き出し中です');
-        return;
-    }
-    
-    console.log('NEORT用 高解像度書き出し開始...');
-    console.log('出力サイズ: 2160×3840');
-    
-    // 書き出し設定
-    exportMode = 'neort';
-    isExporting = true;
-    exportFrameCount = 0;
-    exportFlakes = [];  // 書き出し用要素を初期化
-    exportGenerationPhase = 0;
-    
-    // 高解像度グラフィックスを作成
-    exportGraphics = createGraphics(NEORT_W, NEORT_H);
-    exportGraphics.pixelDensity(1);  // ピクセル密度を1に固定
-    
-    // UIを更新
-    document.getElementById('exportStatus').classList.add('active');
-    document.getElementById('totalFrames').textContent = '900';
-    
-    // 季節データを再初期化（高解像度用）
-    initSeasonData();
-}
-
-function stopExport() {
-    isExporting = false;
-    exportGraphics.remove();
-    exportGraphics = null;
-    exportFlakes = [];  // 書き出し用要素をクリア
-    exportGenerationPhase = 0;
-    
-    // UIを更新
-    document.getElementById('exportStatus').classList.remove('active');
-    
-    // プレビューモードに戻す
-    initSeasonData();
-    updateCanvasSize();
-    
-    console.log(`書き出し完了：${exportFrameCount}フレーム`);
-    alert(`高解像度書き出し完了！\n${exportFrameCount}枚の画像がダウンロードフォルダに保存されました。\n\n動画化コマンド：\nffmpeg -r 60 -i ${exportMode}_frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 ${exportMode}_output.mp4`);
-}
-
-// ===============================================
 // 操作関数
 // ===============================================
 function togglePreviewMode() {
@@ -950,7 +963,6 @@ function keyPressed() {
     } else if (key === 'r' || key === 'R') {
         resetAnimation();
     } else if (key === 's' || key === 'S') {
-        // プレビューサイズで保存
         let prefix = previewMode === 'google' ? 'google_preview_' : 'neort_preview_';
         saveCanvas(prefix + 'poetry_computer_' + frameCount, 'png');
         console.log('プレビュー画像を保存しました');
