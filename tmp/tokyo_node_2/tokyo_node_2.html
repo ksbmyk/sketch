@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（連番保存対応版）</title>
+    <title>詩とコンピュータ - 季節のコード詩（パフォーマンス最適化版）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -110,7 +110,7 @@
 <body>
     <div class="container">
         <div id="controls">
-            <h2>🌸 詩とコンピュータ - 季節のコード詩（連番保存対応版）</h2>
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（パフォーマンス最適化版）</h2>
             
             <div class="info-grid">
                 <div class="info-box">
@@ -225,6 +225,9 @@ function setup() {
     let canvas = createCanvas(previewW, previewH);
     canvas.parent('canvasContainer');
     
+    // ★フォントを一度だけ設定（最適化）
+    textFont('monospace');
+    
     initSeasonData();
     seasonStartTime = millis();
     generateFlakes();
@@ -309,9 +312,7 @@ function draw() {
     // 通常のプレビュー描画
     background(0);
     
-    push();
     drawPoetryWork();
-    pop();
     
     if (previewMode === 'google') {
         fill(0);
@@ -488,6 +489,7 @@ function exportHighResGoogle() {
     
     exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
     exportGraphics.pixelDensity(1);
+    exportGraphics.textFont('monospace');  // ★高解像度用にもフォント設定
     
     document.getElementById('exportStatus').classList.add('active');
     document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
@@ -515,6 +517,7 @@ function exportHighResNeort() {
     
     exportGraphics = createGraphics(NEORT_W, NEORT_H);
     exportGraphics.pixelDensity(1);
+    exportGraphics.textFont('monospace');  // ★高解像度用にもフォント設定
     
     document.getElementById('exportStatus').classList.add('active');
     document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
@@ -524,18 +527,15 @@ function exportHighResNeort() {
     initSeasonData();
 }
 
-// 以下、既存の描画関数たち（変更なし）
-
+// ★最適化された描画関数
 function drawPoetryWork() {
-    push();
     updateBackground();
     handleTransition();
     if (generationPhase < 3) {
         generateFlakesPhase();
     }
     displayPoetryCode();
-    renderFlakes();
-    pop();
+    renderFlakesOptimized();  // ★最適化版を使用
 }
 
 function drawPoetryWorkHighRes(pg) {
@@ -551,7 +551,7 @@ function drawPoetryWorkHighRes(pg) {
     drawExportBackground(pg, currentSeason, nextSeason, seasonProgress);
     generateExportFlakesPhase(currentSeason, seasonIndex);
     displayExportPoetryCode(pg, currentSeason);
-    renderExportFlakes(pg);
+    renderExportFlakesOptimized(pg);  // ★最適化版を使用
     
     pg.pop();
 }
@@ -616,6 +616,21 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     }
 }
 
+function displayPoetryCode() {
+    push();
+    let sizeScale = previewMode === 'google' ? 1 : 2.25;
+    
+    fill(255, 255, 255, 200);
+    textSize(10 * sizeScale);
+    textAlign(CENTER, CENTER);
+    text(d[cs].code, workW/2, workH/2);
+    
+    textSize(6 * sizeScale);
+    fill(255, 255, 255, 200);
+    text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
+    pop();
+}
+
 function displayExportPoetryCode(pg, currentSeason) {
     pg.push();
     let sizeScale = exportMode === 'google' ? 1 : 2.25;
@@ -623,7 +638,6 @@ function displayExportPoetryCode(pg, currentSeason) {
     pg.fill(255, 255, 255, 200);
     pg.textSize(40 * sizeScale);
     pg.textAlign(CENTER, CENTER);
-    pg.textFont('monospace');
     pg.text(d[currentSeason].code, workW/2, workH/2);
     
     pg.textSize(24 * sizeScale);
@@ -632,11 +646,65 @@ function displayExportPoetryCode(pg, currentSeason) {
     pg.pop();
 }
 
-function renderExportFlakes(pg) {
+// ★最適化されたフレーク描画（プレビュー用）
+function renderFlakesOptimized() {
+    // まず更新とフィルタリング
+    f = f.filter(flake => {
+        flake.updateOptimized();
+        return !flake.isOffscreen();
+    });
+    
+    // 描画の初期設定
+    noStroke();
+    textAlign(CENTER, CENTER);
+    
+    // 回転しないフレークをまとめて描画（push/pop不要）
+    f.filter(flake => !flake.shouldRotate).forEach(flake => {
+        fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        textSize(flake.size);
+        text(flake.char, flake.x, flake.y);
+    });
+    
+    // 回転するフレークは個別に処理
+    f.filter(flake => flake.shouldRotate).forEach(flake => {
+        push();
+        translate(flake.x, flake.y);
+        rotate(flake.rotation);
+        fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        textSize(flake.size);
+        text(flake.char, 0, 0);
+        pop();
+    });
+}
+
+// ★最適化されたフレーク描画（エクスポート用）
+function renderExportFlakesOptimized(pg) {
+    // 更新とフィルタリング
     exportFlakes = exportFlakes.filter(flake => {
         flake.updateExport(exportFrameCount);
-        flake.displayExport(pg);
         return !flake.isOffscreenExport();
+    });
+    
+    // 描画の初期設定
+    pg.noStroke();
+    pg.textAlign(CENTER, CENTER);
+    
+    // 回転しないフレークをまとめて描画
+    exportFlakes.filter(flake => !flake.shouldRotate).forEach(flake => {
+        pg.fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        pg.textSize(flake.size);
+        pg.text(flake.char, flake.x, flake.y);
+    });
+    
+    // 回転するフレークは個別に処理
+    exportFlakes.filter(flake => flake.shouldRotate).forEach(flake => {
+        pg.push();
+        pg.translate(flake.x, flake.y);
+        pg.rotate(flake.rotation);
+        pg.fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        pg.textSize(flake.size);
+        pg.text(flake.char, 0, 0);
+        pg.pop();
     });
 }
 
@@ -653,18 +721,17 @@ class ExportFlake {
         
         let speedScale = exportMode === 'google' ? 4 : 9;
         
-        // ★春の落下速度を調整
+        // 春の落下速度を調整
         let speedGroup = random();
         if (this.char === '✿') {  // 春は少し速めに落とす
             if (speedGroup < 0.3) {
-                this.speed = random(3.0, 4.0) * speedScale;  // 速度UP
+                this.speed = random(3.0, 4.0) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(4.0, 5.0) * speedScale;  // 速度UP
+                this.speed = random(4.0, 5.0) * speedScale;
             } else {
-                this.speed = random(5.0, 6.5) * speedScale;  // 速度UP
+                this.speed = random(5.0, 6.5) * speedScale;
             }
         } else {
-            // 他の季節は元のまま
             if (speedGroup < 0.3) {
                 this.speed = random(2.5, 3.5) * speedScale;
             } else if (speedGroup < 0.7) {
@@ -680,18 +747,18 @@ class ExportFlake {
         this.baseOpacity = random(180, 255);
         this.wobblePhase = random(TWO_PI);
 
-        // ★横揺れ幅を控えめに調整
-        if (this.char === '✿') {  // 春：優雅に舞う
-            this.wobbleMultiplier = 0.8;    // 横揺れを控えめに（2.0→0.8）
-            this.wobbleSpeed = 0.007;       // ゆっくりした周期
-            this.rotationSpeed = 0.025;     // 優雅に回転
-            this.velocityDamping = 0.997;   // 横速度の減衰も控えめに
+        // 横揺れ幅を控えめに調整
+        if (this.char === '✿') {  // 春
+            this.wobbleMultiplier = 0.8;
+            this.wobbleSpeed = 0.007;
+            this.rotationSpeed = 0.025;
+            this.velocityDamping = 0.997;
             
-        } else if (this.char === '♠') {  // 秋：激しく舞い散る
-            this.wobbleMultiplier = 0.25;   // 小刻みな横揺れ（0.4→0.25）
-            this.wobbleSpeed = 0.025;       // 速い周期
-            this.rotationSpeed = 0.07;      // 激しく回転
-            this.velocityDamping = 0.985;   // 横速度を速く減衰
+        } else if (this.char === '♠') {  // 秋
+            this.wobbleMultiplier = 0.25;
+            this.wobbleSpeed = 0.025;
+            this.rotationSpeed = 0.07;
+            this.velocityDamping = 0.985;
             this.erraticOffset = random(TWO_PI);
             
         } else {
@@ -705,28 +772,28 @@ class ExportFlake {
     updateExport(currentFrame) {
         let framesSinceBirth = currentFrame - this.birthFrame;
         
-        // ★春の落下加速を少し強く
+        // 春の落下加速を少し強く
         if (this.char === '✿') {
-            this.speed = this.initialSpeed * Math.pow(1.003, framesSinceBirth);  // 春は少し速く加速
+            this.speed = this.initialSpeed * Math.pow(1.003, framesSinceBirth);
         } else {
-            this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);  // 他は元のまま
+            this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
         }
         
         this.y += this.speed;
         
         if (this.char === '✿') {  // 春
-            this.x += sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
+            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else if (this.char === '♠') {  // 秋
-            this.x += sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
-            this.x += cos(framesSinceBirth * 0.04 + this.erraticOffset) * 0.2;
+            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
+            this.x += Math.cos(framesSinceBirth * 0.04 + this.erraticOffset) * 0.2;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
-            this.x += sin(framesSinceBirth * 0.01 + this.wobblePhase) * this.wobbleMultiplier;
+            this.x += Math.sin(framesSinceBirth * 0.01 + this.wobblePhase) * this.wobbleMultiplier;
             this.x += this.velocity;
         }
 
@@ -734,27 +801,18 @@ class ExportFlake {
             this.rotation += this.rotationSpeed;
         }
         
+        // ★最適化された透明度計算
         if (this.y > workH * 0.7) {
-            this.opacity = map(this.y, workH * 0.7, workH, this.baseOpacity, 0);
+            let fadeRange = workH * 0.3;
+            let fadeProgress = (this.y - workH * 0.7) / fadeRange;
+            this.opacity = this.baseOpacity * (1 - fadeProgress);
         } else {
             this.opacity = this.baseOpacity;
         }
     }
     
-    displayExport(pg) {
-        pg.push();
-        pg.translate(this.x, this.y);
-        pg.rotate(this.rotation);
-        pg.fill(this.col[0], this.col[1], this.col[2], this.opacity);
-        pg.textSize(this.size);
-        pg.textFont('monospace');
-        pg.textAlign(CENTER, CENTER);
-        pg.text(this.char, 0, 0);
-        pg.pop();
-    }
-    
     isOffscreenExport() {
-        return this.y > workH + 20;
+        return this.y > workH + 20 || this.x < -200 || this.x > workW + 200;
     }
 }
 
@@ -838,30 +896,6 @@ function generateFlakesPhase() {
     }
 }
 
-function displayPoetryCode() {
-    push();
-    let sizeScale = previewMode === 'google' ? 1 : 2.25;
-    
-    fill(255, 255, 255, 200);
-    textSize(10 * sizeScale);
-    textAlign(CENTER, CENTER);
-    textFont('monospace');
-    text(d[cs].code, workW/2, workH/2);
-    
-    textSize(6 * sizeScale);
-    fill(255, 255, 255, 200);
-    text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
-    pop();
-}
-
-function renderFlakes() {
-    f = f.filter(flake => {
-        flake.update();
-        flake.display();
-        return !flake.isOffscreen();
-    });
-}
-
 class Flake {
     constructor(x, y, char, col, size, rotate) {
         this.x = x;
@@ -876,18 +910,17 @@ class Flake {
             (exportMode === 'google' ? 4 : 9) : 
             (previewMode === 'google' ? 1 : 2.25);
         
-        // ★春の落下速度を調整
+        // 春の落下速度を調整
         let speedGroup = random();
         if (this.char === '✿') {  // 春は少し速めに落とす
             if (speedGroup < 0.3) {
-                this.speed = random(3.0, 4.0) * speedScale;  // 速度UP
+                this.speed = random(3.0, 4.0) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(4.0, 5.0) * speedScale;  // 速度UP
+                this.speed = random(4.0, 5.0) * speedScale;
             } else {
-                this.speed = random(5.0, 6.5) * speedScale;  // 速度UP
+                this.speed = random(5.0, 6.5) * speedScale;
             }
         } else {
-            // 他の季節は元のまま
             if (speedGroup < 0.3) {
                 this.speed = random(2.5, 3.5) * speedScale;
             } else if (speedGroup < 0.7) {
@@ -901,18 +934,18 @@ class Flake {
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
 
-        // ★横揺れ幅を控えめに調整
-        if (this.char === '✿') {  // 春：優雅に舞う
-            this.wobbleMultiplier = 0.8;    // 横揺れを控えめに（2.0→0.8）
-            this.wobbleSpeed = 0.007;       // ゆっくりした周期
-            this.rotationSpeed = 0.025;     // 優雅に回転
-            this.velocityDamping = 0.997;   // 横速度の減衰も控えめに
+        // 横揺れ幅を控えめに調整
+        if (this.char === '✿') {  // 春
+            this.wobbleMultiplier = 0.8;
+            this.wobbleSpeed = 0.007;
+            this.rotationSpeed = 0.025;
+            this.velocityDamping = 0.997;
             
-        } else if (this.char === '♠') {  // 秋：激しく舞い散る
-            this.wobbleMultiplier = 0.25;   // 小刻みな横揺れ（0.4→0.25）
-            this.wobbleSpeed = 0.025;       // 速い周期
-            this.rotationSpeed = 0.07;      // 激しく回転
-            this.velocityDamping = 0.985;   // 横速度を速く減衰
+        } else if (this.char === '♠') {  // 秋
+            this.wobbleMultiplier = 0.25;
+            this.wobbleSpeed = 0.025;
+            this.rotationSpeed = 0.07;
+            this.velocityDamping = 0.985;
             this.erraticOffset = random(TWO_PI);
             
         } else {
@@ -921,36 +954,41 @@ class Flake {
             this.rotationSpeed = 0.03;
             this.velocityDamping = 1.0;
         }
+        
+        // ★最適化：sin/cos用の位相を事前計算
+        this.sinPhase = 0;
+        this.cosPhase = 0;
     }
     
-    update() {
-        // ★春の落下加速を少し強く
+    // ★最適化されたupdate関数
+    updateOptimized() {
+        // 春の落下加速を少し強く
         if (this.char === '✿') {
-            this.speed *= 1.003;  // 春は少し速く加速
+            this.speed *= 1.003;
         } else {
-            this.speed *= 1.002;  // 他は元のまま
+            this.speed *= 1.002;
         }
         
         this.y += this.speed;
         
         // 春と秋で異なる横移動パターン
         if (this.char === '✿') {  // 春
-            // 控えめだが優雅な横揺れ
-            this.x += sin(frameCounter * this.wobbleSpeed + this.y * 0.005) * this.wobbleMultiplier;
+            this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.005;
+            this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else if (this.char === '♠') {  // 秋
-            // 小刻みな横揺れ
-            this.x += sin(frameCounter * this.wobbleSpeed + this.y * 0.01) * this.wobbleMultiplier;
-            // 不規則な動き
-            this.x += cos(frameCounter * 0.04 + this.erraticOffset) * 0.2;
+            this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.01;
+            this.cosPhase = frameCounter * 0.04 + this.erraticOffset;
+            this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
+            this.x += Math.cos(this.cosPhase) * 0.2;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
             // デフォルト（夏・冬）
-            this.x += sin(frameCounter * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
+            this.x += Math.sin(frameCounter * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
             this.x += this.velocity;
         }
 
@@ -958,27 +996,18 @@ class Flake {
           this.rotation += this.rotationSpeed;
         }
         
+        // ★最適化された透明度計算
         if (this.y > workH * 0.7) {
-            this.opacity = map(this.y, workH * 0.7, workH, this.baseOpacity, 0);
+            let fadeRange = workH * 0.3;
+            let fadeProgress = (this.y - workH * 0.7) / fadeRange;
+            this.opacity = this.baseOpacity * (1 - fadeProgress);
         } else {
             this.opacity = this.baseOpacity;
         }
     }
     
-    display() {
-        push();
-        translate(this.x, this.y);
-        rotate(this.rotation);
-        fill(this.col[0], this.col[1], this.col[2], this.opacity);
-        textSize(this.size);
-        textFont('monospace');
-        textAlign(CENTER, CENTER);
-        text(this.char, 0, 0);
-        pop();
-    }
-    
     isOffscreen() {
-        return this.y > workH + 20;
+        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;
     }
 }
 
