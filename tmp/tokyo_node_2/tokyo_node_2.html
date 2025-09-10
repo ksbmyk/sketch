@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（華やか版）</title>
+    <title>詩とコンピュータ - 季節のコード詩（秋の広がり版）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -110,7 +110,7 @@
 <body>
     <div class="container">
         <div id="controls">
-            <h2>🌸 詩とコンピュータ - 季節のコード詩（華やか版）</h2>
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（秋の広がり版）</h2>
             
             <div class="info-grid">
                 <div class="info-box">
@@ -285,7 +285,7 @@ function initSeasonData() {
         },
         w: { // 冬
             c: '*',
-            r: false,
+            r: true,  // 雪も回転させる
             s: 15 * sizeScale,  
             co: [255, 255, 255],
             bg: [0, 31, 63],
@@ -557,6 +557,14 @@ function drawPoetryWorkHighRes(pg) {
 }
 
 function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
+    // 最後のフレーム（899）の場合は春の背景
+    if (exportFrameCount === 899) {
+        pg.fill(...d.s.bg);  // 春の背景色
+        pg.noStroke();
+        pg.rect(0, 0, workW, workH);
+        return;
+    }
+    
     let currentBg = color(...d[currentSeason].bg);
     let nextBg = color(...d[nextSeason].bg);
     
@@ -721,7 +729,7 @@ class ExportFlake {
         
         let speedScale = exportMode === 'google' ? 4 : 9;
         
-        // 春の落下速度を調整
+        // 落下速度を季節ごとに調整
         let speedGroup = random();
         if (this.char === '✿') {  // 春は少し速めに落とす
             if (speedGroup < 0.3) {
@@ -730,6 +738,14 @@ class ExportFlake {
                 this.speed = random(4.0, 5.0) * speedScale;
             } else {
                 this.speed = random(5.0, 6.5) * speedScale;
+            }
+        } else if (this.char === '♠') {  // 秋はゆっくりと広がりながら落ちる
+            if (speedGroup < 0.3) {
+                this.speed = random(1.5, 2.5) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(2.5, 3.5) * speedScale;
+            } else {
+                this.speed = random(3.5, 4.5) * speedScale;
             }
         } else {
             if (speedGroup < 0.3) {
@@ -747,53 +763,61 @@ class ExportFlake {
         this.baseOpacity = random(180, 255);
         this.wobblePhase = random(TWO_PI);
 
-        // 横揺れ幅を控えめに調整
+        // 季節ごとの横移動パラメータ
         if (this.char === '✿') {  // 春 - 回転を大幅に強化
             this.wobbleMultiplier = 0.8;
             this.wobbleSpeed = 0.007;
             this.rotationSpeed = 0.12;  // 0.025から0.12に増加（約5倍）
             this.velocityDamping = 0.997;
+            this.horizontalDrift = 0;  // デフォルト値
             
-        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化
-            this.wobbleMultiplier = 0.25;
+        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化、広がる動き
+            this.wobbleMultiplier = 1.5;  // 横揺れを大幅に増加（0.25から1.5へ）
             this.wobbleSpeed = 0.025;
             this.rotationSpeed = 0.18;  // 0.07から0.18に増加（約2.5倍）
-            this.velocityDamping = 0.985;
+            this.velocityDamping = 0.995;  // 減速を緩やかに（0.985から0.995へ）
             this.erraticOffset = random(TWO_PI);
+            this.horizontalDrift = random(-2, 2) * speedScale;  // 横方向への漂流を追加
             
         } else {
             this.wobbleMultiplier = 0.15;
             this.wobbleSpeed = 0.01;
             this.rotationSpeed = 0.03;
             this.velocityDamping = 1.0;
+            this.horizontalDrift = 0;  // デフォルト値
         }
     }
     
     updateExport(currentFrame) {
         let framesSinceBirth = currentFrame - this.birthFrame;
         
-        // 春の落下加速を少し強く
+        // 春の落下加速を少し強く、秋はほぼ等速
         if (this.char === '✿') {
             this.speed = this.initialSpeed * Math.pow(1.003, framesSinceBirth);
+        } else if (this.char === '♠') {  // 秋は加速をほぼなしに
+            this.speed = this.initialSpeed * Math.pow(1.0005, framesSinceBirth);
         } else {
             this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
         }
         
         this.y += this.speed;
         
-        if (this.char === '✿') {  // 春
-            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
+        if (this.char === '✿') {  // 春 - プレビューと同じ計算式に修正
+            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.y * 0.005) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
-        } else if (this.char === '♠') {  // 秋
-            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.wobblePhase) * this.wobbleMultiplier;
-            this.x += Math.cos(framesSinceBirth * 0.04 + this.erraticOffset) * 0.2;
+        } else if (this.char === '♠') {  // 秋 - プレビューと同じ計算式に修正
+            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.y * 0.01) * this.wobbleMultiplier;
+            this.x += Math.cos(framesSinceBirth * 0.04 + this.erraticOffset) * 0.5;  // 0.2から0.5に増加
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
-            this.x += Math.sin(framesSinceBirth * 0.01 + this.wobblePhase) * this.wobbleMultiplier;
+            this.x += Math.sin(framesSinceBirth * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
             this.x += this.velocity;
         }
 
@@ -812,7 +836,7 @@ class ExportFlake {
     }
     
     isOffscreenExport() {
-        return this.y > workH + 20 || this.x < -200 || this.x > workW + 200;
+        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;  // プレビューと同じ判定範囲に変更
     }
 }
 
@@ -910,7 +934,7 @@ class Flake {
             (exportMode === 'google' ? 4 : 9) : 
             (previewMode === 'google' ? 1 : 2.25);
         
-        // 春の落下速度を調整
+        // 落下速度を季節ごとに調整
         let speedGroup = random();
         if (this.char === '✿') {  // 春は少し速めに落とす
             if (speedGroup < 0.3) {
@@ -919,6 +943,14 @@ class Flake {
                 this.speed = random(4.0, 5.0) * speedScale;
             } else {
                 this.speed = random(5.0, 6.5) * speedScale;
+            }
+        } else if (this.char === '♠') {  // 秋はゆっくりと広がりながら落ちる
+            if (speedGroup < 0.3) {
+                this.speed = random(1.5, 2.5) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(2.5, 3.5) * speedScale;
+            } else {
+                this.speed = random(3.5, 4.5) * speedScale;
             }
         } else {
             if (speedGroup < 0.3) {
@@ -934,25 +966,28 @@ class Flake {
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
 
-        // 横揺れ幅を控えめに調整
+        // 季節ごとの横移動パラメータ
         if (this.char === '✿') {  // 春 - 回転を大幅に強化
             this.wobbleMultiplier = 0.8;
             this.wobbleSpeed = 0.007;
             this.rotationSpeed = 0.12;  // 0.025から0.12に増加（約5倍）
             this.velocityDamping = 0.997;
+            this.horizontalDrift = 0;  // デフォルト値
             
-        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化
-            this.wobbleMultiplier = 0.25;
+        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化、広がる動き
+            this.wobbleMultiplier = 1.5;  // 横揺れを大幅に増加（0.25から1.5へ）
             this.wobbleSpeed = 0.025;
             this.rotationSpeed = 0.18;  // 0.07から0.18に増加（約2.5倍）
-            this.velocityDamping = 0.985;
+            this.velocityDamping = 0.995;  // 減速を緩やかに（0.985から0.995へ）
             this.erraticOffset = random(TWO_PI);
+            this.horizontalDrift = random(-2, 2) * speedScale;  // 横方向への漂流を追加
             
         } else {
             this.wobbleMultiplier = 0.15;
             this.wobbleSpeed = 0.01;
             this.rotationSpeed = 0.03;
             this.velocityDamping = 1.0;
+            this.horizontalDrift = 0;  // デフォルト値
         }
         
         // ★最適化：sin/cos用の位相を事前計算
@@ -962,9 +997,11 @@ class Flake {
     
     // ★最適化されたupdate関数
     updateOptimized() {
-        // 春の落下加速を少し強く
+        // 春の落下加速を少し強く、秋はほぼ等速
         if (this.char === '✿') {
             this.speed *= 1.003;
+        } else if (this.char === '♠') {  // 秋は加速をほぼなしに
+            this.speed *= 1.0005;
         } else {
             this.speed *= 1.002;
         }
@@ -975,6 +1012,7 @@ class Flake {
         if (this.char === '✿') {  // 春
             this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.005;
             this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
@@ -982,13 +1020,15 @@ class Flake {
             this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.01;
             this.cosPhase = frameCounter * 0.04 + this.erraticOffset;
             this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
-            this.x += Math.cos(this.cosPhase) * 0.2;
+            this.x += Math.cos(this.cosPhase) * 0.5;  // 0.2から0.5に増加
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
             // デフォルト（夏・冬）
             this.x += Math.sin(frameCounter * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
             this.x += this.velocity;
         }
 
