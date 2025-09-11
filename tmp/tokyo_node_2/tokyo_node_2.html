@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（秋の広がり版）</title>
+    <title>詩とコンピュータ - 季節のコード詩（統一版）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -110,7 +110,7 @@
 <body>
     <div class="container">
         <div id="controls">
-            <h2>🌸 詩とコンピュータ - 季節のコード詩（秋の広がり版）</h2>
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（統一版）</h2>
             
             <div class="info-grid">
                 <div class="info-box">
@@ -225,7 +225,6 @@ function setup() {
     let canvas = createCanvas(previewW, previewH);
     canvas.parent('canvasContainer');
     
-    // ★フォントを一度だけ設定（最適化）
     textFont('monospace');
     
     initSeasonData();
@@ -247,19 +246,32 @@ function updateCanvasSize() {
     }
 }
 
-function initSeasonData() {
-    let sizeScale;
+// 統一されたスケール取得関数
+function getUnifiedScale() {
+    // 基準は960×1620（Google Form）として、他の解像度での比率を計算
     if (isExporting) {
-        sizeScale = exportMode === 'google' ? 4 : 9;
+        if (exportMode === 'google') {
+            return 1.0;  // 960×1620が基準
+        } else {
+            return 2.25;  // NEORT用は2.25倍（2160/960）
+        }
     } else {
-        sizeScale = previewMode === 'google' ? 1 : 2.25;
+        if (previewMode === 'google') {
+            return 0.25;  // プレビューは1/4
+        } else {
+            return 0.5625;  // NEORT プレビューも比率を維持（2.25 * 0.25）
+        }
     }
+}
+
+function initSeasonData() {
+    let sizeScale = getUnifiedScale();
     
     d = {
         s: { // 春
             c: '✿',
             r: true,
-            s: 12 * sizeScale,  
+            s: 48 * sizeScale,  // 基準サイズを統一
             co: [255, 100, 210],
             bg: [255, 182, 193],
             code: "春.tender('✿', :bloom)",
@@ -268,7 +280,7 @@ function initSeasonData() {
         u: { // 夏
             c: ';',
             r: false,
-            s: 10 * sizeScale,  
+            s: 40 * sizeScale,  
             co: [0, 30, 180],
             bg: [135, 206, 250],
             code: "夏.sudden(';', :pour)",
@@ -277,7 +289,7 @@ function initSeasonData() {
         a: { // 秋
             c: '♠',
             r: true,
-            s: 15 * sizeScale,
+            s: 60 * sizeScale,
             co: [204, 85, 0],
             bg: [204, 163, 0],
             code: "秋.gradual('♠', :fall)",
@@ -285,8 +297,8 @@ function initSeasonData() {
         },
         w: { // 冬
             c: '*',
-            r: true,  // 雪も回転させる
-            s: 15 * sizeScale,
+            r: true,
+            s: 60 * sizeScale,
             co: [255, 255, 255],
             bg: [0, 31, 63],
             code: "冬.silent('*', :float)",
@@ -301,15 +313,12 @@ function initSeasonData() {
 
 function draw() {
     if (isExporting && !isSaving) {
-        // フレーム生成モード
         generateHighResFrame();
         return;
     } else if (isSaving) {
-        // 保存処理中は描画を停止
         return;
     }
     
-    // 通常のプレビュー描画
     background(0);
     
     drawPoetryWork();
@@ -363,7 +372,6 @@ function generateHighResFrame() {
         drawPoetryWorkHighRes(exportGraphics);
     }
     
-    // Canvas データを保存（メモリに）
     let imageData = exportGraphics.canvas.toDataURL('image/png');
     pendingFrames.push({
         data: imageData,
@@ -373,46 +381,39 @@ function generateHighResFrame() {
     
     exportFrameCount++;
     
-    // 進捗更新
     document.getElementById('exportFrame').textContent = exportFrameCount;
     let progress = (exportFrameCount / 900) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
     
-    // 900フレーム生成完了
     if (exportFrameCount >= 900) {
         console.log('フレーム生成完了。順次保存を開始します...');
         startSequentialSave();
     }
 }
 
-// 順次保存処理（連番を確実に維持）
+// 順次保存処理
 function startSequentialSave() {
     isSaving = true;
     saveIndex = 0;
     
-    // UIを更新
     document.getElementById('exportStatus').classList.add('saving');
     document.getElementById('exportStatusText').textContent = '💾 順次保存中...';
     document.getElementById('exportMessage').textContent = 'ブラウザの確認ダイアログが出たら「許可」を選択してください';
     
-    // ボタンを無効化
     document.getElementById('exportGoogleBtn').disabled = true;
     document.getElementById('exportNeortBtn').disabled = true;
     
     saveNextFrame();
 }
 
-// 次のフレームを保存
 function saveNextFrame() {
     if (saveIndex >= pendingFrames.length) {
-        // 全フレーム保存完了
         completeSave();
         return;
     }
     
     let frame = pendingFrames[saveIndex];
     
-    // Data URLからBlobを作成してダウンロード
     fetch(frame.data)
         .then(res => res.blob())
         .then(blob => {
@@ -421,19 +422,16 @@ function saveNextFrame() {
             link.download = frame.filename;
             link.click();
             
-            // メモリ解放
             URL.revokeObjectURL(link.href);
             
             saveIndex++;
             
-            // 進捗更新
             document.getElementById('exportFrame').textContent = saveIndex;
             document.getElementById('exportMessage').textContent = `保存中: ${frame.filename}`;
             let progress = (saveIndex / pendingFrames.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
             
-            // 次のフレームを保存（間隔を空けて）
-            setTimeout(saveNextFrame, 100);  // 100ms間隔で保存
+            setTimeout(saveNextFrame, 100);
         })
         .catch(error => {
             console.error('保存エラー:', error);
@@ -442,11 +440,9 @@ function saveNextFrame() {
         });
 }
 
-// 保存完了処理
 function completeSave() {
     console.log(`保存完了: ${saveIndex}/${pendingFrames.length}フレーム`);
     
-    // クリーンアップ
     pendingFrames = [];
     isSaving = false;
     isExporting = false;
@@ -458,16 +454,13 @@ function completeSave() {
         exportGraphics = null;
     }
     
-    // UIをリセット
     document.getElementById('exportStatus').classList.remove('active', 'saving');
     document.getElementById('exportGoogleBtn').disabled = false;
     document.getElementById('exportNeortBtn').disabled = false;
     
-    // プレビューモードに戻す
     initSeasonData();
     updateCanvasSize();
     
-    // 完了メッセージ
     alert(`書き出し完了！\n${saveIndex}枚の画像が保存されました。\n\n動画化コマンド：\nffmpeg -r 60 -i ${exportMode}_frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 ${exportMode}_output.mp4`);
 }
 
@@ -489,7 +482,7 @@ function exportHighResGoogle() {
     
     exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
     exportGraphics.pixelDensity(1);
-    exportGraphics.textFont('monospace');  // ★高解像度用にもフォント設定
+    exportGraphics.textFont('monospace');
     
     document.getElementById('exportStatus').classList.add('active');
     document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
@@ -517,7 +510,7 @@ function exportHighResNeort() {
     
     exportGraphics = createGraphics(NEORT_W, NEORT_H);
     exportGraphics.pixelDensity(1);
-    exportGraphics.textFont('monospace');  // ★高解像度用にもフォント設定
+    exportGraphics.textFont('monospace');
     
     document.getElementById('exportStatus').classList.add('active');
     document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
@@ -527,7 +520,6 @@ function exportHighResNeort() {
     initSeasonData();
 }
 
-// ★最適化された描画関数
 function drawPoetryWork() {
     updateBackground();
     handleTransition();
@@ -535,7 +527,7 @@ function drawPoetryWork() {
         generateFlakesPhase();
     }
     displayPoetryCode();
-    renderFlakesOptimized();  // ★最適化版を使用
+    renderFlakesOptimized();
 }
 
 function drawPoetryWorkHighRes(pg) {
@@ -545,12 +537,11 @@ function drawPoetryWorkHighRes(pg) {
     let seasonIndex = Math.floor(totalProgress * 4);
     let seasonProgress = (totalProgress * 4) % 1;
     
-    // ★最後のフレーム（899）は春として扱う
     let currentSeason, nextSeason;
     if (exportFrameCount === 899) {
-        currentSeason = 's';  // 春
-        nextSeason = 'u';     // 夏
-        seasonProgress = 0;   // 春の始まり
+        currentSeason = 's';
+        nextSeason = 'u';
+        seasonProgress = 0;
     } else {
         currentSeason = s[seasonIndex % 4];
         nextSeason = s[(seasonIndex + 1) % 4];
@@ -559,15 +550,14 @@ function drawPoetryWorkHighRes(pg) {
     drawExportBackground(pg, currentSeason, nextSeason, seasonProgress);
     generateExportFlakesPhase(currentSeason, seasonIndex);
     displayExportPoetryCode(pg, currentSeason);
-    renderExportFlakesOptimized(pg);  // ★最適化版を使用
+    renderExportFlakesOptimized(pg);
     
     pg.pop();
 }
 
 function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
-    // 最後のフレーム（899）の場合は春の背景
     if (exportFrameCount === 899) {
-        pg.fill(...d.s.bg);  // 春の背景色
+        pg.fill(...d.s.bg);
         pg.noStroke();
         pg.rect(0, 0, workW, workH);
         return;
@@ -586,14 +576,14 @@ function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
 
 function generateExportFlakesPhase(currentSeason, seasonIndex) {
     let frameInSeason = exportFrameCount % 225;
-    let posScale = exportMode === 'google' ? 4 : 9;  // ★プレビューと同じスケール計算に修正
+    let posScale = getUnifiedScale();
     
     if (frameInSeason === 0) {
         exportFlakes = [];
-        for (let i = 0; i < 80; i++) {  // 50から80に増加
+        for (let i = 0; i < 80; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
-                random(-80 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
+                random(-20, workW + 20),
+                random(-320 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.8, d[currentSeason].s * 1.2),
@@ -604,10 +594,10 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     }
     
     if (frameInSeason === 24) {
-        for (let i = 0; i < 60; i++) {  // 30から60に増加
+        for (let i = 0; i < 60; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
-                random(-60 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
+                random(-20, workW + 20),
+                random(-240 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.7, d[currentSeason].s * 1.1),
@@ -618,10 +608,10 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     }
     
     if (frameInSeason === 48) {
-        for (let i = 0; i < 40; i++) {  // 20から40に増加
+        for (let i = 0; i < 40; i++) {
             exportFlakes.push(new ExportFlake(
-                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
-                random(-40 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
+                random(-20, workW + 20),
+                random(-160 * posScale, -20 * posScale),
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.6, d[currentSeason].s * 1.0),
@@ -634,22 +624,22 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
 
 function displayPoetryCode() {
     push();
-    let sizeScale = previewMode === 'google' ? 1 : 2.25;
+    let sizeScale = getUnifiedScale();
     
     fill(255, 255, 255, 200);
-    textSize(10 * sizeScale);
+    textSize(40 * sizeScale);
     textAlign(CENTER, CENTER);
     text(d[cs].code, workW/2, workH/2);
     
-    textSize(6 * sizeScale);
+    textSize(24 * sizeScale);
     fill(255, 255, 255, 200);
-    text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 15 * sizeScale);
+    text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 60 * sizeScale);
     pop();
 }
 
 function displayExportPoetryCode(pg, currentSeason) {
     pg.push();
-    let sizeScale = exportMode === 'google' ? 1 : 2.25;
+    let sizeScale = getUnifiedScale();
     
     pg.fill(255, 255, 255, 200);
     pg.textSize(40 * sizeScale);
@@ -662,26 +652,21 @@ function displayExportPoetryCode(pg, currentSeason) {
     pg.pop();
 }
 
-// ★最適化されたフレーク描画（プレビュー用）
 function renderFlakesOptimized() {
-    // まず更新とフィルタリング
     f = f.filter(flake => {
         flake.updateOptimized();
         return !flake.isOffscreen();
     });
     
-    // 描画の初期設定
     noStroke();
     textAlign(CENTER, CENTER);
     
-    // 回転しないフレークをまとめて描画（push/pop不要）
     f.filter(flake => !flake.shouldRotate).forEach(flake => {
         fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
         textSize(flake.size);
         text(flake.char, flake.x, flake.y);
     });
     
-    // 回転するフレークは個別に処理
     f.filter(flake => flake.shouldRotate).forEach(flake => {
         push();
         translate(flake.x, flake.y);
@@ -693,26 +678,21 @@ function renderFlakesOptimized() {
     });
 }
 
-// ★最適化されたフレーク描画（エクスポート用）
 function renderExportFlakesOptimized(pg) {
-    // 更新とフィルタリング
     exportFlakes = exportFlakes.filter(flake => {
         flake.updateExport(exportFrameCount);
         return !flake.isOffscreenExport();
     });
     
-    // 描画の初期設定
     pg.noStroke();
     pg.textAlign(CENTER, CENTER);
     
-    // 回転しないフレークをまとめて描画
     exportFlakes.filter(flake => !flake.shouldRotate).forEach(flake => {
         pg.fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
         pg.textSize(flake.size);
         pg.text(flake.char, flake.x, flake.y);
     });
     
-    // 回転するフレークは個別に処理
     exportFlakes.filter(flake => flake.shouldRotate).forEach(flake => {
         pg.push();
         pg.translate(flake.x, flake.y);
@@ -735,74 +715,73 @@ class ExportFlake {
         this.rotation = rotate ? random(TWO_PI) : 0;
         this.birthFrame = birthFrame;
         
-        let speedScale = exportMode === 'google' ? 4 : 9;
+        let speedScale = getUnifiedScale();
         
-        // 落下速度を季節ごとに調整
+        // 落下速度（統一スケール使用）
         let speedGroup = random();
-        if (this.char === '✿') {  // 春は少し速めに落とす
+        if (this.char === '✿') {
             if (speedGroup < 0.3) {
-                this.speed = random(3.0, 4.0) * speedScale;
+                this.speed = random(12, 16) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(4.0, 5.0) * speedScale;
+                this.speed = random(16, 20) * speedScale;
             } else {
-                this.speed = random(5.0, 6.5) * speedScale;
+                this.speed = random(20, 26) * speedScale;
             }
-        } else if (this.char === '♠') {  // 秋はゆっくりと広がりながら落ちる
+        } else if (this.char === '♠') {
             if (speedGroup < 0.3) {
-                this.speed = random(1.5, 2.5) * speedScale;
+                this.speed = random(6, 10) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(2.5, 3.5) * speedScale;
+                this.speed = random(10, 14) * speedScale;
             } else {
-                this.speed = random(3.5, 4.5) * speedScale;
+                this.speed = random(14, 18) * speedScale;
             }
         } else {
             if (speedGroup < 0.3) {
-                this.speed = random(2.5, 3.5) * speedScale;
+                this.speed = random(10, 14) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(3.5, 4.5) * speedScale;
+                this.speed = random(14, 18) * speedScale;
             } else {
-                this.speed = random(4.5, 6) * speedScale;
+                this.speed = random(18, 24) * speedScale;
             }
         }
         
         this.initialSpeed = this.speed;
-        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;
+        this.velocity = rotate ? random(-2, 2) * speedScale : 0;
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
         this.wobblePhase = random(TWO_PI);
 
-        // 季節ごとの横移動パラメータ
-        if (this.char === '✿') {  // 春 - 回転を大幅に強化
-            this.wobbleMultiplier = 0.8;
+        // 統一された横移動パラメータ
+        if (this.char === '✿') {
+            this.wobbleMultiplier = 3.2 * speedScale;
             this.wobbleSpeed = 0.007;
-            this.rotationSpeed = 0.12;  // 0.025から0.12に増加（約5倍）
+            this.rotationSpeed = 0.12;
             this.velocityDamping = 0.997;
-            this.horizontalDrift = 0;  // デフォルト値
+            this.horizontalDrift = 0;
             
-        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化、広がる動き
-            this.wobbleMultiplier = 1.5;  // 横揺れを大幅に増加（0.25から1.5へ）
+        } else if (this.char === '♠') {
+            this.wobbleMultiplier = 6.0 * speedScale;
             this.wobbleSpeed = 0.025;
-            this.rotationSpeed = 0.18;  // 0.07から0.18に増加（約2.5倍）
-            this.velocityDamping = 0.995;  // 減速を緩やかに（0.985から0.995へ）
+            this.rotationSpeed = 0.18;
+            this.velocityDamping = 0.995;
             this.erraticOffset = random(TWO_PI);
-            this.horizontalDrift = random(-2, 2) * speedScale;  // 横方向への漂流を追加
+            this.horizontalDrift = random(-8, 8) * speedScale;
             
         } else {
-            this.wobbleMultiplier = 0.15;
+            this.wobbleMultiplier = 0.6 * speedScale;
             this.wobbleSpeed = 0.01;
             this.rotationSpeed = 0.03;
             this.velocityDamping = 1.0;
-            this.horizontalDrift = 0;  // デフォルト値
+            this.horizontalDrift = 0;
         }
     }
     
     updateExport(currentFrame) {
         let framesSinceBirth = currentFrame - this.birthFrame;
         
-        // 春の落下加速を少し強く、秋はほぼ等速
         if (this.char === '✿') {
             this.speed = this.initialSpeed * Math.pow(1.003, framesSinceBirth);
-        } else if (this.char === '♠') {  // 秋は加速をほぼなしに
+        } else if (this.char === '♠') {
             this.speed = this.initialSpeed * Math.pow(1.0005, framesSinceBirth);
         } else {
             this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
@@ -810,28 +789,25 @@ class ExportFlake {
         
         this.y += this.speed;
         
-        // ★重要：currentFrame（グローバルフレーム）を使用して迫力ある同期した動きを実現
-        if (this.char === '✿') {  // 春 - グローバルフレームで同期
-            let yInfluenceScale = exportMode === 'google' ? 0.001 : 0.00022;  // ★Y座標の影響を解像度に応じて調整
-            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * yInfluenceScale) * this.wobbleMultiplier;
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
+        // 統一されたY座標影響係数
+        let yInfluence = 0.00001 * this.y;
+        
+        if (this.char === '✿') {
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
-        } else if (this.char === '♠') {  // 秋 - グローバルフレームで同期
-            let wobbleScale = exportMode === 'google' ? 4 : 9;  // ★横揺れ用のスケール
-            let yInfluenceScale = exportMode === 'google' ? 0.002 : 0.00044;  // ★Y座標の影響を解像度に応じて調整
-            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * yInfluenceScale) * this.wobbleMultiplier;
-            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 0.5 * wobbleScale;  // ★スケール適用
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
+        } else if (this.char === '♠') {
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + yInfluence) * this.wobbleMultiplier;
+            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 2 * getUnifiedScale();
+            this.x += this.horizontalDrift;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
-            // デフォルト（夏・冬）- グローバルフレームで同期
-            let yInfluenceScale = exportMode === 'google' ? 0.002 : 0.00044;  // ★Y座標の影響を解像度に応じて調整
-            this.x += Math.sin(currentFrame * 0.01 + this.y * yInfluenceScale) * this.wobbleMultiplier;
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
+            this.x += Math.sin(currentFrame * 0.01 + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
             this.x += this.velocity;
         }
 
@@ -839,7 +815,6 @@ class ExportFlake {
             this.rotation += this.rotationSpeed;
         }
         
-        // ★最適化された透明度計算
         if (this.y > workH * 0.7) {
             let fadeRange = workH * 0.3;
             let fadeProgress = (this.y - workH * 0.7) / fadeRange;
@@ -850,10 +825,8 @@ class ExportFlake {
     }
     
     isOffscreenExport() {
-        // 透明度が0になったら削除
         if (this.opacity <= 0) return true;
-        // 画面外に出たら削除
-        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;  // プレビューと同じ判定範囲に変更
+        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;
     }
 }
 
@@ -894,15 +867,13 @@ function generateFlakes() {
 function generateFlakesPhase() {
     let elapsed = millis() - seasonStartTime;
     
-    let posScale = isExporting ? 
-        (exportMode === 'google' ? 4 : 9) : 
-        (previewMode === 'google' ? 1 : 2.25);
+    let posScale = getUnifiedScale();
     
     if (generationPhase === 0) {
-        for (let i = 0; i < 80; i++) {  // 50から80に増加
+        for (let i = 0; i < 80; i++) {
             f.push(new Flake(
                 random(-20, workW + 20),
-                random(-80 * posScale, -5 * posScale),
+                random(-320 * posScale, -20 * posScale),
                 d[cs].c,
                 d[cs].co,
                 random(d[cs].s * 0.8, d[cs].s * 1.2),
@@ -911,10 +882,10 @@ function generateFlakesPhase() {
         }
         generationPhase = 1;
     } else if (generationPhase === 1 && elapsed > 400) {
-        for (let i = 0; i < 60; i++) {  // 30から60に増加
+        for (let i = 0; i < 60; i++) {
             f.push(new Flake(
                 random(-20, workW + 20),
-                random(-60 * posScale, -5 * posScale),
+                random(-240 * posScale, -20 * posScale),
                 d[cs].c,
                 d[cs].co,
                 random(d[cs].s * 0.7, d[cs].s * 1.1),
@@ -923,10 +894,10 @@ function generateFlakesPhase() {
         }
         generationPhase = 2;
     } else if (generationPhase === 2 && elapsed > 800) {
-        for (let i = 0; i < 40; i++) {  // 20から40に増加
+        for (let i = 0; i < 40; i++) {
             f.push(new Flake(
                 random(-20, workW + 20),
-                random(-40 * posScale, -5 * posScale),
+                random(-160 * posScale, -20 * posScale),
                 d[cs].c,
                 d[cs].co,
                 random(d[cs].s * 0.6, d[cs].s * 1.0),
@@ -947,77 +918,72 @@ class Flake {
         this.shouldRotate = rotate;
         this.rotation = rotate ? random(TWO_PI) : 0;
         
-        let speedScale = isExporting ? 
-            (exportMode === 'google' ? 4 : 9) : 
-            (previewMode === 'google' ? 1 : 2.25);
+        let speedScale = getUnifiedScale();
         
-        // 落下速度を季節ごとに調整
+        // 落下速度（統一スケール使用）
         let speedGroup = random();
-        if (this.char === '✿') {  // 春は少し速めに落とす
+        if (this.char === '✿') {
             if (speedGroup < 0.3) {
-                this.speed = random(3.0, 4.0) * speedScale;
+                this.speed = random(12, 16) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(4.0, 5.0) * speedScale;
+                this.speed = random(16, 20) * speedScale;
             } else {
-                this.speed = random(5.0, 6.5) * speedScale;
+                this.speed = random(20, 26) * speedScale;
             }
-        } else if (this.char === '♠') {  // 秋はゆっくりと広がりながら落ちる
+        } else if (this.char === '♠') {
             if (speedGroup < 0.3) {
-                this.speed = random(1.5, 2.5) * speedScale;
+                this.speed = random(6, 10) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(2.5, 3.5) * speedScale;
+                this.speed = random(10, 14) * speedScale;
             } else {
-                this.speed = random(3.5, 4.5) * speedScale;
+                this.speed = random(14, 18) * speedScale;
             }
         } else {
             if (speedGroup < 0.3) {
-                this.speed = random(2.5, 3.5) * speedScale;
+                this.speed = random(10, 14) * speedScale;
             } else if (speedGroup < 0.7) {
-                this.speed = random(3.5, 4.5) * speedScale;
+                this.speed = random(14, 18) * speedScale;
             } else {
-                this.speed = random(4.5, 6) * speedScale;
+                this.speed = random(18, 24) * speedScale;
             }
         }
         
-        this.velocity = rotate ? random(-0.5, 0.5) * speedScale : 0;
+        this.velocity = rotate ? random(-2, 2) * speedScale : 0;
         this.opacity = 255;
         this.baseOpacity = random(180, 255);
 
-        // 季節ごとの横移動パラメータ
-        if (this.char === '✿') {  // 春 - 回転を大幅に強化
-            this.wobbleMultiplier = 0.8;
+        // 統一された横移動パラメータ
+        if (this.char === '✿') {
+            this.wobbleMultiplier = 3.2 * speedScale;
             this.wobbleSpeed = 0.007;
-            this.rotationSpeed = 0.12;  // 0.025から0.12に増加（約5倍）
+            this.rotationSpeed = 0.12;
             this.velocityDamping = 0.997;
-            this.horizontalDrift = 0;  // デフォルト値
+            this.horizontalDrift = 0;
             
-        } else if (this.char === '♠') {  // 秋 - 回転を大幅に強化、広がる動き
-            this.wobbleMultiplier = 1.5;  // 横揺れを大幅に増加（0.25から1.5へ）
+        } else if (this.char === '♠') {
+            this.wobbleMultiplier = 6.0 * speedScale;
             this.wobbleSpeed = 0.025;
-            this.rotationSpeed = 0.18;  // 0.07から0.18に増加（約2.5倍）
-            this.velocityDamping = 0.995;  // 減速を緩やかに（0.985から0.995へ）
+            this.rotationSpeed = 0.18;
+            this.velocityDamping = 0.995;
             this.erraticOffset = random(TWO_PI);
-            this.horizontalDrift = random(-2, 2) * speedScale;  // 横方向への漂流を追加
+            this.horizontalDrift = random(-8, 8) * speedScale;
             
         } else {
-            this.wobbleMultiplier = 0.15;
+            this.wobbleMultiplier = 0.6 * speedScale;
             this.wobbleSpeed = 0.01;
             this.rotationSpeed = 0.03;
             this.velocityDamping = 1.0;
-            this.horizontalDrift = 0;  // デフォルト値
+            this.horizontalDrift = 0;
         }
         
-        // ★最適化：sin/cos用の位相を事前計算
         this.sinPhase = 0;
         this.cosPhase = 0;
     }
     
-    // ★最適化されたupdate関数
     updateOptimized() {
-        // 春の落下加速を少し強く、秋はほぼ等速
         if (this.char === '✿') {
             this.speed *= 1.003;
-        } else if (this.char === '♠') {  // 秋は加速をほぼなしに
+        } else if (this.char === '♠') {
             this.speed *= 1.0005;
         } else {
             this.speed *= 1.002;
@@ -1025,27 +991,28 @@ class Flake {
         
         this.y += this.speed;
         
-        // 春と秋で異なる横移動パターン
-        if (this.char === '✿') {  // 春
-            this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.005;
+        // 統一されたY座標影響係数
+        let yInfluence = 0.00001 * this.y;
+        
+        if (this.char === '✿') {
+            this.sinPhase = frameCounter * this.wobbleSpeed + yInfluence;
             this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
+            this.x += this.horizontalDrift;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
-        } else if (this.char === '♠') {  // 秋
-            this.sinPhase = frameCounter * this.wobbleSpeed + this.y * 0.01;
+        } else if (this.char === '♠') {
+            this.sinPhase = frameCounter * this.wobbleSpeed + yInfluence;
             this.cosPhase = frameCounter * 0.04 + this.erraticOffset;
             this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
-            this.x += Math.cos(this.cosPhase) * 0.5;  // 0.2から0.5に増加
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
+            this.x += Math.cos(this.cosPhase) * 2 * getUnifiedScale();
+            this.x += this.horizontalDrift;
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
-            // デフォルト（夏・冬）
-            this.x += Math.sin(frameCounter * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
-            this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
+            this.x += Math.sin(frameCounter * 0.01 + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
             this.x += this.velocity;
         }
 
@@ -1053,7 +1020,6 @@ class Flake {
           this.rotation += this.rotationSpeed;
         }
         
-        // ★最適化された透明度計算
         if (this.y > workH * 0.7) {
             let fadeRange = workH * 0.3;
             let fadeProgress = (this.y - workH * 0.7) / fadeRange;
