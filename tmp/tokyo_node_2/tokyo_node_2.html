@@ -545,8 +545,16 @@ function drawPoetryWorkHighRes(pg) {
     let seasonIndex = Math.floor(totalProgress * 4);
     let seasonProgress = (totalProgress * 4) % 1;
     
-    let currentSeason = s[seasonIndex % 4];
-    let nextSeason = s[(seasonIndex + 1) % 4];
+    // ★最後のフレーム（899）は春として扱う
+    let currentSeason, nextSeason;
+    if (exportFrameCount === 899) {
+        currentSeason = 's';  // 春
+        nextSeason = 'u';     // 夏
+        seasonProgress = 0;   // 春の始まり
+    } else {
+        currentSeason = s[seasonIndex % 4];
+        nextSeason = s[(seasonIndex + 1) % 4];
+    }
     
     drawExportBackground(pg, currentSeason, nextSeason, seasonProgress);
     generateExportFlakesPhase(currentSeason, seasonIndex);
@@ -578,14 +586,14 @@ function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
 
 function generateExportFlakesPhase(currentSeason, seasonIndex) {
     let frameInSeason = exportFrameCount % 225;
-    let posScale = exportMode === 'google' ? 1 : 2.25;
+    let posScale = exportMode === 'google' ? 4 : 9;  // ★プレビューと同じスケール計算に修正
     
     if (frameInSeason === 0) {
         exportFlakes = [];
         for (let i = 0; i < 80; i++) {  // 50から80に増加
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),
-                random(-320 * posScale, -20 * posScale),
+                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
+                random(-80 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.8, d[currentSeason].s * 1.2),
@@ -598,8 +606,8 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     if (frameInSeason === 24) {
         for (let i = 0; i < 60; i++) {  // 30から60に増加
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),
-                random(-240 * posScale, -20 * posScale),
+                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
+                random(-60 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.7, d[currentSeason].s * 1.1),
@@ -612,8 +620,8 @@ function generateExportFlakesPhase(currentSeason, seasonIndex) {
     if (frameInSeason === 48) {
         for (let i = 0; i < 40; i++) {  // 20から40に増加
             exportFlakes.push(new ExportFlake(
-                random(-200, workW + 200),
-                random(-160 * posScale, -20 * posScale),
+                random(-20, workW + 20),  // ★プレビューと同じX範囲に修正
+                random(-40 * posScale, -5 * posScale),  // ★プレビューと同じY範囲に修正
                 d[currentSeason].c,
                 d[currentSeason].co,
                 random(d[currentSeason].s * 0.6, d[currentSeason].s * 1.0),
@@ -802,21 +810,23 @@ class ExportFlake {
         
         this.y += this.speed;
         
-        if (this.char === '✿') {  // 春 - プレビューと同じ計算式に修正
-            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.y * 0.005) * this.wobbleMultiplier;
+        // ★重要：currentFrame（グローバルフレーム）を使用して迫力ある同期した動きを実現
+        if (this.char === '✿') {  // 春 - グローバルフレームで同期
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * 0.005) * this.wobbleMultiplier;
             this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
-        } else if (this.char === '♠') {  // 秋 - プレビューと同じ計算式に修正
-            this.x += Math.sin(framesSinceBirth * this.wobbleSpeed + this.y * 0.01) * this.wobbleMultiplier;
-            this.x += Math.cos(framesSinceBirth * 0.04 + this.erraticOffset) * 0.5;  // 0.2から0.5に増加
+        } else if (this.char === '♠') {  // 秋 - グローバルフレームで同期
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * 0.01) * this.wobbleMultiplier;
+            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 0.5;  // 0.2から0.5に増加
             this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
-            this.x += Math.sin(framesSinceBirth * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
+            // デフォルト（夏・冬）- グローバルフレームで同期
+            this.x += Math.sin(currentFrame * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
             this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
             this.x += this.velocity;
         }
