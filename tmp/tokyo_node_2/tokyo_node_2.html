@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詩とコンピュータ - 季節のコード詩（統一版）</title>
+    <title>詩とコンピュータ - 季節のコード詩（統一版・修正）</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <style>
         body {
@@ -574,12 +574,18 @@ function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
     pg.rect(0, 0, workW, workH);
 }
 
+// ★★★ ここが重要な修正部分 ★★★
 function generateExportFlakesPhase(currentSeason, seasonIndex) {
     let frameInSeason = exportFrameCount % 225;
     let posScale = getUnifiedScale();
     
-    if (frameInSeason === 0) {
+    // 最初のフレームのみ配列をリセット
+    if (exportFrameCount === 0) {
         exportFlakes = [];
+    }
+    
+    // 各季節の開始時に新しいフレークを追加（古いフレークは削除しない）
+    if (frameInSeason === 0) {
         for (let i = 0; i < 80; i++) {
             exportFlakes.push(new ExportFlake(
                 random(-20, workW + 20),
