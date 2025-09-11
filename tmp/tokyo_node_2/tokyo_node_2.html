@@ -846,6 +846,9 @@ class ExportFlake {
     }
     
     isOffscreenExport() {
+        // 透明度が0になったら削除
+        if (this.opacity <= 0) return true;
+        // 画面外に出たら削除
         return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;  // プレビューと同じ判定範囲に変更
     }
 }
