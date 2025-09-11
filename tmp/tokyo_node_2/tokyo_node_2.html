@@ -812,21 +812,25 @@ class ExportFlake {
         
         // ★重要：currentFrame（グローバルフレーム）を使用して迫力ある同期した動きを実現
         if (this.char === '✿') {  // 春 - グローバルフレームで同期
-            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * 0.005) * this.wobbleMultiplier;
+            let yInfluenceScale = exportMode === 'google' ? 0.001 : 0.00022;  // ★Y座標の影響を解像度に応じて調整
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * yInfluenceScale) * this.wobbleMultiplier;
             this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else if (this.char === '♠') {  // 秋 - グローバルフレームで同期
-            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * 0.01) * this.wobbleMultiplier;
-            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 0.5;  // 0.2から0.5に増加
+            let wobbleScale = exportMode === 'google' ? 4 : 9;  // ★横揺れ用のスケール
+            let yInfluenceScale = exportMode === 'google' ? 0.002 : 0.00044;  // ★Y座標の影響を解像度に応じて調整
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + this.y * yInfluenceScale) * this.wobbleMultiplier;
+            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 0.5 * wobbleScale;  // ★スケール適用
             this.x += this.horizontalDrift || 0;  // 横方向への漂流を追加
             this.velocity *= this.velocityDamping;
             this.x += this.velocity;
             
         } else {
             // デフォルト（夏・冬）- グローバルフレームで同期
-            this.x += Math.sin(currentFrame * 0.01 + this.y * 0.01) * this.wobbleMultiplier;
+            let yInfluenceScale = exportMode === 'google' ? 0.002 : 0.00044;  // ★Y座標の影響を解像度に応じて調整
+            this.x += Math.sin(currentFrame * 0.01 + this.y * yInfluenceScale) * this.wobbleMultiplier;
             this.x += this.horizontalDrift || 0;  // 横方向への漂流（デフォルトは0）
             this.x += this.velocity;
         }
