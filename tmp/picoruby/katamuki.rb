@@ -14,11 +14,14 @@ i2c = I2C.new(
 # MPU6886センサーを初期化
 mpu = MPU6886.new(i2c)
 
+button = GPIO.new(39, GPIO::IN)
+
 puts "センサー初期化完了"
 puts "---"
 
 # センサーデータを繰り返し読み取る
 loop do
+  break if button.read == 0 
   # 加速度を取得（単位：G、重力加速度）
   accel = mpu.acceleration
   
