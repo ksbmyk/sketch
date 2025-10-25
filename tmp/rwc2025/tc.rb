@@ -8,7 +8,7 @@ def setup
   baud = 115200
 
   # UART 通信を開始
-  @uart = UART.open(port, baud)
+  # @uart = UART.open(port, baud)
 
   @circle_count = 4 # 感圧
   @distance = 100 # 曲げ
@@ -20,13 +20,13 @@ def setup
   @is_button_push = false # ボタン
   @speed = 0
 
-  size(1000, 1000)
+  size(displayWidth, displayHeight)
   colorMode(HSB, 360, 100, 100, 255)
   noStroke
 end
 
 def draw
-  handle_serial_data
+  # handle_serial_data
 
   blendMode(BLEND)
   if (@is_dark_mode)
@@ -40,7 +40,7 @@ def draw
   translate(width / 2, height / 2)
   fill(@hue_value, 80, 100, 150)
 
-  @speed = @is_button_push ? 100 : 0
+  @speed = @is_button_push ? 0.05 : 0.01
 
   @angle_offset += @speed
 
