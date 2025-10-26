@@ -5,13 +5,13 @@ require 'uart'
 pin = GPIO.new(25, GPIO::OUT)
 pin.write 1
 
-# ポテンショメータ
+# 可変抵抗器(1)
 pot = ADC.new(26)
 
-# 曲げセンサー
+# 可変抵抗器(2)
 bend = ADC.new(27)
 
-# 感圧センサー
+# 可変抵抗器(3)
 pressure = ADC.new(28)
 
 # トグルスイッチ
@@ -21,8 +21,8 @@ toggle = GPIO.new(2, GPIO::IN|GPIO::PULL_UP) # 内部プルアップに設定
 button = GPIO.new(4, GPIO::IN|GPIO::PULL_UP) # 内部プルアップに設定
 
 # ロータリーエンコーダー
-a = GPIO.new(12, GPIO::IN|GPIO::PULL_UP)
-b = GPIO.new(13, GPIO::IN|GPIO::PULL_UP)
+a = GPIO.new(14, GPIO::IN|GPIO::PULL_UP)
+b = GPIO.new(15, GPIO::IN|GPIO::PULL_UP)
 last_state = (a.read << 1) | b.read
 pos = 0
 
@@ -72,15 +72,19 @@ loop do
   state = (a.read << 1) | b.read
   if state != last_state
     case [last_state, state]
-    when [0b00, 0b01], [0b01, 0b11], [0b11, 0b10], [0b10, 0b00] # 2進数
+    when [0b00, 0b01], [0b01, 0b11], [0b11, 0b10], [0b10, 0b00]
       pos += 1
+      puts "ロータリーエンコーダー: #{pos}"
+      uart.write("R,#{pos}\n")
     when [0b00, 0b10], [0b10, 0b11], [0b11, 0b01], [0b01, 0b00]
       pos -= 1
+      puts "ロータリーエンコーダー: #{pos}"
+      uart.write("R,#{pos}\n")
+    else
+    #   無効な遷移は無視
     end
     last_state = state
-    puts "ロータリーエンコーダー: #{pos}"
-    uart.write("R,#{pos}\n")
-    sleep_ms 5
+    sleep_ms 1  # ← 1msに短縮（またはこの行を削除）
   end
 
   # 各ADC値
@@ -88,7 +92,7 @@ loop do
   current_bend_raw = bend.read_raw
   current_pressure_raw = pressure.read_raw
 
-  # 可変抵抗器
+  # 可変抵抗器(1)
   pot_readings << current_pot_raw
   pot_readings.shift if pot_readings.length > 5 # 移動平均フィルタサイズ5
 
@@ -96,7 +100,7 @@ loop do
   pot_readings.each { |val| pot_sum += val }
   filtered_pot_value = pot_sum / pot_readings.length if pot_readings.length > 0
 
-  # 曲げセンサー
+  # 可変抵抗器(2)
   bend_readings << current_bend_raw
   bend_readings.shift if bend_readings.length > 5
 
@@ -104,7 +108,7 @@ loop do
   bend_readings.each { |val| bend_sum += val }
   filtered_bend_value = bend_sum / bend_readings.length if bend_readings.length > 0
 
-  # 感圧センサー
+  # 可変抵抗器(3)
   pressure_readings << current_pressure_raw
   pressure_readings.shift if pressure_readings.length > 5
   
@@ -114,21 +118,21 @@ loop do
 
   # フィルタリングされた値が十分に変化した場合のみ出力
   if filtered_pot_value && (filtered_pot_value - last_pot_value).abs > 50
-    puts "ポテンショメータ: #{filtered_pot_value}"
+    puts "可変抵抗器 1 #{filtered_pot_value}"
     uart.write("P,#{filtered_pot_value}\n")
     sleep_ms 5
     last_pot_value = filtered_pot_value
   end
 
   if filtered_bend_value && (filtered_bend_value - last_bend_value).abs > 50
-    puts "曲げセンサー: #{filtered_bend_value}"
+    puts "可変抵抗器 2: #{filtered_bend_value}"
     uart.write("M,#{filtered_bend_value}\n")
     sleep_ms 5
     last_bend_value = filtered_bend_value
   end
 
-  if filtered_pressure_value && (filtered_pressure_value - last_pressure_value).abs >  10
-    puts "感圧センサー: #{filtered_pressure_value}"
+  if filtered_pressure_value && (filtered_pressure_value - last_pressure_value).abs >  50
+    puts "可変抵抗器 3: #{filtered_pressure_value}"
     uart.write("K,#{filtered_pressure_value}\n")
     sleep_ms 5
     last_pressure_value = filtered_pressure_value
