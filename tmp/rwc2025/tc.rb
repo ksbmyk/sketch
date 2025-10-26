@@ -8,7 +8,7 @@ def setup
   baud = 115200
 
   # UART 通信を開始
-  # @uart = UART.open(port, baud)
+  @uart = UART.open(port, baud)
 
   @circle_count = 4 # 感圧
   @distance = 100 # 曲げ
@@ -25,9 +25,8 @@ def setup
 end
 
 def draw
-  # handle_serial_data
+  handle_serial_data
 
-  # 1. 全体背景を対照的に設定
   @is_dark_mode = true
   if (@is_dark_mode)
     background(0, 0, 0)      # 全体が黒背景
@@ -35,10 +34,8 @@ def draw
     background(0, 0, 100)    # 全体が白背景
   end
 
-  # 2. 右側：図形領域を先に描画
   draw_graphics_area
 
-  # 3. 左側：テキストエリア（黒背景）を上から重ねる
   blendMode(BLEND)  # blendModeをリセット
   fill(0, 0, 0)
   rect(0, 0, width / 2, height)
@@ -225,10 +222,8 @@ end
 def draw_graphics_area
   pushMatrix
 
-  # 右側の中央に移動
   translate(width * 3 / 4, height / 2)
 
-  # blendModeを対照的に設定
   if (@is_dark_mode)
     background(0, 0, 0)
     blendMode(ADD)
@@ -256,7 +251,7 @@ def handle_serial_data
   if data
     line = data.chomp!
     values = line.split(',')
-
+  puts "#{data}"
     if values.length == 2
       case values[0]
       when "T"
