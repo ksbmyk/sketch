@@ -38,7 +38,7 @@ def draw
 
   blendMode(BLEND)  # blendModeをリセット
   fill(0, 0, 0)
-  rect(0, 0, width / 2, height)
+  rect(0, 0, width / 3, height)
 
   draw_text_area
 end
@@ -51,7 +51,7 @@ def draw_text_area
   textSize(14)
 
   x_offset = 20
-  y_offset = 20
+  y_offset = 60
   line_height = 20
 
   # コードを表示
@@ -256,7 +256,7 @@ end
 def draw_graphics_area
   pushMatrix
 
-  translate(width * 3 / 4, height / 2)
+  translate(width * 2 / 3, height / 2)
 
   if (@is_dark_mode)
     background(0, 0, 0)
