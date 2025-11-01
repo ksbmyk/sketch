@@ -127,6 +127,7 @@
       display: inline-flex;
       align-items: center;
       margin: 0;
+      margin-left: -18px;
       vertical-align: middle;
     }
     .slider-container input[type="range"] {
@@ -173,8 +174,10 @@
       }
     }
     .slider-container span {
-      min-width: 40px;
+      min-width: 50px;
       text-align: right;
+      margin-right: 10px;
+      display: inline-block;
     }
 
   </style>
@@ -200,19 +203,19 @@
   <span class="control-structure">end</span>
 
   <span class="function">translate</span><span class="first-parentheses">(</span><span class="identifier">width</span> / <span class="integer">2</span>, <span class="identifier">height</span> / <span class="integer">2</span><span class="first-parentheses">)</span>
-  <span class="variable">$hue_value</span> = <div class="slider-container"><input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span></div>
-  <span class="variable">$alpha_value</span> = <div class="slider-container"><input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span></div>
+  <span class="variable">$hue_value</span> =<div class="slider-container"><span id="hue-value">100</span><input type="range" id="hue" min="0" max="360" value="100"></div>
+  <span class="variable">$alpha_value</span> =<div class="slider-container"><span id="alpha-value">150</span><input type="range" id="alpha" min="50" max="255" value="150"></div>
   <span class="function">fill</span><span class="first-parentheses">(</span><span class="variable">$hue_value</span>, <span class="integer">80</span>, <span class="integer">100</span>, <span class="variable">$alpha_value</span><span class="first-parentheses">)</span>
-  <span class="variable">$speed</span> = <div class="slider-container"><input type="range" id="speed" min="1" max="20" value="5"><span id="speed-value">0.05</span></div>
+  <span class="variable">$speed</span> = <div class="slider-container"><span id="speed-value">0.05</span><input type="range" id="speed" min="1" max="20" value="5"></div>
   <span class="variable">$angle_offset</span> += <span class="variable">$speed</span>
 
-  <span class="variable">$circle_count</span> = <div class="slider-container"><input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span></div>
+  <span class="variable">$circle_count</span> =<div class="slider-container"><span id="circle-value">10</span><input type="range" id="circle" min="1" max="100" value="10"></div>
   <span class="variable">$circle_count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
     <span class="variable">angle</span> = <span class="identifier">TWO_PI</span> / <span class="variable">$circle_count</span> * <span class="variable">i</span> + <span class="variable">$angle_offset</span>
-    <span class="variable">$distance</span> = <div class="slider-container"><input type="range" id="distance" min="1" max="300" value="100"><span id="distance-value">100</span></div>
+    <span class="variable">$distance</span> =<div class="slider-container"><span id="distance-value">100</span><input type="range" id="distance" min="1" max="300" value="100"></div>
     <span class="variable">x</span> = <span class="function">cos</span><span class="first-parentheses">(</span><span class="variable">angle</span><span class="first-parentheses">)</span> * <span class="variable">$distance</span>
     <span class="variable">y</span> = <span class="function">sin</span><span class="first-parentheses">(</span><span class="variable">angle</span><span class="first-parentheses">)</span> * <span class="variable">$distance</span>
-    <span class="variable">$circle_size</span> = <div class="slider-container"><input type="range" id="size" min="31" max="500" value="150"><span id="size-value">150</span></div>
+    <span class="variable">$circle_size</span> =<div class="slider-container"><span id="size-value">150</span><input type="range" id="size" min="31" max="500" value="150"></div>
     <span class="function">circle</span><span class="first-parentheses">(</span><span class="variable">x</span>, <span class="variable">y</span>, <span class="variable">$circle_size</span> + <span class="second-parentheses">(</span><span class="variable">i</span>.<span class="function">even?</span> ? <span class="integer">30</span> : -<span class="integer">30</span><span class="second-parentheses">)</span><span class="first-parentheses">)</span>
   <span class="control-structure">end</span>
 <span class="control-structure">end</span>
