@@ -181,42 +181,41 @@
 </head>
 <body>
   <div id="code-container">
-    <code>
-$angle_offset = 0
-def setup
-  createCanvas(windowWidth, windowWidth)
-  colorMode(HSB, 360, 100, 100, 255)
-  noStroke
-end
+<code><span class="variable">$angle_offset</span> = <span class="integer">0</span>
+<span class="control-structure">def</span> <span class="function">setup</span>
+  <span class="function">createCanvas</span><span class="first-parentheses">(</span><span class="identifier">windowWidth</span>, <span class="identifier">windowWidth</span><span class="first-parentheses">)</span>
+  <span class="function">colorMode</span><span class="first-parentheses">(</span><span class="identifier">HSB</span>, <span class="integer">360</span>, <span class="integer">100</span>, <span class="integer">100</span>, <span class="integer">255</span><span class="first-parentheses">)</span>
+  <span class="function">noStroke</span>
+<span class="control-structure">end</span>
 
-def draw
-  blendMode(BLEND)
-  $is_dark_mode = <button id="mode-toggle">false</button>
-  if ($is_dark_mode)
-    background(0, 0, 0)
-    blendMode(ADD)
-  else
-    background(0, 0, 100)
-    blendMode(MULTIPLY)
-  end
+<span class="control-structure">def</span> <span class="function">draw</span>
+  <span class="function">blendMode</span><span class="first-parentheses">(</span><span class="identifier">BLEND</span><span class="first-parentheses">)</span>
+  <span class="variable">$is_dark_mode</span> = <button id="mode-toggle">false</button>
+  <span class="control-structure">if</span> <span class="first-parentheses">(</span><span class="variable">$is_dark_mode</span><span class="first-parentheses">)</span>
+    <span class="function">background</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">0</span><span class="first-parentheses">)</span>
+    <span class="function">blendMode</span><span class="first-parentheses">(</span><span class="identifier">ADD</span><span class="first-parentheses">)</span>
+  <span class="control-structure">else</span>
+    <span class="function">background</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="integer">100</span><span class="first-parentheses">)</span>
+    <span class="function">blendMode</span><span class="first-parentheses">(</span><span class="identifier">MULTIPLY</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
 
-  translate(width / 2, height / 2)
-  $hue_value = <div class="slider-container"><input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span></div>
-  $alpha_value = <div class="slider-container"><input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span></div>
-  fill($hue_value, 80, 100, $alpha_value)
-  $speed = <div class="slider-container"><input type="range" id="speed" min="1" max="20" value="5"><span id="speed-value">0.05</span></div>
-  $angle_offset += $speed
+  <span class="function">translate</span><span class="first-parentheses">(</span><span class="identifier">width</span> / <span class="integer">2</span>, <span class="identifier">height</span> / <span class="integer">2</span><span class="first-parentheses">)</span>
+  <span class="variable">$hue_value</span> = <div class="slider-container"><input type="range" id="hue" min="0" max="360" value="100"><span id="hue-value">100</span></div>
+  <span class="variable">$alpha_value</span> = <div class="slider-container"><input type="range" id="alpha" min="50" max="255" value="150"><span id="alpha-value">150</span></div>
+  <span class="function">fill</span><span class="first-parentheses">(</span><span class="variable">$hue_value</span>, <span class="integer">80</span>, <span class="integer">100</span>, <span class="variable">$alpha_value</span><span class="first-parentheses">)</span>
+  <span class="variable">$speed</span> = <div class="slider-container"><input type="range" id="speed" min="1" max="20" value="5"><span id="speed-value">0.05</span></div>
+  <span class="variable">$angle_offset</span> += <span class="variable">$speed</span>
 
-  $circle_count = <div class="slider-container"><input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span></div>
-  $circle_count.times do |i|
-    angle = TWO_PI / $circle_count * i + $angle_offset
-    $distance = <div class="slider-container"><input type="range" id="distance" min="1" max="300" value="100"><span id="distance-value">100</span></div>
-    x = cos(angle) * $distance
-    y = sin(angle) * $distance
-    $circle_size = <div class="slider-container"><input type="range" id="size" min="31" max="500" value="150"><span id="size-value">150</span></div>
-    circle(x, y, $circle_size + (i.even? ? 30 : -30))
-  end
-end
+  <span class="variable">$circle_count</span> = <div class="slider-container"><input type="range" id="circle" min="1" max="100" value="10"><span id="circle-value">10</span></div>
+  <span class="variable">$circle_count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">angle</span> = <span class="identifier">TWO_PI</span> / <span class="variable">$circle_count</span> * <span class="variable">i</span> + <span class="variable">$angle_offset</span>
+    <span class="variable">$distance</span> = <div class="slider-container"><input type="range" id="distance" min="1" max="300" value="100"><span id="distance-value">100</span></div>
+    <span class="variable">x</span> = <span class="function">cos</span><span class="first-parentheses">(</span><span class="variable">angle</span><span class="first-parentheses">)</span> * <span class="variable">$distance</span>
+    <span class="variable">y</span> = <span class="function">sin</span><span class="first-parentheses">(</span><span class="variable">angle</span><span class="first-parentheses">)</span> * <span class="variable">$distance</span>
+    <span class="variable">$circle_size</span> = <div class="slider-container"><input type="range" id="size" min="31" max="500" value="150"><span id="size-value">150</span></div>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="variable">x</span>, <span class="variable">y</span>, <span class="variable">$circle_size</span> + <span class="second-parentheses">(</span><span class="variable">i</span>.<span class="function">even?</span> ? <span class="integer">30</span> : -<span class="integer">30</span><span class="second-parentheses">)</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
     </code>
   </div>
   <div id="result-container">
