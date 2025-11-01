@@ -50,7 +50,7 @@ def draw_text_area
   textSize(14)
 
   x_offset = 20
-  y_offset = 60
+  y_offset = 30
   line_height = 20
 
   # コードを表示
@@ -69,7 +69,7 @@ def draw_text_area
     "end",
     "",
     "def draw",
-    "  # blendModeを対照的に設定",
+    "  # 背景色と色の混ぜ方を設定",
     "  @is_dark_mode = #{@is_dark_mode}",
     "  if (@is_dark_mode)",
     "    background(0, 0, 0)",
@@ -79,26 +79,32 @@ def draw_text_area
     "    blendMode(MULTIPLY)",
     "  end",
     "",
+    "  # 色を設定",
     "  @hue_value = #{@hue_value}",
     "  fill(@hue_value, 80, 100, 150)",
     "",
+    "  # 回転角度を設定",
     "  @is_button_push = #{@is_button_push}",
     "  @angle_offset += @is_button_push ? 0.05 : 0.01",
     "",
+    "  # 円の個数を設定",
     "  @circle_count = #{@circle_count}",
-    "  @distance = #{@distance}",
-    "  @circle_size = #{@circle_size}",
     "  @circle_count.times do |i|",
     "    angle = TWO_PI / @circle_count * i + @angle_offset",
+    "    # 中心からの距離を設定",
+    "    @distance = #{@distance}",
     "    x = cos(angle) * @distance",
     "    y = sin(angle) * @distance",
+    "    # 円のサイズを設定",
+    "    @circle_size = #{@circle_size}",
+    "    # 円を描く",
     "    circle(x, y, @circle_size + (i.even? ? 30 : -30))",
     "  end",
     "end"
   ]
 
   # 値を強調表示する行番号（0始まり）
-  highlight_value_lines = [15, 24, 27, 30, 31, 32]  # @is_dark_mode, @hue_value, @is_button_push, @circle_count, @distance, @circle_size
+  highlight_value_lines = [15, 25, 29, 33, 37, 41]  # @is_dark_mode, @hue_value, @is_button_push, @circle_count, @distance, @circle_size
 
   code_lines.each_with_index do |line, i|
     y_pos = y_offset + line_height * i
@@ -297,13 +303,13 @@ def handle_serial_data
         @hue_value = ((values[1].to_i % 360) + 360) % 360
       when "P"
         puts "可変抵抗1: #{values[1]}"
-        @circle_size = map(values[1].strip.to_i, 0, 4095, 10, 500).to_i
+        @circle_count = map(values[1].to_i, 0, 4095, 2, 31).to_i
       when "M"
         puts "可変抵抗2: #{values[1]}"
-        @distance = map(values[1].to_i, 500, 3000, 50, 200).to_i
+        @distance = map(values[1].to_i, 0, 4095, 50, 201).to_i
       when "K"
         puts "可変抵抗3: #{values[1]}"
-        @circle_count = map(values[1].to_i, 10, 150, 4, 50).to_i
+        @circle_size = map(values[1].strip.to_i, 0, 4095, 10, 500).to_i
       else
         puts "Error #{values}"
       end
