@@ -60,14 +60,9 @@ def draw_text_area
     "using Processing",
     "",
     "def setup",
-    "  @circle_count = 4 # 感圧",
-    "  @distance = 100 # 曲げ",
-    "  @circle_size = 150 # ボリューム",
-    "  @hue_value = 200 # ロータリエンコーダ",
-    "",
-    "  @is_dark_mode = false # トグルスイッチ",
-    "  @angle_offset = 0",
-    "  @is_button_push = false # ボタン",
+    "  @circle_count = 4; @distance = 100; @circle_size = 150",
+    "  @hue_value = 200; @is_dark_mode = false",
+    "  @angle_offset = 0; @is_button_push = false",
     "",
     "  size(displayWidth, displayHeight)",
     "  colorMode(HSB, 360, 100, 100, 255)",
@@ -103,13 +98,16 @@ def draw_text_area
     "end"
   ]
 
+  # 値を強調表示する行番号（0始まり）
+  highlight_value_lines = [15, 24, 27, 30, 31, 32]  # @is_dark_mode, @hue_value, @is_button_push, @circle_count, @distance, @circle_size
+
   code_lines.each_with_index do |line, i|
     y_pos = y_offset + line_height * i
-    draw_syntax_highlighted_line(line, x_offset, y_pos)
+    draw_syntax_highlighted_line(line, x_offset, y_pos, highlight_value_lines.include?(i))
   end
 end
 
-def draw_syntax_highlighted_line(line, x, y)
+def draw_syntax_highlighted_line(line, x, y, highlight_value = false)
   # 空行
   if line.strip.empty?
     # 何も描画しない
@@ -130,6 +128,7 @@ def draw_syntax_highlighted_line(line, x, y)
     # インデント以降の部分を解析
     remaining = line.strip
     after_def = false  # defの直後かどうかを追跡
+    after_equals = false  # = の直後かどうかを追跡（値を強調する行の場合）
 
     while remaining.length > 0
       matched = false
@@ -139,6 +138,14 @@ def draw_syntax_highlighted_line(line, x, y)
         fill(120, 30, 60)  # 落ち着いたグレー
         text(remaining, current_x, y)
         break  # コメント以降は処理終了
+      # イコール記号（値を強調する行の場合、これ以降を追跡）
+      elsif remaining.start_with?('=') && highlight_value
+        fill(0, 0, 100)  # 白
+        text('=', current_x, y)
+        current_x += textWidth('=')
+        remaining = remaining[1..-1]
+        after_equals = true
+        matched = true
       # インポート文
       elsif remaining =~ /^(require|using)\b/
         keyword = $1
@@ -148,20 +155,38 @@ def draw_syntax_highlighted_line(line, x, y)
         remaining = remaining[keyword.length..-1]
         matched = true
       # キーワード
-      elsif remaining =~ /^(def|if|else|elsif|end|do|times)\b/
+      elsif remaining =~ /^(def|if|else|elsif|end|do|times|true|false)\b/
         keyword = $1
-        fill(300, 60, 80)  # 落ち着いたマゼンタ
-        text(keyword, current_x, y)
-        current_x += textWidth(keyword)
+        if after_equals
+          # = の後のtrueやfalseを大きく強調表示
+          textSize(20)
+          fill(300, 100, 100)  # 明るく鮮やかなマゼンタ
+          text(keyword, current_x, y)
+          current_x += textWidth(keyword)
+          textSize(14)
+        else
+          fill(300, 60, 80)  # 落ち着いたマゼンタ
+          text(keyword, current_x, y)
+          current_x += textWidth(keyword)
+        end
         remaining = remaining[keyword.length..-1]
         matched = true
         after_def = (keyword == "def")  # defの場合フラグを立てる
       # インスタンス変数
       elsif remaining =~ /^(@\w+)/
         variable = $1
-        fill(200, 60, 85)  # 落ち着いたシアン
-        text(variable, current_x, y)
-        current_x += textWidth(variable)
+        if after_equals
+          # = の後の変数を大きく強調表示
+          textSize(20)
+          fill(200, 100, 100)  # 明るく鮮やかなシアン
+          text(variable, current_x, y)
+          current_x += textWidth(variable)
+          textSize(14)
+        else
+          fill(200, 60, 85)  # 落ち着いたシアン
+          text(variable, current_x, y)
+          current_x += textWidth(variable)
+        end
         remaining = remaining[variable.length..-1]
         matched = true
       # 定数 (TWO_PI, ADD, MULTIPLY など、完全に大文字のみ)
@@ -197,9 +222,18 @@ def draw_syntax_highlighted_line(line, x, y)
       # 数値
       elsif remaining =~ /^(\d+\.?\d*)/
         number = $1
-        fill(100, 40, 75)  # 落ち着いた緑がかった色
-        text(number, current_x, y)
-        current_x += textWidth(number)
+        if after_equals
+          # = の後の数値を大きく強調表示
+          textSize(20)
+          fill(100, 100, 100)  # 明るく鮮やかな緑
+          text(number, current_x, y)
+          current_x += textWidth(number)
+          textSize(14)
+        else
+          fill(100, 40, 75)  # 落ち着いた緑がかった色
+          text(number, current_x, y)
+          current_x += textWidth(number)
+        end
         remaining = remaining[number.length..-1]
         matched = true
       # その他（記号、空白など）
@@ -251,21 +285,26 @@ def handle_serial_data
   if data
     line = data.chomp!
     values = line.split(',')
-  puts "#{data}"
     if values.length == 2
       case values[0]
       when "T"
+        puts "スイッチ: #{values[1]}"
         @is_dark_mode = values[1] == "1"
       when "B"
+        puts "ボタン: #{values[1]}"
         @is_button_push = values[1] == "1"
       when "R"
+        puts "ロータリーエンコーダー: #{values[1]}"
         @hue_value = ((values[1].to_i % 360) + 360) % 360
       when "P"
+        puts "可変抵抗1: #{values[1]}"
         @circle_size = map(values[1].strip.to_i, 0, 4095, 10, 500).to_i
-      when "K"
-        @circle_count = map(values[1].to_i, 10, 150, 4, 50).to_i
       when "M"
+        puts "可変抵抗2: #{values[1]}"
         @distance = map(values[1].to_i, 500, 3000, 50, 200).to_i
+      when "K"
+        puts "可変抵抗3: #{values[1]}"
+        @circle_count = map(values[1].to_i, 10, 150, 4, 50).to_i
       else
         puts "Error #{values}"
       end
