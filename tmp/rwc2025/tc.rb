@@ -17,7 +17,7 @@ def setup
  
   @is_dark_mode = false # トグルスイッチ
   @angle_offset = 0
-  @is_button_push = true # ボタン
+  @is_button_push = false # ボタン
 
   size(displayWidth, displayHeight)
   colorMode(HSB, 360, 100, 100, 255)
@@ -27,7 +27,6 @@ end
 def draw
   handle_serial_data
 
-  @is_dark_mode = true
   if (@is_dark_mode)
     background(0, 0, 0)      # 全体が黒背景
   else
@@ -267,7 +266,7 @@ def draw_graphics_area
   end
 
   fill(@hue_value, 80, 100, 150)
-  @angle_offset +=  @is_button_push ? 0.1 : 0.01
+  @angle_offset +=  @is_button_push ? 0.5 : 0.01
 
   @circle_count.times do |i|
     angle = TWO_PI / @circle_count * i + @angle_offset
