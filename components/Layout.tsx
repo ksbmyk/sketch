@@ -36,12 +36,8 @@ const Layout = ({ children, title = 'sketch' }: Props) => (
           <span> <FontAwesomeIcon icon={faGithub} className="h-[20px]" /> </span>
         </Link>
         <span className="ml-2"></span>
-        <Link href="https://note.com/chobishiba/n/n2f838aff2849" target="_blank" className="text-customLink hover:text-customLinkHover">
-          <span> <FontAwesomeIcon icon={faStickyNote} className="h-[20px]" /> </span>
-        </Link>
-        <span className="ml-2"></span>
-        <Link href="https://ksbmyk.github.io/sketch" className="text-customLink hover:text-customLinkHover">
-          <span> chobishiba sketch </span>
+        <Link href="https://ksbmyk.github.io/" className="text-customLink hover:text-customLinkHover">
+          <span> chobishiba</span>
         </Link>
       </nav>
     </header>
