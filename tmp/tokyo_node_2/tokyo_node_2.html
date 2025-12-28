@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>詩とコンピュータ - 季節のコード詩（統一版・修正）</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        #controls {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #0ff;
+            margin: 0 0 20px 0;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .info-box {
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #0ff;
+        }
+        .info-box span {
+            color: #0ff;
+            font-weight: bold;
+        }
+        .export-status {
+            background: rgba(255,0,0,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .export-status.active {
+            display: block;
+            background: rgba(0,255,0,0.2);
+        }
+        .export-status.saving {
+            background: rgba(255,255,0,0.2);
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #canvasContainer {
+            display: flex;
+            justify-content: center;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ff, #00ff88);
+            transition: width 0.3s;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="controls">
+            <h2>🌸 詩とコンピュータ - 季節のコード詩（統一版）</h2>
+            
+            <div class="info-grid">
+                <div class="info-box">
+                    <div>プレビューモード: <span id="previewModeText" style="color: #ff0;">Google Form用</span></div>
+                    <div style="font-size: 12px; color: #888;">Mキーで切り替え</div>
+                </div>
+                <div class="info-box">
+                    <div>作品サイズ: <span id="workSizeText">960×1620</span></div>
+                    <div style="font-size: 12px; color: #888;">実際の解像度</div>
+                </div>
+                <div class="info-box">
+                    <div>FPS: <span id="fps">60</span></div>
+                    <div style="font-size: 12px; color: #888;">現在の季節: <span id="currentSeason">春</span></div>
+                </div>
+            </div>
+            
+            <div class="export-status" id="exportStatus">
+                <div id="exportStatusText">📸 フレーム生成中...</div>
+                <div>フレーム: <span id="exportFrame">0</span> / <span id="totalFrames">900</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div style="font-size: 12px; color: #aaa; margin-top: 5px;" id="exportMessage">処理には時間がかかります</div>
+            </div>
+            
+            <div class="button-group">
+                <button onclick="togglePreviewMode()">🔄 モード切替 (Google/NEORT)</button>
+                <button onclick="exportHighResGoogle()" id="exportGoogleBtn" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">📸 Google Form用 高解像度書き出し</button>
+                <button onclick="exportHighResNeort()" id="exportNeortBtn" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">📸 NEORT用 高解像度書き出し</button>
+                <button onclick="toggleGuide()">📐 ガイド表示</button>
+                <button onclick="resetAnimation()">🔄 リセット</button>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,0,0.1); border: 1px solid #444; border-radius: 5px;">
+                <div style="color: #ffa500; font-size: 12px; margin-bottom: 5px;">📌 操作方法</div>
+                <div style="font-size: 11px; color: #aaa; line-height: 1.4;">
+                    <strong>M:</strong> プレビューモード切替（Google ⇔ NEORT）<br>
+                    <strong>S:</strong> 現在のフレーム保存（プレビューサイズ）<br>
+                    <strong>高解像度書き出し:</strong> 900フレームを連番で確実に保存<br>
+                    <strong>R:</strong> アニメーションリセット | <strong>G:</strong> ガイド表示切替<br>
+                    <strong>保存先:</strong> ブラウザのダウンロードフォルダ
+                </div>
+            </div>
+        </div>
+        
+        <div id="canvasContainer"></div>
+    </div>
+
+<script>
+// ===============================================
+// 設定値
+// ===============================================
+const WORK_SCALE = 0.25; // プレビュー用スケール（25%）
+
+// Google Form用
+const GOOGLE_CANVAS_W = 3840;   
+const GOOGLE_CANVAS_H = 2160;   
+const GOOGLE_WORK_W = 960;      
+const GOOGLE_WORK_H = 1620;     
+
+// NEORT用
+const NEORT_W = 2160;           
+const NEORT_H = 3840;           
+
+// プレビューモード
+let previewMode = 'google'; 
+
+// プレビュー用サイズ
+let previewW, previewH, workW, workH;
+
+// ガイド表示
+let showGuide = true;
+
+// 高解像度書き出し用
+let exportGraphics = null;
+let isExporting = false;
+let exportFrameCount = 0;
+let exportMode = '';
+
+// 連番保存用の新しい変数
+let pendingFrames = [];  // 保存待ちフレーム
+let isSaving = false;     // 保存処理中フラグ
+let saveIndex = 0;        // 現在保存中のインデックス
+
+// ===============================================
+// 季節のコード詩の変数
+// ===============================================
+let d; 
+let f = []; 
+let l = 0.0; 
+let s; 
+let cs; 
+let ns; 
+let seasonStartTime;
+let frameCounter = 0;
+let generationPhase = 0;
+const SEASON_DURATION = 3750; 
+
+// 高解像度書き出し用の変数
+let exportFlakes = []; 
+let exportGenerationPhase = 0;
+
+// ===============================================
+// p5.js メイン
+// ===============================================
+function setup() {
+    pixelDensity(1);
+    
+    previewMode = 'google';
+    updateCanvasSize();
+    
+    let canvas = createCanvas(previewW, previewH);
+    canvas.parent('canvasContainer');
+    
+    textFont('monospace');
+    
+    initSeasonData();
+    seasonStartTime = millis();
+    generateFlakes();
+}
+
+function updateCanvasSize() {
+    if (previewMode === 'google') {
+        previewW = 960;
+        previewH = 540;
+        workW = GOOGLE_WORK_W * WORK_SCALE;  
+        workH = GOOGLE_WORK_H * WORK_SCALE;  
+    } else {
+        previewW = NEORT_W * WORK_SCALE;  
+        previewH = NEORT_H * WORK_SCALE;  
+        workW = previewW;  
+        workH = previewH;  
+    }
+}
+
+// 統一されたスケール取得関数
+function getUnifiedScale() {
+    // 基準は960×1620（Google Form）として、他の解像度での比率を計算
+    if (isExporting) {
+        if (exportMode === 'google') {
+            return 1.0;  // 960×1620が基準
+        } else {
+            return 2.25;  // NEORT用は2.25倍（2160/960）
+        }
+    } else {
+        if (previewMode === 'google') {
+            return 0.25;  // プレビューは1/4
+        } else {
+            return 0.5625;  // NEORT プレビューも比率を維持（2.25 * 0.25）
+        }
+    }
+}
+
+function initSeasonData() {
+    let sizeScale = getUnifiedScale();
+    
+    d = {
+        s: { // 春
+            c: '✿',
+            r: true,
+            s: 48 * sizeScale,  // 基準サイズを統一
+            co: [255, 100, 210],
+            bg: [255, 182, 193],
+            code: "春.tender('✿', :bloom)",
+            name: "春"
+        },
+        u: { // 夏
+            c: ';',
+            r: false,
+            s: 40 * sizeScale,  
+            co: [0, 30, 180],
+            bg: [135, 206, 250],
+            code: "夏.sudden(';', :pour)",
+            name: "夏"
+        },
+        a: { // 秋
+            c: '♠',
+            r: true,
+            s: 60 * sizeScale,
+            co: [204, 85, 0],
+            bg: [204, 163, 0],
+            code: "秋.gradual('♠', :fall)",
+            name: "秋"
+        },
+        w: { // 冬
+            c: '*',
+            r: true,
+            s: 60 * sizeScale,
+            co: [255, 255, 255],
+            bg: [0, 31, 63],
+            code: "冬.silent('*', :float)",
+            name: "冬"
+        }
+    };
+    
+    s = ['s', 'u', 'a', 'w'];
+    cs = 's';  
+    ns = 'u';  
+}
+
+function draw() {
+    if (isExporting && !isSaving) {
+        generateHighResFrame();
+        return;
+    } else if (isSaving) {
+        return;
+    }
+    
+    background(0);
+    
+    drawPoetryWork();
+    
+    if (previewMode === 'google') {
+        fill(0);
+        noStroke();
+        rect(GOOGLE_WORK_W * WORK_SCALE, 0, previewW, previewH);  
+        rect(0, GOOGLE_WORK_H * WORK_SCALE, GOOGLE_WORK_W * WORK_SCALE, previewH);  
+    }
+    
+    if (showGuide) {
+        drawGuides();
+    }
+    
+    if (frameCount % 10 === 0) {
+        updateUI();
+    }
+    
+    frameCounter++;
+}
+
+// 高解像度フレーム生成（メモリに保存）
+function generateHighResFrame() {
+    if (!exportGraphics) return;
+    
+    exportGraphics.clear();
+    
+    if (exportMode === 'google') {
+        exportGraphics.background(0);
+        exportGraphics.push();
+        exportGraphics.drawingContext.save();
+        exportGraphics.drawingContext.beginPath();
+        exportGraphics.drawingContext.rect(0, 0, GOOGLE_WORK_W, GOOGLE_WORK_H);
+        exportGraphics.drawingContext.clip();
+        
+        workW = GOOGLE_WORK_W;
+        workH = GOOGLE_WORK_H;
+        drawPoetryWorkHighRes(exportGraphics);
+        
+        exportGraphics.drawingContext.restore();
+        exportGraphics.pop();
+        
+        exportGraphics.fill(0);
+        exportGraphics.noStroke();
+        exportGraphics.rect(GOOGLE_WORK_W, 0, GOOGLE_CANVAS_W - GOOGLE_WORK_W, GOOGLE_CANVAS_H);
+        exportGraphics.rect(0, GOOGLE_WORK_H, GOOGLE_WORK_W, GOOGLE_CANVAS_H - GOOGLE_WORK_H);
+    } else {
+        workW = NEORT_W;
+        workH = NEORT_H;
+        drawPoetryWorkHighRes(exportGraphics);
+    }
+    
+    let imageData = exportGraphics.canvas.toDataURL('image/png');
+    pendingFrames.push({
+        data: imageData,
+        filename: `${exportMode}_frame_${nf(exportFrameCount, 4)}.png`,
+        frameNumber: exportFrameCount
+    });
+    
+    exportFrameCount++;
+    
+    document.getElementById('exportFrame').textContent = exportFrameCount;
+    let progress = (exportFrameCount / 900) * 100;
+    document.getElementById('progressFill').style.width = progress + '%';
+    
+    if (exportFrameCount >= 900) {
+        console.log('フレーム生成完了。順次保存を開始します...');
+        startSequentialSave();
+    }
+}
+
+// 順次保存処理
+function startSequentialSave() {
+    isSaving = true;
+    saveIndex = 0;
+    
+    document.getElementById('exportStatus').classList.add('saving');
+    document.getElementById('exportStatusText').textContent = '💾 順次保存中...';
+    document.getElementById('exportMessage').textContent = 'ブラウザの確認ダイアログが出たら「許可」を選択してください';
+    
+    document.getElementById('exportGoogleBtn').disabled = true;
+    document.getElementById('exportNeortBtn').disabled = true;
+    
+    saveNextFrame();
+}
+
+function saveNextFrame() {
+    if (saveIndex >= pendingFrames.length) {
+        completeSave();
+        return;
+    }
+    
+    let frame = pendingFrames[saveIndex];
+    
+    fetch(frame.data)
+        .then(res => res.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = frame.filename;
+            link.click();
+            
+            URL.revokeObjectURL(link.href);
+            
+            saveIndex++;
+            
+            document.getElementById('exportFrame').textContent = saveIndex;
+            document.getElementById('exportMessage').textContent = `保存中: ${frame.filename}`;
+            let progress = (saveIndex / pendingFrames.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            setTimeout(saveNextFrame, 100);
+        })
+        .catch(error => {
+            console.error('保存エラー:', error);
+            alert(`エラーが発生しました: ${frame.filename}\n再試行してください。`);
+            completeSave();
+        });
+}
+
+function completeSave() {
+    console.log(`保存完了: ${saveIndex}/${pendingFrames.length}フレーム`);
+    
+    pendingFrames = [];
+    isSaving = false;
+    isExporting = false;
+    exportFrameCount = 0;
+    saveIndex = 0;
+    
+    if (exportGraphics) {
+        exportGraphics.remove();
+        exportGraphics = null;
+    }
+    
+    document.getElementById('exportStatus').classList.remove('active', 'saving');
+    document.getElementById('exportGoogleBtn').disabled = false;
+    document.getElementById('exportNeortBtn').disabled = false;
+    
+    initSeasonData();
+    updateCanvasSize();
+    
+    alert(`書き出し完了！\n${saveIndex}枚の画像が保存されました。\n\n動画化コマンド：\nffmpeg -r 60 -i ${exportMode}_frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 ${exportMode}_output.mp4`);
+}
+
+// 書き出し開始（Google Form用）
+function exportHighResGoogle() {
+    if (isExporting || isSaving) {
+        console.log('処理中です');
+        return;
+    }
+    
+    console.log('Google Form用 高解像度書き出し開始...');
+    
+    exportMode = 'google';
+    isExporting = true;
+    exportFrameCount = 0;
+    pendingFrames = [];
+    exportFlakes = [];
+    exportGenerationPhase = 0;
+    
+    exportGraphics = createGraphics(GOOGLE_CANVAS_W, GOOGLE_CANVAS_H);
+    exportGraphics.pixelDensity(1);
+    exportGraphics.textFont('monospace');
+    
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
+    document.getElementById('totalFrames').textContent = '900';
+    document.getElementById('progressFill').style.width = '0%';
+    
+    initSeasonData();
+}
+
+// 書き出し開始（NEORT用）
+function exportHighResNeort() {
+    if (isExporting || isSaving) {
+        console.log('処理中です');
+        return;
+    }
+    
+    console.log('NEORT用 高解像度書き出し開始...');
+    
+    exportMode = 'neort';
+    isExporting = true;
+    exportFrameCount = 0;
+    pendingFrames = [];
+    exportFlakes = [];
+    exportGenerationPhase = 0;
+    
+    exportGraphics = createGraphics(NEORT_W, NEORT_H);
+    exportGraphics.pixelDensity(1);
+    exportGraphics.textFont('monospace');
+    
+    document.getElementById('exportStatus').classList.add('active');
+    document.getElementById('exportStatusText').textContent = '📸 フレーム生成中...';
+    document.getElementById('totalFrames').textContent = '900';
+    document.getElementById('progressFill').style.width = '0%';
+    
+    initSeasonData();
+}
+
+function drawPoetryWork() {
+    updateBackground();
+    handleTransition();
+    if (generationPhase < 3) {
+        generateFlakesPhase();
+    }
+    displayPoetryCode();
+    renderFlakesOptimized();
+}
+
+function drawPoetryWorkHighRes(pg) {
+    pg.push();
+    
+    let totalProgress = (exportFrameCount % 900) / 900.0;
+    let seasonIndex = Math.floor(totalProgress * 4);
+    let seasonProgress = (totalProgress * 4) % 1;
+    
+    let currentSeason, nextSeason;
+    if (exportFrameCount === 899) {
+        currentSeason = 's';
+        nextSeason = 'u';
+        seasonProgress = 0;
+    } else {
+        currentSeason = s[seasonIndex % 4];
+        nextSeason = s[(seasonIndex + 1) % 4];
+    }
+    
+    drawExportBackground(pg, currentSeason, nextSeason, seasonProgress);
+    generateExportFlakesPhase(currentSeason, seasonIndex);
+    displayExportPoetryCode(pg, currentSeason);
+    renderExportFlakesOptimized(pg);
+    
+    pg.pop();
+}
+
+function drawExportBackground(pg, currentSeason, nextSeason, seasonProgress) {
+    if (exportFrameCount === 899) {
+        pg.fill(...d.s.bg);
+        pg.noStroke();
+        pg.rect(0, 0, workW, workH);
+        return;
+    }
+    
+    let currentBg = color(...d[currentSeason].bg);
+    let nextBg = color(...d[nextSeason].bg);
+    
+    let lerpAmount = seasonProgress < 0.5 ? 0 : map(seasonProgress, 0.5, 1, 0, 1);
+    let bg = lerpColor(currentBg, nextBg, lerpAmount);
+    
+    pg.fill(bg);
+    pg.noStroke();
+    pg.rect(0, 0, workW, workH);
+}
+
+// ★★★ ここが重要な修正部分 ★★★
+function generateExportFlakesPhase(currentSeason, seasonIndex) {
+    let frameInSeason = exportFrameCount % 225;
+    let posScale = getUnifiedScale();
+    
+    // 最初のフレームのみ配列をリセット
+    if (exportFrameCount === 0) {
+        exportFlakes = [];
+    }
+    
+    // 各季節の開始時に新しいフレークを追加（古いフレークは削除しない）
+    if (frameInSeason === 0) {
+        for (let i = 0; i < 80; i++) {
+            exportFlakes.push(new ExportFlake(
+                random(-20, workW + 20),
+                random(-320 * posScale, -20 * posScale),
+                d[currentSeason].c,
+                d[currentSeason].co,
+                random(d[currentSeason].s * 0.8, d[currentSeason].s * 1.2),
+                d[currentSeason].r,
+                exportFrameCount
+            ));
+        }
+    }
+    
+    if (frameInSeason === 24) {
+        for (let i = 0; i < 60; i++) {
+            exportFlakes.push(new ExportFlake(
+                random(-20, workW + 20),
+                random(-240 * posScale, -20 * posScale),
+                d[currentSeason].c,
+                d[currentSeason].co,
+                random(d[currentSeason].s * 0.7, d[currentSeason].s * 1.1),
+                d[currentSeason].r,
+                exportFrameCount
+            ));
+        }
+    }
+    
+    if (frameInSeason === 48) {
+        for (let i = 0; i < 40; i++) {
+            exportFlakes.push(new ExportFlake(
+                random(-20, workW + 20),
+                random(-160 * posScale, -20 * posScale),
+                d[currentSeason].c,
+                d[currentSeason].co,
+                random(d[currentSeason].s * 0.6, d[currentSeason].s * 1.0),
+                d[currentSeason].r,
+                exportFrameCount
+            ));
+        }
+    }
+}
+
+function displayPoetryCode() {
+    push();
+    let sizeScale = getUnifiedScale();
+    
+    fill(255, 255, 255, 200);
+    textSize(40 * sizeScale);
+    textAlign(CENTER, CENTER);
+    text(d[cs].code, workW/2, workH/2);
+    
+    textSize(24 * sizeScale);
+    fill(255, 255, 255, 200);
+    text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 60 * sizeScale);
+    pop();
+}
+
+function displayExportPoetryCode(pg, currentSeason) {
+    pg.push();
+    let sizeScale = getUnifiedScale();
+    
+    pg.fill(255, 255, 255, 200);
+    pg.textSize(40 * sizeScale);
+    pg.textAlign(CENTER, CENTER);
+    pg.text(d[currentSeason].code, workW/2, workH/2);
+    
+    pg.textSize(24 * sizeScale);
+    pg.fill(255, 255, 255, 200);
+    pg.text("#Computer_Poetry_TOKYO_NODE", workW/2, workH/2 + 60 * sizeScale);
+    pg.pop();
+}
+
+function renderFlakesOptimized() {
+    f = f.filter(flake => {
+        flake.updateOptimized();
+        return !flake.isOffscreen();
+    });
+    
+    noStroke();
+    textAlign(CENTER, CENTER);
+    
+    f.filter(flake => !flake.shouldRotate).forEach(flake => {
+        fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        textSize(flake.size);
+        text(flake.char, flake.x, flake.y);
+    });
+    
+    f.filter(flake => flake.shouldRotate).forEach(flake => {
+        push();
+        translate(flake.x, flake.y);
+        rotate(flake.rotation);
+        fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        textSize(flake.size);
+        text(flake.char, 0, 0);
+        pop();
+    });
+}
+
+function renderExportFlakesOptimized(pg) {
+    exportFlakes = exportFlakes.filter(flake => {
+        flake.updateExport(exportFrameCount);
+        return !flake.isOffscreenExport();
+    });
+    
+    pg.noStroke();
+    pg.textAlign(CENTER, CENTER);
+    
+    exportFlakes.filter(flake => !flake.shouldRotate).forEach(flake => {
+        pg.fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        pg.textSize(flake.size);
+        pg.text(flake.char, flake.x, flake.y);
+    });
+    
+    exportFlakes.filter(flake => flake.shouldRotate).forEach(flake => {
+        pg.push();
+        pg.translate(flake.x, flake.y);
+        pg.rotate(flake.rotation);
+        pg.fill(flake.col[0], flake.col[1], flake.col[2], flake.opacity);
+        pg.textSize(flake.size);
+        pg.text(flake.char, 0, 0);
+        pg.pop();
+    });
+}
+
+class ExportFlake {
+    constructor(x, y, char, col, size, rotate, birthFrame) {
+        this.x = x;
+        this.y = y;
+        this.char = char;
+        this.col = col;
+        this.size = size;
+        this.shouldRotate = rotate;
+        this.rotation = rotate ? random(TWO_PI) : 0;
+        this.birthFrame = birthFrame;
+        
+        let speedScale = getUnifiedScale();
+        
+        // 落下速度（統一スケール使用）
+        let speedGroup = random();
+        if (this.char === '✿') {
+            if (speedGroup < 0.3) {
+                this.speed = random(12, 16) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(16, 20) * speedScale;
+            } else {
+                this.speed = random(20, 26) * speedScale;
+            }
+        } else if (this.char === '♠') {
+            if (speedGroup < 0.3) {
+                this.speed = random(6, 10) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(10, 14) * speedScale;
+            } else {
+                this.speed = random(14, 18) * speedScale;
+            }
+        } else {
+            if (speedGroup < 0.3) {
+                this.speed = random(10, 14) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(14, 18) * speedScale;
+            } else {
+                this.speed = random(18, 24) * speedScale;
+            }
+        }
+        
+        this.initialSpeed = this.speed;
+        this.velocity = rotate ? random(-2, 2) * speedScale : 0;
+        this.opacity = 255;
+        this.baseOpacity = random(180, 255);
+        this.wobblePhase = random(TWO_PI);
+
+        // 統一された横移動パラメータ
+        if (this.char === '✿') {
+            this.wobbleMultiplier = 3.2 * speedScale;
+            this.wobbleSpeed = 0.007;
+            this.rotationSpeed = 0.12;
+            this.velocityDamping = 0.997;
+            this.horizontalDrift = 0;
+            
+        } else if (this.char === '♠') {
+            this.wobbleMultiplier = 6.0 * speedScale;
+            this.wobbleSpeed = 0.025;
+            this.rotationSpeed = 0.18;
+            this.velocityDamping = 0.995;
+            this.erraticOffset = random(TWO_PI);
+            this.horizontalDrift = random(-8, 8) * speedScale;
+            
+        } else {
+            this.wobbleMultiplier = 0.6 * speedScale;
+            this.wobbleSpeed = 0.01;
+            this.rotationSpeed = 0.03;
+            this.velocityDamping = 1.0;
+            this.horizontalDrift = 0;
+        }
+    }
+    
+    updateExport(currentFrame) {
+        let framesSinceBirth = currentFrame - this.birthFrame;
+        
+        if (this.char === '✿') {
+            this.speed = this.initialSpeed * Math.pow(1.003, framesSinceBirth);
+        } else if (this.char === '♠') {
+            this.speed = this.initialSpeed * Math.pow(1.0005, framesSinceBirth);
+        } else {
+            this.speed = this.initialSpeed * Math.pow(1.002, framesSinceBirth);
+        }
+        
+        this.y += this.speed;
+        
+        // 統一されたY座標影響係数
+        let yInfluence = 0.00001 * this.y;
+        
+        if (this.char === '✿') {
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
+            this.velocity *= this.velocityDamping;
+            this.x += this.velocity;
+            
+        } else if (this.char === '♠') {
+            this.x += Math.sin(currentFrame * this.wobbleSpeed + yInfluence) * this.wobbleMultiplier;
+            this.x += Math.cos(currentFrame * 0.04 + this.erraticOffset) * 2 * getUnifiedScale();
+            this.x += this.horizontalDrift;
+            this.velocity *= this.velocityDamping;
+            this.x += this.velocity;
+            
+        } else {
+            this.x += Math.sin(currentFrame * 0.01 + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
+            this.x += this.velocity;
+        }
+
+        if (this.shouldRotate) {
+            this.rotation += this.rotationSpeed;
+        }
+        
+        if (this.y > workH * 0.7) {
+            let fadeRange = workH * 0.3;
+            let fadeProgress = (this.y - workH * 0.7) / fadeRange;
+            this.opacity = this.baseOpacity * (1 - fadeProgress);
+        } else {
+            this.opacity = this.baseOpacity;
+        }
+    }
+    
+    isOffscreenExport() {
+        if (this.opacity <= 0) return true;
+        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;
+    }
+}
+
+function updateBackground() {
+    let elapsed = millis() - seasonStartTime;
+    l = min(elapsed / SEASON_DURATION, 1.0);
+    
+    let currentBg = color(...d[cs].bg);
+    let nextBg = color(...d[ns].bg);
+    
+    let lerpAmount = l < 0.5 ? 0 : map(l, 0.5, 1, 0, 1);
+    let bg = lerpColor(currentBg, nextBg, lerpAmount);
+    
+    fill(bg);
+    noStroke();
+    rect(0, 0, workW, workH);
+}
+
+function handleTransition() {
+    if (l >= 1) {
+        cs = ns;
+        let currentIndex = s.indexOf(cs);
+        let nextIndex = (currentIndex + 1) % 4;
+        ns = s[nextIndex];
+        
+        seasonStartTime = millis();
+        l = 0;
+        f = [];
+        generateFlakes();
+    }
+}
+
+function generateFlakes() {
+    generationPhase = 0;
+    generateFlakesPhase();
+}
+
+function generateFlakesPhase() {
+    let elapsed = millis() - seasonStartTime;
+    
+    let posScale = getUnifiedScale();
+    
+    if (generationPhase === 0) {
+        for (let i = 0; i < 80; i++) {
+            f.push(new Flake(
+                random(-20, workW + 20),
+                random(-320 * posScale, -20 * posScale),
+                d[cs].c,
+                d[cs].co,
+                random(d[cs].s * 0.8, d[cs].s * 1.2),
+                d[cs].r
+            ));
+        }
+        generationPhase = 1;
+    } else if (generationPhase === 1 && elapsed > 400) {
+        for (let i = 0; i < 60; i++) {
+            f.push(new Flake(
+                random(-20, workW + 20),
+                random(-240 * posScale, -20 * posScale),
+                d[cs].c,
+                d[cs].co,
+                random(d[cs].s * 0.7, d[cs].s * 1.1),
+                d[cs].r
+            ));
+        }
+        generationPhase = 2;
+    } else if (generationPhase === 2 && elapsed > 800) {
+        for (let i = 0; i < 40; i++) {
+            f.push(new Flake(
+                random(-20, workW + 20),
+                random(-160 * posScale, -20 * posScale),
+                d[cs].c,
+                d[cs].co,
+                random(d[cs].s * 0.6, d[cs].s * 1.0),
+                d[cs].r
+            ));
+        }
+        generationPhase = 3;
+    }
+}
+
+class Flake {
+    constructor(x, y, char, col, size, rotate) {
+        this.x = x;
+        this.y = y;
+        this.char = char;
+        this.col = col;
+        this.size = size;
+        this.shouldRotate = rotate;
+        this.rotation = rotate ? random(TWO_PI) : 0;
+        
+        let speedScale = getUnifiedScale();
+        
+        // 落下速度（統一スケール使用）
+        let speedGroup = random();
+        if (this.char === '✿') {
+            if (speedGroup < 0.3) {
+                this.speed = random(12, 16) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(16, 20) * speedScale;
+            } else {
+                this.speed = random(20, 26) * speedScale;
+            }
+        } else if (this.char === '♠') {
+            if (speedGroup < 0.3) {
+                this.speed = random(6, 10) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(10, 14) * speedScale;
+            } else {
+                this.speed = random(14, 18) * speedScale;
+            }
+        } else {
+            if (speedGroup < 0.3) {
+                this.speed = random(10, 14) * speedScale;
+            } else if (speedGroup < 0.7) {
+                this.speed = random(14, 18) * speedScale;
+            } else {
+                this.speed = random(18, 24) * speedScale;
+            }
+        }
+        
+        this.velocity = rotate ? random(-2, 2) * speedScale : 0;
+        this.opacity = 255;
+        this.baseOpacity = random(180, 255);
+
+        // 統一された横移動パラメータ
+        if (this.char === '✿') {
+            this.wobbleMultiplier = 3.2 * speedScale;
+            this.wobbleSpeed = 0.007;
+            this.rotationSpeed = 0.12;
+            this.velocityDamping = 0.997;
+            this.horizontalDrift = 0;
+            
+        } else if (this.char === '♠') {
+            this.wobbleMultiplier = 6.0 * speedScale;
+            this.wobbleSpeed = 0.025;
+            this.rotationSpeed = 0.18;
+            this.velocityDamping = 0.995;
+            this.erraticOffset = random(TWO_PI);
+            this.horizontalDrift = random(-8, 8) * speedScale;
+            
+        } else {
+            this.wobbleMultiplier = 0.6 * speedScale;
+            this.wobbleSpeed = 0.01;
+            this.rotationSpeed = 0.03;
+            this.velocityDamping = 1.0;
+            this.horizontalDrift = 0;
+        }
+        
+        this.sinPhase = 0;
+        this.cosPhase = 0;
+    }
+    
+    updateOptimized() {
+        if (this.char === '✿') {
+            this.speed *= 1.003;
+        } else if (this.char === '♠') {
+            this.speed *= 1.0005;
+        } else {
+            this.speed *= 1.002;
+        }
+        
+        this.y += this.speed;
+        
+        // 統一されたY座標影響係数
+        let yInfluence = 0.00001 * this.y;
+        
+        if (this.char === '✿') {
+            this.sinPhase = frameCounter * this.wobbleSpeed + yInfluence;
+            this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
+            this.velocity *= this.velocityDamping;
+            this.x += this.velocity;
+            
+        } else if (this.char === '♠') {
+            this.sinPhase = frameCounter * this.wobbleSpeed + yInfluence;
+            this.cosPhase = frameCounter * 0.04 + this.erraticOffset;
+            this.x += Math.sin(this.sinPhase) * this.wobbleMultiplier;
+            this.x += Math.cos(this.cosPhase) * 2 * getUnifiedScale();
+            this.x += this.horizontalDrift;
+            this.velocity *= this.velocityDamping;
+            this.x += this.velocity;
+            
+        } else {
+            this.x += Math.sin(frameCounter * 0.01 + yInfluence) * this.wobbleMultiplier;
+            this.x += this.horizontalDrift;
+            this.x += this.velocity;
+        }
+
+        if (this.shouldRotate) {
+          this.rotation += this.rotationSpeed;
+        }
+        
+        if (this.y > workH * 0.7) {
+            let fadeRange = workH * 0.3;
+            let fadeProgress = (this.y - workH * 0.7) / fadeRange;
+            this.opacity = this.baseOpacity * (1 - fadeProgress);
+        } else {
+            this.opacity = this.baseOpacity;
+        }
+    }
+    
+    isOffscreen() {
+        return this.y > workH + 20 || this.x < -100 || this.x > workW + 100;
+    }
+}
+
+function drawGuides() {
+    push();
+    
+    stroke(0, 255, 255, 100);
+    strokeWeight(1);
+    noFill();
+    
+    if (previewMode === 'google') {
+        rect(0, 0, GOOGLE_WORK_W * WORK_SCALE, GOOGLE_WORK_H * WORK_SCALE);
+    } else {
+        rect(0, 0, workW, workH);
+    }
+    
+    stroke(255, 0, 255, 50);
+    line(previewW / 2, 0, previewW / 2, previewH);
+    line(0, previewH / 2, previewW, previewH / 2);
+    
+    fill(0, 255, 255);
+    noStroke();
+    textSize(10);
+    textAlign(LEFT, TOP);
+    
+    if (previewMode === 'google') {
+        text(`作品: ${GOOGLE_WORK_W}×${GOOGLE_WORK_H}`, 5, GOOGLE_WORK_H * WORK_SCALE + 5);
+        text(`キャンバス: ${GOOGLE_CANVAS_W}×${GOOGLE_CANVAS_H}`, 5, GOOGLE_WORK_H * WORK_SCALE + 20);
+        text('左上配置 (Google Form用)', 5, GOOGLE_WORK_H * WORK_SCALE + 35);
+    } else {
+        text(`作品: ${NEORT_W}×${NEORT_H}`, 5, 5);
+        text('全画面 (NEORT用)', 5, 20);
+        text('余白なし', 5, 35);
+    }
+    
+    pop();
+}
+
+function updateUI() {
+    document.getElementById('fps').textContent = Math.round(frameRate());
+    document.getElementById('currentSeason').textContent = d[cs].name;
+    
+    let modeElement = document.getElementById('previewModeText');
+    if (modeElement) {
+        modeElement.textContent = previewMode === 'google' ? 'Google Form用' : 'NEORT用';
+    }
+    
+    let sizeElement = document.getElementById('workSizeText');
+    if (sizeElement) {
+        if (previewMode === 'google') {
+            sizeElement.textContent = `${GOOGLE_WORK_W}×${GOOGLE_WORK_H}`;
+        } else {
+            sizeElement.textContent = `${NEORT_W}×${NEORT_H}`;
+        }
+    }
+}
+
+// ===============================================
+// 操作関数
+// ===============================================
+function togglePreviewMode() {
+    previewMode = previewMode === 'google' ? 'neort' : 'google';
+    updateCanvasSize();
+    resizeCanvas(previewW, previewH);
+    
+    initSeasonData();
+    
+    console.log('プレビューモードを切り替えました：', previewMode === 'google' ? 'Google Form用' : 'NEORT用');
+    updateUI();
+}
+
+function toggleGuide() {
+    showGuide = !showGuide;
+}
+
+function resetAnimation() {
+    frameCounter = 0;
+    l = 0;
+    cs = 's';
+    ns = 'u';
+    f = [];
+    generationPhase = 0;
+    seasonStartTime = millis();
+    generateFlakes();
+}
+
+// キーボードショートカット
+function keyPressed() {
+    if (key === 'm' || key === 'M') {
+        togglePreviewMode();
+    } else if (key === 'g' || key === 'G') {
+        toggleGuide();
+    } else if (key === 'r' || key === 'R') {
+        resetAnimation();
+    } else if (key === 's' || key === 'S') {
+        let prefix = previewMode === 'google' ? 'google_preview_' : 'neort_preview_';
+        saveCanvas(prefix + 'poetry_computer_' + frameCount, 'png');
+        console.log('プレビュー画像を保存しました');
+    }
+}
+</script>
+</body>
+</html>
