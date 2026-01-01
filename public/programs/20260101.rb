@@ -25,15 +25,10 @@ def draw
   @base_hue = (@angle_offset * 20) % 360
 
   @circle_count = 10
-
   distance = 100
 
   # 呼吸
   breath = sin(@angle_offset * 0.5)
-
-  # 線の太さの呼吸
-  weight = 6 + breath * 4
-  strokeWeight(weight)
 
   # サイズだけ呼吸（80〜220）
   circle_size = 150 + breath * 70
@@ -46,6 +41,11 @@ def draw
 
     hue = (@base_hue + i * 15) % 360
     stroke(hue, 80, 100, @alpha_value)
+
+    # 線の太さに位相ずれ（2〜10）
+    phase = TWO_PI / @circle_count * i
+    weight = 6 + sin(@angle_offset + phase) * 4
+    strokeWeight(weight)
 
     circle(x, y, circle_size + (i.even? ? 30 : -30))
   end
