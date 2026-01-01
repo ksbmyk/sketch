@@ -4,7 +4,7 @@
 def setup
   createCanvas(windowWidth, windowWidth)
   colorMode(HSB, 360, 100, 100, 255)
-  noStroke
+  #noStroke
   @angle_offset = 0
 end
 
@@ -24,9 +24,9 @@ def draw
 
   @alpha_value = 150
 
-  fill(@hue_value, 80, 100, @alpha_value)
-  @speed = 0.05
+  stroke(@hue_value, 80, 100, @alpha_value)
 
+  @speed = 0.05
   @angle_offset += @speed
 
   @circle_count = 10
@@ -42,4 +42,3 @@ def draw
     circle(x, y, @circle_size + (i.even? ? 30 : -30))
   end
 end
-
