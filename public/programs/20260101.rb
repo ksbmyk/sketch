@@ -1,5 +1,5 @@
 def setup
-  createCanvas(windowWidth, windowWidth)
+  createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 255)
   @angle_offset = 0
   noFill
