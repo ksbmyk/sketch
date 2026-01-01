@@ -7,14 +7,8 @@ end
 
 def draw
   blendMode(BLEND)
-  @is_dark_mode = true
-  if (@is_dark_mode)
-    background(0, 0, 0)
-    blendMode(ADD)
-  else
-    background(0, 0, 100)
-    blendMode(MULTIPLY)
-  end
+  background(0, 0, 0)
+  blendMode(ADD)
 
   translate(width / 2, height / 2)
 
