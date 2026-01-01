@@ -19,7 +19,8 @@ def draw
   speed = 0.04
   @angle_offset += speed
 
-  base_hue = (@angle_offset * 20) % 360
+  # 色相を固定（1色）
+  hue = 200  # 青系
 
   circle_count = 10
   distance = 100
@@ -36,7 +37,6 @@ def draw
     x = cos(angle) * distance
     y = sin(angle) * distance
 
-    hue = (base_hue + i * 15) % 360
     stroke(hue, 80, 100, alpha_value)
 
     # 線の太さに位相ずれ（2〜10）
