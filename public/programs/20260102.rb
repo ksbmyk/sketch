@@ -1,3 +1,6 @@
+# GENUARY 2026 jan2 "Twelve principles of animation."
+# https://genuary.art/prompts
+
 NUM_PARTICLES = 500
 NOISE_SCALE = 0.005
 
@@ -45,7 +48,7 @@ def setup
   colorMode(HSB, 360, 100, 100, 100)
   background(220, 30, 10)
   
-  @particles = NUM_PARTICLES.times.map { Particle.new(width, height)
+  @particles = NUM_PARTICLES.times.map { Particle.new(width, height) }
   @time = 0.0
 end
 
