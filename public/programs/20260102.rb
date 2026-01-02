@@ -17,8 +17,10 @@ class Particle
   end
 
   def update(angle, strength)
+    # Perlinノイズで、この位置での流れる方向を決定
     @vx += cos(angle) * strength * 0.1
     @vy += sin(angle) * strength * 0.1
+    # 減衰させ徐々に減速
     @vx *= 0.95
     @vy *= 0.95
     @x += @vx
@@ -55,16 +57,21 @@ end
 def draw
   background(220, 30, 10, 10)
   
+  # Slow In and Slow Out: sinの2乗で緩急を強調
+  # 0〜1を滑らかに往復
   ease = sin(@time * 0.5) * 0.5 + 0.5
+  # 2乗でより緩急がを際立たせる
   flow_strength = ease * ease * 4 + 0.2
   
   @particles.each do |p|
+    # Perlinノイズで流れ場の角度を決定
     angle = noise(p.x * NOISE_SCALE, p.y * NOISE_SCALE, @time * 0.1) * TWO_PI * 2
     
     p.update(angle, flow_strength)
     p.reset if p.out_of_bounds?
     
     noStroke
+    # 速いほど明るく
     brightness = map(p.speed, 0, 3, 40, 100)
     fill(p.hue, 60, brightness, 80)
     circle(p.x, p.y, p.size)
