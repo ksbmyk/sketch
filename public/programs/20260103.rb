@@ -1,3 +1,6 @@
+# GENUARY 2026 jan1 "Fibonacci forever. Create a work that uses the Fibonacci sequence in some way."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
