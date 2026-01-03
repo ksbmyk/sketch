@@ -10,11 +10,19 @@ def draw
   stroke(0)
   strokeWeight(2)
   
+  # 90°ずつ回転させて4つ描く
+  4.times do |i|
+    push
+    rotate(HALF_PI * i)
+    draw_spiral(5)
+    pop
+  end
+end
+
+def draw_spiral(s)
   # フィボナッチ数列
   fib = [1, 1]
   10.times { fib << fib[-1] + fib[-2] }
-  
-  s = 5  # scale factor
   
   cx, cy = 0, 0
   angle = 0
