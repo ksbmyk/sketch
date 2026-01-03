@@ -7,10 +7,11 @@ end
 
 def draw
   translate(width / 2, height / 2)
-  noFill
   
   draw_concentric_circles(5)
   
+  blendMode(ADD)
+
   # 90°ずつ回転させて4つ描く
   4.times do |i|
     push
@@ -18,12 +19,17 @@ def draw
     draw_squares_on_spiral(5)
     pop
   end
+
+  blendMode(BLEND)
 end
 
 def draw_concentric_circles(s)
+  # フィボナッチ数列
   fib = [1, 1]
   10.times { fib << fib[-1] + fib[-2] }
-  
+
+  noFill
+
   fib.each_with_index do |r, i|
     radius = r * s
     hue = 180 + (i * 4)
@@ -36,10 +42,10 @@ def draw_squares_on_spiral(s)
   # フィボナッチ数列
   fib = [1, 1]
   10.times { fib << fib[-1] + fib[-2] }
-  
+
   cx, cy = 0, 0
   angle = 0
-  
+
   interval = 30
   
   fib.each_with_index do |r, i|
@@ -57,13 +63,16 @@ def draw_squares_on_spiral(s)
       py = cy + radius * sin(a)
       
       hue = 180 + (i * 4)
-      stroke(hue, 50, 90, 60)
+
+      # 半透明の塗り
+      fill(hue, 60, 70, 15)
+      stroke(hue, 50, 90, 40)
       strokeWeight(1.5)
       
       push
       translate(px, py)
       rotate(random(TWO_PI))
-      square_size = random(5, 30)
+      square_size = random(10, 200)
       rectMode(CENTER)
       rect(0, 0, square_size, square_size)
       pop
