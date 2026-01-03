@@ -1,25 +1,38 @@
 def setup
   createCanvas(700, 700)
-  background(255)
+  colorMode(HSB, 360, 100, 100, 100)
+  background(0, 0, 5)
   noLoop
 end
 
 def draw
   translate(width / 2, height / 2)
   noFill
-  stroke(0)
-  strokeWeight(2)
+  
+  draw_concentric_circles(5)
   
   # 90°ずつ回転させて4つ描く
   4.times do |i|
     push
     rotate(HALF_PI * i)
-    draw_spiral(5)
+    draw_squares_on_spiral(5)
     pop
   end
 end
 
-def draw_spiral(s)
+def draw_concentric_circles(s)
+  fib = [1, 1]
+  10.times { fib << fib[-1] + fib[-2] }
+  
+  fib.each_with_index do |r, i|
+    radius = r * s
+    hue = 180 + (i * 4)
+    stroke(hue, 40, 40, 20)
+    circle(0, 0, radius * 2)
+  end
+end
+
+def draw_squares_on_spiral(s)
   # フィボナッチ数列
   fib = [1, 1]
   10.times { fib << fib[-1] + fib[-2] }
@@ -27,10 +40,34 @@ def draw_spiral(s)
   cx, cy = 0, 0
   angle = 0
   
+  interval = 30
+  
   fib.each_with_index do |r, i|
     radius = r * s
+    arc_length = radius * HALF_PI
+    num_points = (arc_length / interval).to_i
     
-    arc(cx, cy, radius * 2, radius * 2, angle, angle + HALF_PI)
+    next if num_points < 1
+    
+    num_points.times do |j|
+      t = j.to_f / num_points
+      a = angle + t * HALF_PI
+      
+      px = cx + radius * cos(a)
+      py = cy + radius * sin(a)
+      
+      hue = 180 + (i * 4)
+      stroke(hue, 50, 90, 60)
+      strokeWeight(1.5)
+      
+      push
+      translate(px, py)
+      rotate(random(TWO_PI))
+      square_size = random(5, 30)
+      rectMode(CENTER)
+      rect(0, 0, square_size, square_size)
+      pop
+    end
     
     # 次の円弧の中心を計算
     # 円弧の終点方向に (現在の半径 - 次の半径) だけ移動
