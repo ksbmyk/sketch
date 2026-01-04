@@ -12,6 +12,7 @@ def draw
   background(0)
 
   @time += 0.02
+  @time = @time % (TWO_PI * 10)  # 周期的にリセット
 
   # 解像度の周期的変化（ピクセルサイズ: 5〜50）
   pixel_size = map(sin(@time * 0.3), -1, 1, 5, 50).to_i
