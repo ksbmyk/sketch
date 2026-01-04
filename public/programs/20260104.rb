@@ -41,7 +41,8 @@ def draw
 
   # ピクセルを描画
   pixels_to_draw.each_value do |pixel|
-    fill(190, 80, 80)
+    brightness = map([pixel[:count], 10].min, 1, 10, 50, 100)
+    fill(190, 80, brightness)
     rect(pixel[:x], pixel[:y], pixel_size - 1, pixel_size - 1)
   end
 end
