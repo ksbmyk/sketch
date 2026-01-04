@@ -1,3 +1,6 @@
+# GENUARY 2026 jan4 "Lowres. An image or graphic with low resolution, where details are simplified or pixelated."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
