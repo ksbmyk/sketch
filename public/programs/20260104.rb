@@ -10,7 +10,10 @@ def draw
 
   @time += 0.02
 
-  pixel_size = 20  # 固定のピクセルサイズ
+  # 解像度の周期的変化（ピクセルサイズ: 5〜50）
+  pixel_size = map(sin(@time * 0.3), -1, 1, 5, 50).to_i
+  pixel_size = [pixel_size, 2].max
+
   a = 3
   b = 4
   phase = @time  # 位相が時間で変化
