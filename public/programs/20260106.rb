@@ -38,10 +38,7 @@ def draw
       scale_factor = map(sin(frameCount * 0.03 + phase_offset), -1, 1, 0.3, 1.3)
       rect_size = @cell_size * scale_factor
       
-      # 色相：青系のみ（180〜260度：シアン〜青〜紫）
-      # 位置による差（0〜40度の範囲）
       position_hue = ((col + row) / (@cols + @rows - 2).to_f) * 40
-      # 時間で青系の範囲内を往復（sinで滑らかに）
       time_hue = sin(frameCount * 0.01) * 20
       hue = 200 + position_hue + time_hue  # 180〜260の範囲に収める
 
