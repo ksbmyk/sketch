@@ -1,4 +1,4 @@
-# GENUARY 2026 jan6 "Lights on/off. Make something that changes when you switch on or off the “digital” lights."
+# GENUARY 2026 jan7 "Boolean algebra. Get inspired by Boolean algebra, in any way."
 # https://genuary.art/prompts
 
 
