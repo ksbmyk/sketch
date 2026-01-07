@@ -25,7 +25,7 @@ class Gate
 end
 
 class Wire
-  attr_reader :from_gate, :to_gate, :segments, :total_length
+  attr_reader :from_gate, :to_gate, :segments
   attr_accessor :hue
   
   def initialize(from_gate, to_gate)
@@ -77,7 +77,7 @@ class Wire
 end
 
 class Pulse
-  attr_reader :wire, :progress, :alive, :hue
+  attr_reader :hue
   
   def initialize(wire)
     @wire = wire
@@ -95,6 +95,10 @@ class Pulse
   
   def position
     @wire.position_at(@progress)
+  end
+
+  def alive?
+    @alive
   end
   
   private
@@ -142,7 +146,7 @@ def generate_circuit
     num_outputs = rand(1..2)
     candidates = @gates.select.with_index { |g, j| j != i && g.x > gate.x - 50 }
     
-    candidates.sample([num_outputs, candidates.size].min)&.each do |target|
+    candidates.sample(num_outputs).each do |target|
       wire = Wire.new(gate, target)
       @wires << wire
       gate.outputs << wire
@@ -254,7 +258,7 @@ end
 
 def update_and_draw_pulses
   @pulses.each(&:update)
-  @pulses.reject! { |p| !p.alive }
+  @pulses.select!(&:alive?)
   
   @pulses.each do |pulse|
     pos = pulse.position
