@@ -26,9 +26,9 @@ ROAD_COLOR_GLOW = [190, 255, 200]
 
 # 建物
 BUILDING_MIN_SIZE = 10
-BUILDING_FLOOR_OFFSET = 2.5
-BUILDING_FLOOR_RANGE = (3..8)
-BUILDING_MAX_FLOORS = 15
+BUILDING_FLOOR_OFFSET = 1.5
+BUILDING_FLOOR_RANGE = (2..5)
+BUILDING_MAX_FLOORS = 10
 BUILDING_COLOR_BASE = [250, 200, 80]
 BUILDING_COLOR_GLOW = [200, 255, 255]
 
@@ -132,7 +132,7 @@ class Building
   private
 
   def calculate_floors
-    area_factor = Math.sqrt(w * h) / 35.0
+    area_factor = Math.sqrt(w * h) / 40.0
     (rand(BUILDING_FLOOR_RANGE) * area_factor).clamp(BUILDING_FLOOR_RANGE.begin, BUILDING_MAX_FLOORS).to_i
   end
 end
