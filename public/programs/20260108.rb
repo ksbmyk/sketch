@@ -1,14 +1,13 @@
 PHASE_MAIN_ROADS = 0      # 幹線道路を描く
 PHASE_SUBDIVIDE = 1       # ブロック細分化
 PHASE_BUILDINGS = 2       # 建物立ち上がり
-PHASE_ALIVE = 3           # 生命感（光流）
+PHASE_COMPLETE = 3        # 完成
 
 $phase = PHASE_MAIN_ROADS
 $phase_progress = 0.0
 $blocks = []
 $buildings = []
 $main_roads = []
-$particles = []
 
 # 道路の幅
 MAIN_ROAD_WIDTH = 8
@@ -79,64 +78,14 @@ class Building
     @y = y
     @w = w
     @h = h
-    # 高さ（階数）- 面積と乱数で決定
-    area_factor = Math.sqrt(@w * @h) / 40.0
-    @floors = (rand(2..5) * area_factor).clamp(2, 10).to_i
+    # 高さ（階数）- 面積と乱数で決定、階数を増やす
+    area_factor = Math.sqrt(@w * @h) / 35.0
+    @floors = (rand(3..8) * area_factor).clamp(3, 15).to_i
     @grow_progress = 0.0
   end
 
   def fully_grown?
     @grow_progress >= 1.0
-  end
-end
-
-# 光の粒子クラス - 道路を流れる
-class RoadParticle
-  attr_accessor :x, :y, :vx, :vy, :life, :max_life
-
-  def initialize(road)
-    @road = road
-    reset
-  end
-
-  def reset
-    # 道路の種類に応じて配置
-    if @road[:horizontal]
-      @x = rand < 0.5 ? @road[:x1] : @road[:x2]
-      @y = @road[:y1] + rand(-2..2)
-      @vx = @x == @road[:x1] ? rand(1.0..2.0) : rand(-2.0..-1.0)
-      @vy = 0
-    else
-      @x = @road[:x1] + rand(-2..2)
-      @y = rand < 0.5 ? @road[:y1] : @road[:y2]
-      @vx = 0
-      @vy = @y == @road[:y1] ? rand(1.0..2.0) : rand(-2.0..-1.0)
-    end
-    @max_life = rand(80..160)
-    @life = @max_life
-  end
-
-  def update
-    @x += @vx
-    @y += @vy
-    @life -= 1
-    
-    # 道路から外れたか寿命が尽きたらリセット
-    if @life <= 0 || out_of_road?
-      reset
-    end
-  end
-
-  def out_of_road?
-    if @road[:horizontal]
-      @x < @road[:x1] - 10 || @x > @road[:x2] + 10
-    else
-      @y < @road[:y1] - 10 || @y > @road[:y2] + 10
-    end
-  end
-
-  def alpha
-    (@life.to_f / @max_life * 255).to_i
   end
 end
 
@@ -153,8 +102,8 @@ def init_city
   $blocks = []
   $buildings = []
   $main_roads = []
-  $particles = []
   
+  # キャンバスのマージン
   margin = 20
   
   # 幹線道路の配置（3-4本の縦横道路）
@@ -202,8 +151,8 @@ def draw
     draw_phase_subdivide
   when PHASE_BUILDINGS
     draw_phase_buildings
-  when PHASE_ALIVE
-    draw_phase_alive
+  when PHASE_COMPLETE
+    draw_phase_complete
   end
 end
 
@@ -222,10 +171,10 @@ def draw_phase_main_roads
     
     if road[:horizontal]
       draw_len = (road[:x2] - road[:x1]) * eased_progress
-      draw_road_segment(road[:x1], road[:y1], road[:x1] + draw_len, road[:y1], true)
+      draw_road_segment(road[:x1], road[:y1], road[:x1] + draw_len, road[:y1])
     else
       draw_len = (road[:y2] - road[:y1]) * eased_progress
-      draw_road_segment(road[:x1], road[:y1], road[:x1], road[:y1] + draw_len, false)
+      draw_road_segment(road[:x1], road[:y1], road[:x1], road[:y1] + draw_len)
     end
   end
   
@@ -250,7 +199,7 @@ def ease_in_out_quad(t)
 end
 
 # 道路セグメントを発光させて描画
-def draw_road_segment(x1, y1, x2, y2, horizontal)
+def draw_road_segment(x1, y1, x2, y2)
   width = MAIN_ROAD_WIDTH
   
   # グロー効果
@@ -269,7 +218,7 @@ def draw_phase_subdivide
   # 幹線道路
   blendMode(ADD)
   $main_roads.each do |road|
-    draw_road_segment(road[:x1], road[:y1], road[:x2], road[:y2], road[:horizontal])
+    draw_road_segment(road[:x1], road[:y1], road[:x2], road[:y2])
   end
   blendMode(BLEND)
   
@@ -296,7 +245,7 @@ def draw_phase_subdivide
     blendMode(BLEND)
   end
   
-  # 次へ
+  # 次のフェーズへ
   last_block_delay = (all_blocks.length - 1) * 0.008
   if $phase_progress >= last_block_delay + 0.8
     $phase = PHASE_BUILDINGS
@@ -341,49 +290,24 @@ def draw_phase_buildings
   # 次へ
   last_building_delay = ($buildings.length - 1) * 0.006
   if $phase_progress >= last_building_delay + 1.0
-    $phase = PHASE_ALIVE
-    $phase_progress = 0.0
-    setup_particles
+    $phase = PHASE_COMPLETE
   end
 end
 
-# パーティクル初期化
-def setup_particles
-  $main_roads.each do |road|
-    rand(8..15).times do
-      $particles << RoadParticle.new(road)
-    end
-  end
-end
-
-# 変化
-def draw_phase_alive
+# 完成（静止）
+def draw_phase_complete
   draw_all_roads
   
-  # 建物を描画
   $buildings.each do |building|
     draw_building(building)
   end
-  
-  # パーティクルを更新・描画
-  blendMode(ADD)
-  $particles.each do |p|
-    p.update
-    
-    noStroke
-    fill(COLOR_ROAD_GLOW[0], COLOR_ROAD_GLOW[1], COLOR_ROAD_GLOW[2], p.alpha)
-    circle(p.x, p.y, 3)
-    fill(COLOR_ROAD_GLOW[0], COLOR_ROAD_GLOW[1], COLOR_ROAD_GLOW[2], p.alpha * 0.3)
-    circle(p.x, p.y, 8)
-  end
-  blendMode(BLEND)
 end
 
 # 全ての道路を描画
 def draw_all_roads
   blendMode(ADD)
   $main_roads.each do |road|
-    draw_road_segment(road[:x1], road[:y1], road[:x2], road[:y2], road[:horizontal])
+    draw_road_segment(road[:x1], road[:y1], road[:x2], road[:y2])
   end
   blendMode(BLEND)
   
@@ -412,7 +336,7 @@ def draw_building(building)
   
   # 各階層を描画
   current_floors.times do |floor|
-    offset = floor * 1.5
+    offset = floor * 2.5
     
     bx = building.x + offset
     by = building.y + offset
