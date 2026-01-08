@@ -1,3 +1,6 @@
+# GENUARY 2026 jan8 "A City. Create a generative metropolis."
+# https://genuary.art/prompts
+
 CANVAS_SIZE = 700
 MARGIN = 20
 
