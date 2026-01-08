@@ -416,3 +416,7 @@ def draw_building_floor(building, floor)
 
   blendMode(BLEND)
 end
+
+def mousePressed
+  $city = City.new
+end
