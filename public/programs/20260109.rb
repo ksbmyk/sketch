@@ -4,32 +4,37 @@ def setup
   
   @cell_size = 7
   @grid_size = 100
-  @explosions = []
+  @num_states = 6  # 状態数
+  @threshold = 1   # 次の状態に進むのに必要な近傍数
+  @reverse_zones = []  # 逆回転ゾーン
   
-  # グリッド初期化（中央付近に配置）
+  # グリッド初期化（ランダム状態）
   @grid = []
   @grid_size.times do |y|
     row = []
     @grid_size.times do |x|
-      dist = Math.sqrt((x - 50)**2 + (y - 50)**2)
-      if dist < 30
-        row.push(rand < 0.4 ? 1 : 0)
-      else
-        row.push(0)
-      end
+      row.push(rand(@num_states))
     end
     @grid.push(row)
   end
   
+  # 各セルの回転方向（1=順方向、-1=逆方向）
+  @direction = []
+  @grid_size.times do
+    row = []
+    @grid_size.times { row.push(1) }
+    @direction.push(row)
+  end
+
   frameRate(12)
 end
 
 def draw
   background(230, 30, 8)
   
-  apply_explosions
+  apply_reverse_zones
   draw_cells
-  draw_explosions
+  draw_zones
   update_automaton
 end
 
@@ -38,75 +43,59 @@ def mousePressed
   gx = (mouseX / @cell_size).to_i
   gy = (mouseY / @cell_size).to_i
   
-  # 爆発追加
-  @explosions.push({
-    gx: gx,
-    gy: gy,
-    px: mouseX,
-    py: mouseY,
-    radius: 0,
-    max_radius: 12,
-    speed: 0.8
+  @reverse_zones.push({
+    gx: gx, gy: gy,
+    px: mouseX, py: mouseY,
+    radius: 0, max_radius: 25, speed: 1.5
   })
 end
 
-# 爆発の広がりに合わせてセルを追加
-def apply_explosions
-  @explosions.each do |e|
-    old_radius = e[:radius]
-    e[:radius] += e[:speed]
-    new_radius = e[:radius]
+# 逆回転ゾーンの拡大と適用
+def apply_reverse_zones
+  @reverse_zones.each do |z|
+    old_radius = z[:radius]
+    z[:radius] += z[:speed]
+    new_radius = z[:radius]
     
-    # 今フレームで広がった範囲にセルを追加
-    (-e[:max_radius]..e[:max_radius]).each do |dy|
-      (-e[:max_radius]..e[:max_radius]).each do |dx|
+    (-z[:max_radius]..z[:max_radius]).each do |dy|
+      (-z[:max_radius]..z[:max_radius]).each do |dx|
         dist = Math.sqrt(dx * dx + dy * dy)
-        
-        # このフレームで波が通過した範囲
         next if dist > new_radius || dist < old_radius
         
-        nx = (e[:gx] + dx) % @grid_size
-        ny = (e[:gy] + dy) % @grid_size
+        nx = (z[:gx] + dx) % @grid_size
+        ny = (z[:gy] + dy) % @grid_size
         
-        # 高確率でセル発生
-        @grid[ny][nx] = 1 if rand < 0.7
+        # 回転方向を反転
+        @direction[ny][nx] = -@direction[ny][nx]
       end
     end
   end
   
-  @explosions.select! { |e| e[:radius] < e[:max_radius] }
+  @reverse_zones.select! { |z| z[:radius] < z[:max_radius] }
 end
 
-def draw_explosions
+def draw_zones
   noStroke
   
-  @explosions.each do |e|
-    r = e[:radius]
-    alpha = 90 * (1.0 - r / e[:max_radius])
+  @reverse_zones.each do |z|
+    r = z[:radius]
+    alpha = 90 * (1.0 - r / z[:max_radius])
     
-    # リングをセル単位で描画
-    (-e[:max_radius]..e[:max_radius]).each do |dy|
-      (-e[:max_radius]..e[:max_radius]).each do |dx|
+    (-z[:max_radius]..z[:max_radius]).each do |dy|
+      (-z[:max_radius]..z[:max_radius]).each do |dx|
         dist = Math.sqrt(dx * dx + dy * dy)
-        
-        # リングの幅（内側と外側の境界）
         next if dist > r + 1.5 || dist < r - 0.5
         
-        nx = (e[:gx] + dx) % @grid_size
-        ny = (e[:gy] + dy) % @grid_size
+        nx = (z[:gx] + dx) % @grid_size
+        ny = (z[:gy] + dy) % @grid_size
         
         px = nx * @cell_size
         py = ny * @cell_size
         center_x = px + @cell_size / 2
         center_y = py + @cell_size / 2
         
-        # グロー
-        fill(190, 60, 100, alpha * 0.4)
+        fill(200, 60, 100, alpha * 0.5)
         ellipse(center_x, center_y, @cell_size * 2.5, @cell_size * 2.5)
-        
-        # セル本体
-        fill(190, 70, 100, alpha)
-        rect(px, py, @cell_size - 1, @cell_size - 1)
       end
     end
   end
@@ -122,13 +111,19 @@ def update_automaton
   
   @grid_size.times do |y|
     @grid_size.times do |x|
-      n = count_neighbors(x, y)
       current = @grid[y][x].to_i
+      dir = @direction[y][x]
       
-      if current == 1
-        new_grid[y][x] = (n == 2 || n == 3) ? 1 : 0
+      # 次の状態（回転方向に依存）
+      next_state = (current + dir + @num_states) % @num_states
+
+      # 同じ回転方向の近傍のみカウント
+      count = count_same_direction_neighbors(x, y, next_state, dir)
+
+      if count >= @threshold
+        new_grid[y][x] = next_state
       else
-        new_grid[y][x] = (n == 3) ? 1 : 0
+        new_grid[y][x] = current
       end
     end
   end
@@ -136,17 +131,22 @@ def update_automaton
   @grid = new_grid
 end
 
-def count_neighbors(x, y)
-  total = 0
+# 同じ回転方向で、指定した状態を持つ近傍セルの数をカウント
+def count_same_direction_neighbors(x, y, target_state, my_dir)
+  count = 0
   (-1..1).each do |dy|
     (-1..1).each do |dx|
       next if dx == 0 && dy == 0
       nx = (x + dx) % @grid_size
       ny = (y + dy) % @grid_size
-      total += @grid[ny][nx].to_i
+
+      # 同じ回転方向のセルのみカウント
+      next if @direction[ny][nx] != my_dir
+
+      count += 1 if @grid[ny][nx].to_i == target_state
     end
   end
-  total
+  count
 end
 
 def draw_cells
@@ -154,18 +154,29 @@ def draw_cells
   
   @grid_size.times do |y|
     @grid_size.times do |x|
-      next if @grid[y][x].to_i == 0
-      
+      state = @grid[y][x].to_i
+      dir = @direction[y][x]
+
       px = x * @cell_size
       py = y * @cell_size
       center_x = px + @cell_size / 2
       center_y = py + @cell_size / 2
       
-      hue = 180 + (x + y) % 40
+      # 状態に応じた色相（シアン〜青の範囲: 180〜240）
+      hue = 180 + (state * 10)
+
+      # 逆回転セルは明度を変えて区別
+      if dir == -1
+        brightness = 100
+        saturation = 80
+      else
+        brightness = 70
+        saturation = 70
+      end
       
-      fill(hue, 70, 85, 25)
+      fill(hue, saturation, brightness, 25)
       ellipse(center_x, center_y, @cell_size * 2, @cell_size * 2)
-      fill(hue, 70, 85, 90)
+      fill(hue, saturation, brightness, 90)
       rect(px, py, @cell_size - 1, @cell_size - 1)
     end
   end
