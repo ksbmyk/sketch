@@ -1,3 +1,6 @@
+# GENUARY 2026 jan9 "Crazy automaton. Cellular automata with crazy rules."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
