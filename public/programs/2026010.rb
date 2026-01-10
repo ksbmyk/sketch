@@ -34,16 +34,28 @@ def draw
 
     progress = i.to_f / TOTAL_POINTS
     hue = 180 + progress * 80
+
+    stroke(hue, 90, 100, 4)
+    strokeWeight(20)
+    line(x1, y1, x2, y2)
     
-    stroke(hue, 70, 90, 15)
+    stroke(hue, 85, 100, 8)
+    strokeWeight(14)
+    line(x1, y1, x2, y2)
+
+    stroke(hue, 80, 100, 12)
+    strokeWeight(10)
+    line(x1, y1, x2, y2)
+
+    stroke(hue, 75, 100, 20)
     strokeWeight(6)
     line(x1, y1, x2, y2)
 
-    stroke(hue, 60, 95, 30)
+    stroke(hue, 70, 100, 35)
     strokeWeight(3)
     line(x1, y1, x2, y2)
 
-    stroke(hue, 40, 100, 80)
+    stroke(hue, 60, 100, 90)
     strokeWeight(1)
     line(x1, y1, x2, y2)
   end
