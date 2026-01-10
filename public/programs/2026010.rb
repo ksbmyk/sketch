@@ -33,7 +33,7 @@ def draw
     x2, y2 = wobbled_xy(i + 1)
 
     progress = i.to_f / TOTAL_POINTS
-    hue = 180 + progress * 80
+    hue = 180 + progress * 50
 
     stroke(hue, 90, 100, 4)
     strokeWeight(20)
