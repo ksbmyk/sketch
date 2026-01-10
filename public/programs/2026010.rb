@@ -7,7 +7,9 @@ LINES_PER_FRAME = 3
 
 WOBBLE_AMOUNT = 3
 WOBBLE_SPEED = 0.05
-TWO_PI = Math::PI * 2
+TWO_PI = PI * 2
+
+PAUSE_FRAMES = 60
 
 def setup
   createCanvas(700, 700)
@@ -16,6 +18,8 @@ def setup
   @current_line = 0
   @radius = width * 0.4
   @drawing_complete = false
+  @pause_counter = 0
+  @wobble_active = false
   @time = 0.0
 
   @points = calculate_maurer_rose_points
@@ -30,7 +34,12 @@ def draw
     @drawing_complete = true
   end
 
-  if @drawing_complete
+  if @drawing_complete && !@wobble_active
+    @pause_counter += 1
+    @wobble_active = true if @pause_counter >= PAUSE_FRAMES
+  end
+
+  if @wobble_active
     @time += WOBBLE_SPEED
     @time -= TWO_PI if @time > TWO_PI
   end
@@ -64,7 +73,7 @@ end
 def wobbled_point(index)
   base = @points[index]
 
-  return base unless @drawing_complete
+  return base unless @wobble_active
 
   # 各頂点はインデックスに基づいて一意の位相を持つ（位相は小さく保つ）
   phase_x = (index % 100) * 0.07
@@ -87,6 +96,6 @@ def calculate_maurer_rose_points
     y = r * sin(theta_rad)
     points << { x: x, y: y }
   end
-  
+
   points
 end
