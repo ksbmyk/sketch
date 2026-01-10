@@ -10,9 +10,7 @@ def setup
   colorMode(HSB, 360, 100, 100, 100)
   
   @current_line = 0
-  @rotation_angle = 0
   @radius = width * 0.4
-
   @points = calculate_maurer_rose_points
 end
 
@@ -25,7 +23,6 @@ def draw
   
   push
   translate(width / 2, height / 2)
-  rotate(@rotation_angle)
   
   (0...@current_line).each do |i|
     p1 = @points[i]
@@ -48,8 +45,6 @@ def draw
   end
   
   pop
-  
-  @rotation_angle += 0.01
 end
 
 def calculate_maurer_rose_points
@@ -63,7 +58,7 @@ def calculate_maurer_rose_points
     # ローズ・カーブ
     r = @radius * sin(N * theta_rad)
     
-    # C極座標を直交座標に変換
+    # 極座標を直交座標に変換
     x = r * cos(theta_rad)
     y = r * sin(theta_rad)
     
