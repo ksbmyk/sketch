@@ -1,3 +1,6 @@
+# GENUARY 2026 jan10 "Polar coordinates."
+# https://genuary.art/prompts
+
 # マウラー・ローズのパラメータ
 N = 6
 D = 71
