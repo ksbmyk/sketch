@@ -39,7 +39,7 @@ def draw
 
       hue = 210
       saturation = 70
-      brightness = 80 - disorder * 50
+      brightness = 80 - disorder * 100
       
       fill(hue, saturation, brightness, 80)
       noStroke
