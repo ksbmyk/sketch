@@ -1,3 +1,7 @@
+# GENUARY 2026 jan12 "Boxes only."
+# https://genuary.art/prompts
+# rbCanvas/p5 で実行したほうが鮮やかになる
+
 BOX_SIZE = 40
 GRID_COUNT = 9
 
