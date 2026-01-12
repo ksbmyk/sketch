@@ -1,17 +1,11 @@
 NUM_RAYS = 400
 CUBE_SIZE = 60
 RAY_LENGTH = 900
+ORBIT_RADIUS = 400
 
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
-  
-  # Left-top light pointing toward right-bottom
-  # Right-top light pointing toward left-bottom
-  @lights = [
-    { x: 50, y: 50, hue: 200, angle_center: PI / 4 + PI / 8, angle_spread: PI / 2 },
-    { x: 650, y: 50, hue: 320, angle_center: 3 * PI / 4 - PI / 8, angle_spread: PI / 2 }
-  ]
   
   s = CUBE_SIZE
   cx = width / 2.0
@@ -36,6 +30,8 @@ def setup
   end
   
   @silhouette = convex_hull(cube_2d)
+  @center_x = width / 2.0
+  @center_y = height / 2.0
 end
 
 def convex_hull(points)
@@ -65,17 +61,42 @@ end
 def draw
   background(0)
   
+  # Two lights orbiting, opposite each other
+  angle1 = frameCount * 0.015
+  angle2 = angle1 + PI
+  
+  lights = [
+    create_light(angle1, 200),
+    create_light(angle2, 320)
+  ]
+  
   blendMode(ADD)
   
-  @lights.each do |light|
+  lights.each do |light|
     draw_rays(light)
   end
   
   blendMode(BLEND)
   
-  @lights.each do |light|
+  lights.each do |light|
     draw_light_indicator(light[:x], light[:y], light[:hue])
   end
+end
+
+def create_light(orbit_angle, hue)
+  x = @center_x + cos(orbit_angle) * ORBIT_RADIUS
+  y = @center_y + sin(orbit_angle) * ORBIT_RADIUS
+  
+  # Point toward center
+  angle_to_center = atan2(@center_y - y, @center_x - x)
+  
+  {
+    x: x,
+    y: y,
+    hue: hue,
+    angle_center: angle_to_center,
+    angle_spread: PI / 2
+  }
 end
 
 def draw_rays(light)
