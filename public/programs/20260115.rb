@@ -61,13 +61,12 @@ end
 def draw
   background(0)
   
-  # Two lights orbiting, opposite each other
   angle1 = frameCount * 0.015
   angle2 = angle1 + PI
   
   lights = [
-    create_light(angle1, 200),
-    create_light(angle2, 320)
+    create_light(angle1, 190),  # cyan-blue
+    create_light(angle2, 240)   # blue-purple
   ]
   
   blendMode(ADD)
@@ -87,7 +86,6 @@ def create_light(orbit_angle, hue)
   x = @center_x + cos(orbit_angle) * ORBIT_RADIUS
   y = @center_y + sin(orbit_angle) * ORBIT_RADIUS
   
-  # Point toward center
   angle_to_center = atan2(@center_y - y, @center_x - x)
   
   {
