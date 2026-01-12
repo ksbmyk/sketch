@@ -20,6 +20,7 @@ def draw
   offset = (GRID_COUNT - 1) * BOX_SIZE / 2.0
 
   # グローレイヤー
+  blendMode(ADD)
   noStroke
   GRID_COUNT.times do |i|
     GRID_COUNT.times do |j|
@@ -49,6 +50,7 @@ def draw
   end
 
   # 本体の立方体
+  blendMode(BLEND)
   GRID_COUNT.times do |i|
     GRID_COUNT.times do |j|
       x = i * BOX_SIZE - offset
