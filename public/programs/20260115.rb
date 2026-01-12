@@ -1,3 +1,6 @@
+# GENUARY 2026 jan15 "Create an invisible object where only the shadows can be seen."
+# https://genuary.art/prompts
+
 NUM_RAYS = 400
 CUBE_SIZE = 60
 RAY_LENGTH = 900
