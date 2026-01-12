@@ -1,18 +1,18 @@
 NUM_RAYS = 400
 CUBE_SIZE = 60
-RAY_LENGTH = 700
+RAY_LENGTH = 900
 
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
   
-  # Two light sources - positioned to cast interesting shadows
+  # Left-top light pointing toward right-bottom
+  # Right-top light pointing toward left-bottom
   @lights = [
-    { x: 100, y: 150, hue: 200 },
-    { x: 600, y: 150, hue: 320 }
+    { x: 50, y: 50, hue: 200, angle_center: PI / 4 + PI / 8, angle_spread: PI / 2 },
+    { x: 650, y: 50, hue: 320, angle_center: 3 * PI / 4 - PI / 8, angle_spread: PI / 2 }
   ]
   
-  # Static cube at center with slight rotation for 3D look
   s = CUBE_SIZE
   cx = width / 2.0
   cy = height / 2.0
@@ -25,7 +25,7 @@ def setup
     [-s, s, -s], [s, s, -s], [s, s, s], [-s, s, s]
   ]
   
-  @cube_2d = base.map do |v|
+  cube_2d = base.map do |v|
     x1 = v[0] * cos(rot_y) - v[2] * sin(rot_y)
     z1 = v[0] * sin(rot_y) + v[2] * cos(rot_y)
     y1 = v[1]
@@ -35,37 +35,69 @@ def setup
     { x: x1 + cx, y: y2 + cy }
   end
   
-  @cube_edges = [
-    [0, 1], [1, 2], [2, 3], [3, 0],
-    [4, 5], [5, 6], [6, 7], [7, 4],
-    [0, 4], [1, 5], [2, 6], [3, 7]
-  ]
+  @silhouette = convex_hull(cube_2d)
+end
+
+def convex_hull(points)
+  sorted = points.sort_by { |p| [p[:y], p[:x]] }
+  start = sorted.first
+  
+  rest = sorted[1..-1].sort_by do |p|
+    atan2(p[:y] - start[:y], p[:x] - start[:x])
+  end
+  
+  hull = [start]
+  
+  rest.each do |p|
+    while hull.length > 1 && cross(hull[-2], hull[-1], p) <= 0
+      hull.pop
+    end
+    hull << p
+  end
+  
+  hull
+end
+
+def cross(o, a, b)
+  (a[:x] - o[:x]) * (b[:y] - o[:y]) - (a[:y] - o[:y]) * (b[:x] - o[:x])
 end
 
 def draw
-  background(230, 30, 8)
+  background(0)
+  
+  blendMode(ADD)
   
   @lights.each do |light|
-    draw_rays(light[:x], light[:y], light[:hue])
+    draw_rays(light)
   end
+  
+  blendMode(BLEND)
   
   @lights.each do |light|
     draw_light_indicator(light[:x], light[:y], light[:hue])
   end
 end
 
-def draw_rays(light_x, light_y, hue)
+def draw_rays(light)
+  light_x = light[:x]
+  light_y = light[:y]
+  hue = light[:hue]
+  angle_center = light[:angle_center]
+  angle_spread = light[:angle_spread]
+  
+  start_angle = angle_center - angle_spread / 2
+  
   NUM_RAYS.times do |i|
-    ray_angle = i * TWO_PI / NUM_RAYS
+    ray_angle = start_angle + (i.to_f / NUM_RAYS) * angle_spread
     
     dx = cos(ray_angle)
     dy = sin(ray_angle)
     
     hit_t = nil
     
-    @cube_edges.each do |edge|
-      v1 = @cube_2d[edge[0]]
-      v2 = @cube_2d[edge[1]]
+    @silhouette.length.times do |j|
+      v1 = @silhouette[j]
+      v2 = @silhouette[(j + 1) % @silhouette.length]
       
       t = ray_segment_intersection(light_x, light_y, dx, dy, v1[:x], v1[:y], v2[:x], v2[:y])
       if t && t > 5
@@ -81,8 +113,8 @@ def draw_rays(light_x, light_y, hue)
       end_y = light_y + dy * RAY_LENGTH
     end
     
-    stroke(hue, 50, 80, 20)
-    strokeWeight(1)
+    stroke(hue, 80, 80, 35)
+    strokeWeight(1.5)
     line(light_x, light_y, end_x, end_y)
   end
 end
