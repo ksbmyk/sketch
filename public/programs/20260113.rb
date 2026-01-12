@@ -1,3 +1,18 @@
+GRID_SIZE = 3
+
+# カラフルパレット（各セル用）
+PALETTES = [
+  { bg: [350, 70, 80], hair: [280, 80, 30], face: [40, 60, 90], skin: [30, 40, 95] },
+  { bg: [180, 80, 70], hair: [320, 70, 40], face: [60, 70, 85], skin: [35, 35, 92] },
+  { bg: [60, 80, 85], hair: [200, 80, 35], face: [0, 60, 80], skin: [25, 45, 90] },
+  { bg: [280, 60, 75], hair: [40, 80, 50], face: [180, 50, 70], skin: [30, 30, 93] },
+  { bg: [120, 70, 60], hair: [0, 75, 45], face: [220, 60, 75], skin: [28, 38, 88] },
+  { bg: [30, 80, 90], hair: [260, 75, 35], face: [160, 55, 70], skin: [32, 42, 91] },
+  { bg: [200, 75, 65], hair: [50, 85, 55], face: [320, 50, 80], skin: [25, 35, 94] },
+  { bg: [320, 65, 70], hair: [100, 70, 40], face: [30, 65, 85], skin: [28, 40, 89] },
+  { bg: [160, 70, 55], hair: [350, 80, 45], face: [240, 55, 75], skin: [33, 38, 92] },
+]
+
 def setup
   createCanvas(700, 700)
   noLoop
@@ -5,48 +20,75 @@ def setup
 end
 
 def draw
-  background(220, 60, 15)
+  background(0)
   
-  translate(width / 2, height / 2)
+  cell_size = width.to_f / GRID_SIZE
   
-  # === 髪（おかっぱ）===
+  GRID_SIZE.times do |row|
+    GRID_SIZE.times do |col|
+      x = col * cell_size
+      y = row * cell_size
+
+      idx = row * GRID_SIZE + col
+      palette = PALETTES[idx]
+
+      # 背景
+      fill(palette[:bg][0], palette[:bg][1], palette[:bg][2])
+      noStroke
+      rect(x, y, cell_size, cell_size)
+
+      # 顔の描画
+      center_x = x + cell_size / 2
+      center_y = y + cell_size / 2 + 10
+
+      draw_face(center_x, center_y, cell_size * 0.85, palette)
+    end
+  end
+end
+
+def draw_face(x, y, size, palette)
+  push
+  translate(x, y)
+
+  scale_factor = size / 350.0
+  scale(scale_factor)
+
+  hair_color = palette[:hair]
+  face_color = palette[:face]
+  skin_color = palette[:skin]
+
   noStroke
-  fill(220, 70, 20)
+
+  # === 髪（おかっぱ）===
+  fill(hair_color[0], hair_color[1], hair_color[2])
 
   beginShape
-  # 左側の輪郭（上から下へ）
-  vertex(-120, -80)   # 左上
-  vertex(-130, 0)     # 左側頭部
-  vertex(-130, 100)   # 左サイド下
-  vertex(-120, 170)   # 左肩あたり
-  # 下側
-  vertex(-60, 170)    # 左下内側
-  vertex(-60, 170)    # 首の左
-  vertex(60, 170)     # 首の右
-  vertex(60, 170)     # 右下内側
-  vertex(120, 170)    # 右肩あたり
-  # 右側の輪郭（下から上へ）
-  vertex(130, 100)    # 右サイド下
-  vertex(130, 0)      # 右側頭部
-  vertex(120, -80)    # 右上
-  
-  # 頭頂部（曲線的に）
-  vertex(80, -120)    # 右上カーブ
-  vertex(0, -140)     # てっぺん
-  vertex(-80, -120)   # 左上カーブ
+  vertex(-120, -80)
+  vertex(-130, 0)
+  vertex(-130, 100)
+  vertex(-120, 170)
+  vertex(-60, 170)
+  vertex(60, 170)
+  vertex(120, 170)
+  vertex(130, 100)
+  vertex(130, 0)
+  vertex(120, -80)
+  vertex(80, -120)
+  vertex(0, -140)
+  vertex(-80, -120)
   endShape(CLOSE)
   
   # === 首 ===
-  fill(220, 30, 65)
+  fill(skin_color[0], skin_color[1], skin_color[2] - 10)
   rectMode(CENTER)
   rect(0, 160, 60, 80, 5)
   
   # === 顔 ===
-  fill(220, 30, 70)
+  fill(skin_color[0], skin_color[1], skin_color[2])
   ellipse(0, 30, 200, 240)
   
   # 前髪（ぱっつん）
- fill(220, 70, 20)
+  fill(hair_color[0], hair_color[1], hair_color[2])
   beginShape
   vertex(-110, -80)
   vertex(-100, -30)
@@ -60,40 +102,33 @@ def draw
   vertex(-80, -110)
   endShape(CLOSE)
   
-
-  
   # === メガネ ===
-  stroke(220, 50, 40)
+  stroke(face_color[0], face_color[1] + 20, face_color[2] - 30)
   strokeWeight(6)
   noFill
-  
-  # レンズ（角丸矩形）
   rectMode(CENTER)
   rect(-45, 10, 70, 50, 10)
   rect(45, 10, 70, 50, 10)
-  # ブリッジ
   line(-10, 10, 10, 10)
-  # テンプル（つる）
   line(-80, 10, -100, 5)
   line(80, 10, 100, 5)
   
   # === 目 ===
   noStroke
-  fill(220, 60, 30)
+  fill(face_color[0], face_color[1], face_color[2] - 40)
   ellipse(-45, 15, 20, 25)
   ellipse(45, 15, 20, 25)
-  
-  # 瞳のハイライト
-  fill(220, 20, 90)
+  fill(face_color[0], face_color[1] - 30, face_color[2] + 20)
   ellipse(-42, 12, 6, 6)
   ellipse(48, 12, 6, 6)
   
   # === 鼻 ===
-  fill(220, 35, 60)
+  fill(skin_color[0], skin_color[1] + 10, skin_color[2] - 15)
   triangle(0, 30, -12, 70, 12, 70)
   
   # === 口 ===
-  fill(220, 40, 50)
+  fill(face_color[0], face_color[1] + 10, face_color[2] - 20)
   ellipse(0, 100, 40, 15)
 
+  pop
 end
