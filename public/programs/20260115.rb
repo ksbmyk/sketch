@@ -1,4 +1,4 @@
-NUM_RAYS = 360
+NUM_RAYS = 400
 CUBE_SIZE = 60
 RAY_LENGTH = 700
 
@@ -6,9 +6,11 @@ def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
   
-  # Fixed light position (top-left area)
-  @light_x = 150
-  @light_y = 150
+  # Two light sources - positioned to cast interesting shadows
+  @lights = [
+    { x: 100, y: 150, hue: 200 },
+    { x: 600, y: 150, hue: 320 }
+  ]
   
   # Static cube at center with slight rotation for 3D look
   s = CUBE_SIZE
@@ -43,20 +45,22 @@ end
 def draw
   background(230, 30, 8)
   
-  draw_rays(@light_x, @light_y)
-  draw_light_indicator(@light_x, @light_y)
+  @lights.each do |light|
+    draw_rays(light[:x], light[:y], light[:hue])
+  end
+  
+  @lights.each do |light|
+    draw_light_indicator(light[:x], light[:y], light[:hue])
+  end
 end
 
-def draw_rays(light_x, light_y)
-  hue = 200
-  
+def draw_rays(light_x, light_y, hue)
   NUM_RAYS.times do |i|
     ray_angle = i * TWO_PI / NUM_RAYS
     
     dx = cos(ray_angle)
     dy = sin(ray_angle)
     
-    # Find first intersection with cube
     hit_t = nil
     
     @cube_edges.each do |edge|
@@ -70,22 +74,16 @@ def draw_rays(light_x, light_y)
     end
     
     if hit_t
-      # Ray hits cube - draw only up to intersection
       end_x = light_x + dx * hit_t
       end_y = light_y + dy * hit_t
-      
-      stroke(hue, 50, 80, 25)
-      strokeWeight(1)
-      line(light_x, light_y, end_x, end_y)
     else
-      # Ray doesn't hit cube - draw full length
       end_x = light_x + dx * RAY_LENGTH
       end_y = light_y + dy * RAY_LENGTH
-      
-      stroke(hue, 50, 80, 25)
-      strokeWeight(1)
-      line(light_x, light_y, end_x, end_y)
     end
+    
+    stroke(hue, 50, 80, 20)
+    strokeWeight(1)
+    line(light_x, light_y, end_x, end_y)
   end
 end
 
@@ -102,12 +100,12 @@ def ray_segment_intersection(rx, ry, dx, dy, x1, y1, x2, y2)
   (t > 0 && s >= 0 && s <= 1) ? t : nil
 end
 
-def draw_light_indicator(x, y)
+def draw_light_indicator(x, y, hue)
   noStroke
   5.downto(1) do |i|
-    fill(50, 60, 95, 6 * i)
-    circle(x, y, i * 16)
+    fill(hue, 60, 95, 6 * i)
+    circle(x, y, i * 14)
   end
-  fill(50, 40, 100, 95)
-  circle(x, y, 10)
+  fill(hue, 40, 100, 95)
+  circle(x, y, 8)
 end
