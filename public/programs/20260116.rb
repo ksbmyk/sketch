@@ -1,3 +1,6 @@
+# GENUARY 2026 jan16 "Order and disorder."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noLoop
