@@ -69,7 +69,7 @@ def draw_mirror_cell(cx, cy, radius)
           bx2 = cos(branch_angle2) * r_end * 0.7
           by2 = sin(branch_angle2) * r_end * 0.7
 
-          stroke(hue, saturation - 10, brightness + 10, 40)
+          stroke(hue, saturation - 10, brightness + 10, 80)
           line(x2, y2, bx1, by1)
           line(x2, y2, bx2, by2)
           stroke(hue, saturation, brightness, 60)
