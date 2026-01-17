@@ -1,3 +1,6 @@
+# GENUARY 2026 jan17 "Wallpaper group."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   noLoop
