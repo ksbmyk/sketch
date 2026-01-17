@@ -1,3 +1,6 @@
+# GENUARY 2026 jan18 "Unexpected path. Draw a route that changes direction based on one very simple rule."
+# https://genuary.art/prompts
+
 # Langton's Ant
 # Rule: white→turn right, black→turn left, flip color, move forward
 CELL = 3
