@@ -27,7 +27,7 @@ def step_ant
   @dx, @dy = is_on ? [@dy, -@dx] : [-@dy, @dx]
   
   @visits[key] = visits + 1
-
+  
   noStroke
   blendMode(ADD)
   fill(200, 80, 30)
@@ -35,4 +35,14 @@ def step_ant
   
   @x = ((@x + @dx) % @grid).to_i
   @y = ((@y + @dy) % @grid).to_i
+end
+
+def mousePressed
+  blendMode(BLEND)
+  fill(220, 75, 16)
+  noStroke
+  rect(0, 0, width, height)
+  @x, @y = @grid / 2, @grid / 2
+  @dx, @dy = 0, -1
+  @visits = {}
 end
