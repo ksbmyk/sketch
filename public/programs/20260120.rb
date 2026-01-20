@@ -9,7 +9,7 @@ def setup
   noFill
   
   # ハイポトコロイドのパラメータ
-  @fixed_radius   = 220.0
+  @base_radius   = 220.0
   @rolling_radius = 34.0
   @pen_distance   = 110.0
   
@@ -20,7 +20,7 @@ def setup
   @steps_per_frame = 30
   
   # 必要な回転数を計算
-  gcd = @fixed_radius.to_i.gcd(@rolling_radius.to_i)
+  gcd = @base_radius.to_i.gcd(@rolling_radius.to_i)
   @max_angle = 2 * PI * @rolling_radius / gcd
 end
 
@@ -33,7 +33,7 @@ def draw
     break if @angle > @max_angle
     
     # ハイポトコロイド
-    radius_diff = @fixed_radius - @rolling_radius
+    radius_diff = @base_radius - @rolling_radius
     angle_ratio = radius_diff / @rolling_radius
     
     x = radius_diff * cos(@angle) + @pen_distance * cos(angle_ratio * @angle)
