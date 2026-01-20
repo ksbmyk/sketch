@@ -3,8 +3,8 @@
 
 def setup
   createCanvas(700, 700)
-  background(20)
   colorMode(HSB, 360, 100, 100, 100)
+  background(220, 80, 10)
   blendMode(ADD)
   noFill
   
