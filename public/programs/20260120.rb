@@ -1,3 +1,6 @@
+# GENUARY 2026 jan20 "One line. An artwork that is made of a single line only."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   background(20)
