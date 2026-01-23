@@ -1,3 +1,6 @@
+# GENUARY 2026 jan23 "Transparency. Explore the concept of transparency."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
