@@ -1,6 +1,7 @@
 import { Image } from '../interfaces'
 
 export const imageData: Image[] = [
+  { id: 20260124, name: '20260124.gif' },
   { id: 20260123, name: '20260123.png' },
   { id: 20260122, name: '20260122.png' },
   { id: 20260121, name: '20260121.png' },
