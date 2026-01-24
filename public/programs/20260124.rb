@@ -10,11 +10,14 @@ def setup
   
   # Generate square grid
   step = @tile_size + @gap
-  
-  y = @gap / 2
-  while y < height
-    x = @gap / 2
-    while x < width
+  cols = (width / step).ceil
+  rows = (height / step).ceil
+
+  rows.times do |row|
+    cols.times do |col|
+      x = @gap / 2 + col * step
+      y = @gap / 2 + row * step
+
       # Distance from nearest corner (normalized 0-1, 0=corner, 1=center)
       tile_cx = x + @tile_size / 2.0
       tile_cy = y + @tile_size / 2.0
@@ -39,10 +42,7 @@ def setup
         fallen: false,
         hue: 200 + rand(-15..15)
       }
-      
-      x += step
     end
-    y += step
   end
   
   @start_time = nil
