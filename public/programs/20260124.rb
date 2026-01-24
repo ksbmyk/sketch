@@ -1,29 +1,26 @@
-# Genuary Day 24: Perfectionist's nightmare
-# Hexagonal tiles falling from corners to center
-# v2: Fix sleep issue - use timer-based reset
-
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
-  @hex_size = 30
+  @tile_size = 40
+  @gap = 4
   @tiles = []
   
-  # Generate hexagonal grid
-  h = @hex_size * sqrt(3)
+  # Generate square grid
+  step = @tile_size + @gap
   
-  row = 0
-  y = -h
-  while y < height + h
-    x_offset = (row % 2 == 0) ? 0 : @hex_size * 1.5
-    x = -@hex_size * 3 + x_offset
-    
-    while x < width + @hex_size * 3
+  y = @gap / 2
+  while y < height
+    x = @gap / 2
+    while x < width
       # Distance from nearest corner (normalized 0-1, 0=corner, 1=center)
+      tile_cx = x + @tile_size / 2.0
+      tile_cy = y + @tile_size / 2.0
+      
       corner_distances = [
-        sqrt(x**2 + y**2),
-        sqrt((x - width)**2 + y**2),
-        sqrt(x**2 + (y - height)**2),
-        sqrt((x - width)**2 + (y - height)**2)
+        sqrt(tile_cx**2 + tile_cy**2),
+        sqrt((tile_cx - width)**2 + tile_cy**2),
+        sqrt(tile_cx**2 + (tile_cy - height)**2),
+        sqrt((tile_cx - width)**2 + (tile_cy - height)**2)
       ]
       min_corner_dist = corner_distances.min
       max_possible = sqrt((width/2)**2 + (height/2)**2)
@@ -37,15 +34,12 @@ def setup
         fall_start: nil,
         falling: false,
         fallen: false,
-        velocity: 0,
-        hue: 200 + rand(-20..20)
+        hue: 200 + rand(-15..15)
       }
       
-      x += @hex_size * 3
+      x += step
     end
-    
-    y += h / 2
-    row += 1
+    y += step
   end
   
   @start_time = nil
@@ -85,7 +79,7 @@ def draw
       fall_time = (millis - tile[:fall_start]) / 1000.0
       tile[:y] = tile[:base_y] + 0.5 * 800 * fall_time**2
       
-      if tile[:y] > height + @hex_size * 2
+      if tile[:y] > height + @tile_size
         tile[:fallen] = true
         tile[:falling] = false
       end
@@ -93,24 +87,11 @@ def draw
     
     next if tile[:fallen]
     
-    # Draw hexagon
-    push
-    translate(tile[:x], tile[:y])
-    
+    # Draw square tile
     fill(tile[:hue], 50, 80)
     stroke(tile[:hue], 60, 60)
     strokeWeight(2)
-    
-    beginShape
-    6.times do |i|
-      angle = PI / 6 + i * PI / 3
-      hx = cos(angle) * @hex_size
-      hy = sin(angle) * @hex_size
-      vertex(hx, hy)
-    end
-    endShape(CLOSE)
-    
-    pop
+    rect(tile[:x], tile[:y], @tile_size, @tile_size)
   end
   
   # 全て落ちたらリセット待ちへ
@@ -124,7 +105,6 @@ def reset_tiles
     t[:y] = t[:base_y]
     t[:falling] = false
     t[:fallen] = false
-    t[:velocity] = 0
     t[:fall_start] = nil
   end
 end
