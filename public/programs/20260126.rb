@@ -5,13 +5,12 @@ def setup
 end
 
 def draw
-  background(220, 80, 15)
+  background(220, 80, 5)
   
   @max_depth = 6
   @noise_scale = 0.005
   
-  stroke(200, 70, 90)
-  strokeWeight(1.5)
+  blendMode(ADD)
   noFill
   
   subdivide(0, 0, width, 0)
@@ -38,14 +37,23 @@ def subdivide(x, y, size, depth)
 end
 
 def draw_diagonal(x, y, size, noise_val)
-  # 別の位置のノイズで向きを決定
   direction_noise = noise(x * @noise_scale * 3, y * @noise_scale * 3)
-  
-  if direction_noise > 0.5
-    # 左上から右下
-    line(x, y, x + size, y + size)
-  else
-    # 右上から左下
-    line(x + size, y, x, y + size)
+
+  layers = [
+    [8, 10],
+    [4, 20],
+    [2, 40],
+    [1, 80]
+  ]
+
+  layers.each do |weight, alpha|
+    stroke(200, 70, 90, alpha)
+    strokeWeight(weight)
+
+    if direction_noise > 0.5
+      line(x, y, x + size, y + size)
+    else
+      line(x + size, y, x, y + size)
+    end
   end
 end
