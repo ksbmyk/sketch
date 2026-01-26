@@ -40,10 +40,11 @@ def draw_diagonal(x, y, size, noise_val)
   direction_noise = noise(x * @noise_scale * 3, y * @noise_scale * 3)
 
   layers = [
-    [8, 10],
-    [4, 20],
-    [2, 40],
-    [1, 80]
+    [24, 5],
+    [16, 10],
+    [10, 20],
+    [6, 40],
+    [3, 70]
   ]
 
   layers.each do |weight, alpha|
