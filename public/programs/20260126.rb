@@ -1,3 +1,6 @@
+# GENUARY 2026 jan26 "Recursive Grids. Split the canvas into a grid of some kind and recurse on each cell again and again."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   colorMode(HSB, 360, 100, 100, 100)
