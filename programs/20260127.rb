@@ -1,4 +1,4 @@
-# GENUARY 2026 jan27 "Perfectionist’s nightmare."
+# GENUARY 2026 jan27 "Lifeform. A shape or structure that behaves as if it’s alive or growing."
 # https://genuary.art/prompts
 
 def setup
