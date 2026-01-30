@@ -55,8 +55,7 @@ def draw
   @segments.each do |seg|
     density = seg[:density]
 
-    # 密度に応じて分割数を決める（密度が高いほど細かく分割）
-    # 密度0-2: 1分割（そのまま）、密度3+: 2-6分割
+    # 密度に応じて分割数を決める
     num_parts = density <= 2 ? 1 : [density - 1, 6].min
     
     # 線分を分割して描画
@@ -69,20 +68,18 @@ def draw_broken_line(seg, num_parts, density)
   x2, y2 = seg[:x2], seg[:y2]
 
   if num_parts == 1
-    # 密度が低い：普通に描画
+    # 密度が低い：普通に描画（少しだけ太さにブレ）
     stroke(seg[:hue], 50, 70, 80)
-    strokeWeight(1.5)
+    strokeWeight(1.5 + rand * 0.3)
     line(x1, y1, x2, y2)
   else
-    # 密度が高い：断続的に描画
+    # 密度が高い：断続的に描画 + 太さが不安定
     num_parts.times do |i|
-      # このパートを描画するかランダムに決定（毎フレーム変わる）
       next if rand < 0.4
       
       t_start = i.to_f / num_parts
       t_end = (i + 1).to_f / num_parts
 
-      # 少し隙間を作る
       t_start += 0.05
       t_end -= 0.05
       next if t_start >= t_end
@@ -92,10 +89,16 @@ def draw_broken_line(seg, num_parts, density)
       px2 = x1 + (x2 - x1) * t_end
       py2 = y1 + (y2 - y1) * t_end
 
-      # 密度が高いほど明るく不安定な色
       brightness = 60 + density * 5
       stroke(seg[:hue] + rand(-10..10), 70, brightness, 85)
-      strokeWeight(1.5 + rand * 0.5)
+
+      # 密度が高いほど太さの変動幅が大きい
+      weight_variation = density * 0.8
+      weight = 1.0 + rand * weight_variation
+      # たまに極端に太くなる「バグ」
+      weight *= 3 if rand < 0.05
+      strokeWeight(weight)
+
       line(px1, py1, px2, py2)
     end
   end
