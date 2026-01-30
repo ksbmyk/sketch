@@ -1,6 +1,6 @@
 def setup
   createCanvas(700, 700)
-  frameRate(8)
+  frameRate(12)
   colorMode(HSB, 360, 100, 100, 100)
   
   @radius = width * 0.35
@@ -52,28 +52,52 @@ def draw
   background(230, 60, 10)
   translate(width / 2, height / 2)
   
-  # 20フレームに3フレームは正常表示
-  normal_frame = (frameCount % 20) < 3
-  
   @segments.each do |seg|
-    high_density = seg[:density] > 2
+    density = seg[:density]
+
+    # 密度に応じて分割数を決める（密度が高いほど細かく分割）
+    # 密度0-2: 1分割（そのまま）、密度3+: 2-6分割
+    num_parts = density <= 2 ? 1 : [density - 1, 6].min
     
-    if high_density
-      unless normal_frame
-        # 密度が高い場所は60%の確率で欠落
-        next if rand < 0.6
-      end
+    # 線分を分割して描画
+    draw_broken_line(seg, num_parts, density)
+  end
+end
+
+def draw_broken_line(seg, num_parts, density)
+  x1, y1 = seg[:x1], seg[:y1]
+  x2, y2 = seg[:x2], seg[:y2]
+
+  if num_parts == 1
+    # 密度が低い：普通に描画
+    stroke(seg[:hue], 50, 70, 80)
+    strokeWeight(1.5)
+    line(x1, y1, x2, y2)
+  else
+    # 密度が高い：断続的に描画
+    num_parts.times do |i|
+      # このパートを描画するかランダムに決定（毎フレーム変わる）
+      next if rand < 0.4
       
-      # 交差点付近は明るいシアン
-      stroke(180, 90, 100, 95)
-      strokeWeight(2.5)
-    else
-      # 正常部分は暗めの青紫
-      stroke(seg[:hue], 40, 40, 60)
-      strokeWeight(1)
+      t_start = i.to_f / num_parts
+      t_end = (i + 1).to_f / num_parts
+
+      # 少し隙間を作る
+      t_start += 0.05
+      t_end -= 0.05
+      next if t_start >= t_end
+
+      px1 = x1 + (x2 - x1) * t_start
+      py1 = y1 + (y2 - y1) * t_start
+      px2 = x1 + (x2 - x1) * t_end
+      py2 = y1 + (y2 - y1) * t_end
+
+      # 密度が高いほど明るく不安定な色
+      brightness = 60 + density * 5
+      stroke(seg[:hue] + rand(-10..10), 70, brightness, 85)
+      strokeWeight(1.5 + rand * 0.5)
+      line(px1, py1, px2, py2)
     end
-    
-    line(seg[:x1], seg[:y1], seg[:x2], seg[:y2])
   end
 end
 
