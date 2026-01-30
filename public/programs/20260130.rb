@@ -1,3 +1,6 @@
+# GENUARY 2026 jan30 "Its not a bug, its a feature."
+# https://genuary.art/prompts
+
 def setup
   createCanvas(700, 700)
   frameRate(12)
