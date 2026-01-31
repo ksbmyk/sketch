@@ -34,8 +34,6 @@ FRAGMENT_SHADER = <<~GLSL
   float noise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
-    
-    // Cubic interpolation
     vec2 u = f * f * (3.0 - 2.0 * f);
     
     return mix(
@@ -57,10 +55,9 @@ FRAGMENT_SHADER = <<~GLSL
     float amplitude = 0.5;
     float frequency = 1.0;
     
-    // 6 octaves
     for (int i = 0; i < 6; i++) {
       value += amplitude * noise(p * frequency);
-      p *= rot2D(0.5); // Rotate each octave
+      p *= rot2D(0.5);
       frequency *= 2.0;
       amplitude *= 0.5;
     }
@@ -68,21 +65,63 @@ FRAGMENT_SHADER = <<~GLSL
     return value;
   }
   
-  // Domain warping - creates more organic flow
+  // Domain warping
   float warpedFbm(vec2 p, float t) {
+    // Slower time for calmer movement
+    float slowT = t * 0.5;
+
     vec2 q = vec2(
-      fbm(p + vec2(0.0, 0.0) + t * 0.1),
-      fbm(p + vec2(5.2, 1.3) + t * 0.12)
+      fbm(p + vec2(0.0, 0.0) + slowT * 0.08),
+      fbm(p + vec2(5.2, 1.3) + slowT * 0.09)
     );
     
     vec2 r = vec2(
-      fbm(p + 4.0 * q + vec2(1.7, 9.2) + t * 0.15),
-      fbm(p + 4.0 * q + vec2(8.3, 2.8) + t * 0.13)
+      fbm(p + 4.0 * q + vec2(1.7, 9.2) + slowT * 0.1),
+      fbm(p + 4.0 * q + vec2(8.3, 2.8) + slowT * 0.08)
     );
     
     return fbm(p + 4.0 * r);
   }
   
+  // Floating particle
+  float particle(vec2 uv, vec2 pos, float size) {
+    float d = length(uv - pos);
+    // Soft gaussian-like falloff
+    return exp(-d * d / (size * size));
+  }
+
+  // Multiple floating particles
+  float particles(vec2 uv, float t) {
+    float p = 0.0;
+
+    for (int i = 0; i < 15; i++) {
+      float fi = float(i);
+
+      // Unique position and movement per particle
+      float seed1 = hash(vec2(fi, 0.0));
+      float seed2 = hash(vec2(fi, 1.0));
+      float seed3 = hash(vec2(fi, 2.0));
+
+      // Slow, floating movement
+      float speed = 0.1 + seed1 * 0.15;
+      vec2 pos = vec2(
+        sin(t * speed + seed1 * PI * 2.0) * 0.8 + cos(t * speed * 0.7 + seed2 * PI) * 0.3,
+        cos(t * speed * 0.8 + seed2 * PI * 2.0) * 0.6 + sin(t * speed * 0.5 + seed3 * PI) * 0.4
+      );
+
+      // Vary size and brightness
+      float size = 0.08 + seed3 * 0.12;
+      float brightness = 0.3 + seed1 * 0.7;
+¥
+      // Gentle pulsing
+      brightness *= 0.7 + 0.3 * sin(t * (0.5 + seed2 * 0.5) + seed1 * PI * 2.0);
+
+      p += particle(uv, pos, size) * brightness;
+    }
+
+    return p;
+  }
+
   // HSV to RGB
   vec3 hsv2rgb(vec3 c) {
     vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -93,58 +132,55 @@ FRAGMENT_SHADER = <<~GLSL
   void main() {
     vec2 uv = vTexCoord * 2.0 - 1.0;
     uv.x *= u_width / u_height;
-    
-    // Scale
+
     vec2 p = uv * 2.0;
-    
-    // Multiple layers of warped FBM
+
+    // Slower, calmer FBM
     float n1 = warpedFbm(p, u_time);
-    float n2 = warpedFbm(p * 1.5 + 10.0, u_time * 0.8);
-    float n3 = fbm(p * 3.0 + u_time * 0.2);
-    
-    // Combine layers
-    float n = n1 * 0.6 + n2 * 0.3 + n3 * 0.1;
-    
-    // Create ridges (turbulence-like effect)
-    float ridge = abs(n * 2.0 - 1.0);
-    ridge = 1.0 - ridge;
-    ridge = pow(ridge, 2.0);
-    
-    // Color mapping
-    float hue = 0.55 + n * 0.15 + sin(u_time * 0.2) * 0.05; // Cyan to blue range
-    float sat = 0.6 + ridge * 0.4;
-    float val = 0.2 + n * 0.5 + ridge * 0.4;
-    
+    float n2 = warpedFbm(p * 1.3 + 10.0, u_time * 0.7);
+    float n = n1 * 0.7 + n2 * 0.3;
+
+    // Softer color mapping - lower contrast
+    float hue = 0.55 + n * 0.1 + sin(u_time * 0.15) * 0.03;
+    float sat = 0.4 + n * 0.2;
+    float val = 0.25 + n * 0.35;
+
     vec3 col = hsv2rgb(vec3(hue, sat, val));
-    
-    // Add bright veins
-    float vein = smoothstep(0.48, 0.52, n1);
-    vein += smoothstep(0.52, 0.48, n1);
-    col += vec3(0.3, 0.5, 0.9) * vein * 0.4;
-    
-    // Deep areas glow
-    float deep = smoothstep(0.3, 0.0, n);
-    col += vec3(0.1, 0.2, 0.5) * deep * 0.3;
-    
-    // Highlight peaks
-    float peak = smoothstep(0.7, 0.9, n);
-    col += vec3(0.5, 0.8, 1.0) * peak * 0.6;
-    
-    // Subtle texture overlay
-    float detail = noise(uv * 50.0 + u_time);
-    col += col * (detail - 0.5) * 0.1;
-    
-    // Vignette
-    float vignette = 1.0 - dot(uv * 0.4, uv * 0.4);
+
+    // Soft glow in valleys
+    float glow = smoothstep(0.5, 0.2, n);
+    col += vec3(0.1, 0.2, 0.4) * glow * 0.4;
+
+    // Soft highlights on peaks
+    float highlight = smoothstep(0.6, 0.8, n);
+    col += vec3(0.2, 0.4, 0.6) * highlight * 0.3;
+
+    // Floating light particles
+    float pts = particles(uv, u_time);
+    vec3 particleColor = vec3(0.6, 0.8, 1.0);
+    col += particleColor * pts * 0.6;
+
+    // Extra soft glow around particles
+    float ptsGlow = particles(uv * 0.95, u_time);
+    ptsGlow += particles(uv * 0.9, u_time) * 0.5;
+    col += vec3(0.3, 0.5, 0.8) * ptsGlow * 0.15;
+
+    // Global soft bloom
+    vec3 bloom = col * col;
+    col += bloom * 0.25;
+
+    // Very soft vignette
+    float vignette = 1.0 - dot(uv * 0.3, uv * 0.3);
     vignette = smoothstep(0.0, 1.0, vignette);
-    col *= vignette;
-    
-    // Bloom
-    col += col * col * 0.2;
-    
-    // Gamma
-    col = pow(col, vec3(0.9));
-    
+    col *= 0.7 + vignette * 0.3;
+
+    // Soften overall
+    col = pow(col, vec3(0.95));
+
+    // Slight desaturation for dreamier feel
+    float gray = dot(col, vec3(0.299, 0.587, 0.114));
+    col = mix(vec3(gray), col, 0.85);
+
     gl_FragColor = vec4(col, 1.0);
   }
 GLSL
