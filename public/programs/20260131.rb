@@ -1,3 +1,6 @@
+# GENUARY 2026 jan31 "GLSL day. Create an artwork using only shaders."
+# https://genuary.art/prompts
+
 WIDTH = 700
 HEIGHT = 700
 
