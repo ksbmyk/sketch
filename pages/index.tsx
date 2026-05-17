@@ -1,25 +1,26 @@
 import { GetStaticProps } from 'next'
 
 import { Image } from '../interfaces'
-import { imageData } from '../utils/image-data'
+import { imageData, PER_PAGE } from '../utils/image-data'
 import Layout from '../components/Layout'
 import List from '../components/List'
+import Pagination from '../components/Pagination'
 
 type Props = {
     items: Image[]
+    totalPages: number
 }
-const WithStaticProps = ({ items }: Props) => (
+const WithStaticProps = ({ items, totalPages }: Props) => (
     <Layout title="sketch">
         <List items={items} />
+        <Pagination currentPage={1} totalPages={totalPages} />
     </Layout>
 )
 
 export const getStaticProps: GetStaticProps = async () => {
-    // Example for including static props in a Next.js function component page.
-    // Don't forget to include the respective types for any props passed into
-    // the component.
-    const items: Image[] = imageData
-    return { props: { items } }
+    const items: Image[] = imageData.slice(0, PER_PAGE)
+    const totalPages = Math.ceil(imageData.length / PER_PAGE)
+    return { props: { items, totalPages } }
 }
 
 export default WithStaticProps

@@ -125,3 +125,5 @@ export const imageData: Image[] = [
   { id: 20230505, name: '20230505.png' },
   { id: 20230312, name: '20230312.png' },
 ];
+
+export const PER_PAGE = 48;
