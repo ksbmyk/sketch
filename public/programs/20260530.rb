@@ -1,3 +1,6 @@
+# Sekigahara RubyKaigi 01 image
+# https://regional.rubykaigi.org/sekigahara01/
+
 def setup
   createCanvas(700, 700)
   noLoop
