@@ -246,7 +246,11 @@
   <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.08</span><span class="first-parentheses">)</span>
   <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">r</span> * <span class="integer">2</span><span class="first-parentheses">)</span>
 
-  <span class="variable">s</span> = <span class="variable">r</span> * <span class="variable">@size</span> / <span class="integer">100</span>
+  <span class="comment"># 内枠</span>
+  <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.022</span><span class="first-parentheses">)</span>
+  <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">r</span> * <span class="integer">1.82</span><span class="first-parentheses">)</span>
+
+  <span class="variable">s</span> = <span class="variable">r</span> * <span class="integer">0.87</span> * <span class="variable">@size</span> / <span class="integer">100</span>
 
   <span class="comment"># 塗り ↔ 白抜き</span>
   <span class="control-structure">if</span> <span class="variable">@inverted</span>
@@ -504,6 +508,10 @@
       strokeWeight(r * 0.08)
       circle(0, 0, r * 2)
 
+      # 内枠
+      strokeWeight(r * 0.022)
+      circle(0, 0, r * 1.82)
+
       # 塗り ↔ 白抜き
       if @inverted
         noFill()
@@ -514,7 +522,7 @@
         noStroke()
       end
 
-      s = r * @size
+      s = r * 0.87 * @size
 
       case @motif
       when "maru"
@@ -658,7 +666,11 @@
           strokeWeight(r * 0.08)
           circle(0, 0, r * 2)
 
-          s = r * @size / 100
+          # 内枠
+          strokeWeight(r * 0.022)
+          circle(0, 0, r * 1.82)
+
+          s = r * 0.87 * @size / 100
 
           # 塗り ↔ 白抜き
           if @inverted
