@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>家紋生成器</title>
+  <script src="https://cdn.jsdelivr.net/npm/ruby-3_2-wasm-wasi@next/dist/browser.script.iife.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.js"></script>
+  <script type="text/ruby" src="https://raw.githubusercontent.com/ksbmyk/sketch/main/public/p5.rb"></script>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    #code-container {
+      width: 50%;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      line-height: 1.2;
+    }
+    code {
+      color: #fff;
+    }
+    .identifier {
+      color: #679ad1;
+    }
+    .control-structure {
+      color: #bc89bd;
+    }
+    .function {
+      color: #dcdcaf;
+    }
+    .variable {
+      color: #aadafa;
+    }
+    .first-parentheses {
+      color: #f9d849;
+    }
+    .second-parentheses {
+      color: #cc76d1;
+    }
+    .integer {
+      color: #bacdab;
+    }
+    .comment {
+      color: #74985d;
+    }
+    .string {
+      color: #c5947c;
+    }
+
+    .motif-btn {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #333;
+      color: #888;
+      border: 1px solid #555;
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 0 2px;
+      transition: all 0.2s;
+    }
+    .motif-btn.active {
+      background: #ffffff;
+      color: #333;
+      border-color: #ffffff;
+    }
+    .motif-btn:hover {
+      background: #555;
+      color: #fff;
+    }
+    .motif-btn.active:hover {
+      background: #e0e0e0;
+    }
+
+
+    #invert-toggle {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #ffffff;
+      color: #333;
+      border: 2px solid #cccccc;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    #invert-toggle:hover {
+      background: #f5f5f5;
+      border-color: #999;
+    }
+    #invert-toggle:active {
+      background: #e5e5e5;
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 768px) {
+      #invert-toggle {
+        padding: 8px 18px;
+        font-size: 18px;
+      }
+    }
+
+    #result-container {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 10px;
+      background-color: #ffffff;
+    }
+    #sketch-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #btn-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    #btn-row button {
+      padding: 8px 20px;
+      font-size: 14px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #btn-row button:hover {
+      background: #555;
+    }
+
+    .slider-container {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      margin-left: -18px;
+      vertical-align: middle;
+    }
+    .slider-container input[type="range"] {
+      margin: 0;
+      vertical-align: middle;
+      width: 100px;
+      -webkit-appearance: none;
+      height: 20px;
+      background: transparent;
+    }
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      cursor: pointer;
+      margin-top: -8px;
+    }
+    .slider-container input[type="range"]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      background: #666;
+      border-radius: 2px;
+    }
+    .slider-container input[type="range"]:focus {
+      outline: none;
+    }
+    .slider-container input[type="range"]:active::-webkit-slider-thumb {
+      background: #cccccc;
+    }
+    @media (max-width: 768px) {
+      .slider-container input[type="range"] {
+        width: 120px;
+        height: 24px;
+      }
+      .slider-container input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+        margin-top: -10px;
+      }
+      .slider-container input[type="range"]::-webkit-slider-runnable-track {
+        height: 6px;
+      }
+    }
+    .slider-container span {
+      min-width: 50px;
+      text-align: right;
+      margin-right: 10px;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      #result-container {
+        width: 100%;
+        order: -1;
+        padding-top: 5px;
+        padding-bottom: 10px;
+      }
+      #code-container {
+        width: 100%;
+        font-size: 14px;
+        padding: 8px;
+      }
+      .motif-btn {
+        padding: 8px 12px;
+        font-size: 16px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div id="code-container">
+<code><span class="control-structure">def</span> <span class="function">setup</span>
+  <span class="variable">@motif</span> = <button class="motif-btn active" id="btn-maru" data-motif="maru">円</button> <button class="motif-btn" id="btn-hishi" data-motif="hishi">菱</button> <button class="motif-btn" id="btn-hana" data-motif="hana">花</button> <button class="motif-btn" id="btn-ougi" data-motif="ougi">扇</button> <button class="motif-btn" id="btn-uroko" data-motif="uroko">鱗</button>
+  <span class="variable">@center</span> = <button class="motif-btn" id="btn-center-none" data-center="none">なし</button> <button class="motif-btn active" id="btn-center-white" data-center="white">白円</button> <button class="motif-btn" id="btn-center-black" data-center="black">黒円</button> <button class="motif-btn" id="btn-center-ring" data-center="ring">黒縁</button>
+  <span class="variable">@count</span> =<div class="slider-container"><span id="count-value">5</span><input type="range" id="count" min="3" max="12" value="5"></div>
+  <span class="variable">@size</span> =<div class="slider-container"><span id="size-value">80</span><input type="range" id="size" min="20" max="100" value="80"></div>
+  <span class="variable">@inverted</span> = <button id="invert-toggle">false</button>
+  <span class="function">createCanvas</span><span class="first-parentheses">(</span><span class="identifier">windowWidth</span>, <span class="identifier">windowWidth</span><span class="first-parentheses">)</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw</span>
+  <span class="function">background</span><span class="first-parentheses">(</span><span class="integer">255</span><span class="first-parentheses">)</span>
+  <span class="function">translate</span><span class="first-parentheses">(</span><span class="identifier">width</span> / <span class="integer">2</span>, <span class="identifier">height</span> / <span class="integer">2</span><span class="first-parentheses">)</span>
+  <span class="variable">r</span> = <span class="identifier">width</span> * <span class="integer">0.38</span>
+
+  <span class="comment"># 外円</span>
+  <span class="function">noFill</span>
+  <span class="function">stroke</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span>
+  <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.08</span><span class="first-parentheses">)</span>
+  <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">r</span> * <span class="integer">2</span><span class="first-parentheses">)</span>
+
+  <span class="comment"># 内枠</span>
+  <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.022</span><span class="first-parentheses">)</span>
+  <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">r</span> * <span class="integer">1.82</span><span class="first-parentheses">)</span>
+
+  <span class="variable">s</span> = <span class="variable">r</span> * <span class="integer">0.87</span> * <span class="variable">@size</span> / <span class="integer">100</span>
+
+  <span class="comment"># 塗り ↔ 白抜き</span>
+  <span class="control-structure">if</span> <span class="variable">@inverted</span>
+    <span class="function">noFill</span>
+    <span class="function">stroke</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span>
+    <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.02</span><span class="first-parentheses">)</span>
+  <span class="control-structure">else</span>
+    <span class="function">fill</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span>
+    <span class="function">noStroke</span>
+  <span class="control-structure">end</span>
+
+  <span class="control-structure">case</span> <span class="variable">@motif</span>
+  <span class="control-structure">when</span> <span class="string">"maru"</span>
+    <span class="function">draw_maru</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"hishi"</span>
+    <span class="function">draw_hishi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"hana"</span>
+    <span class="function">draw_hana</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"ougi"</span>
+    <span class="function">draw_ougi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"uroko"</span>
+    <span class="function">draw_uroko</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+
+  <span class="variable">center_d</span> = <span class="variable">s</span> * <span class="integer">0.35</span>
+  <span class="control-structure">case</span> <span class="variable">@center</span>
+  <span class="control-structure">when</span> <span class="string">"white"</span>
+    <span class="function">fill</span><span class="first-parentheses">(</span><span class="integer">255</span><span class="first-parentheses">)</span>
+    <span class="function">noStroke</span>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">center_d</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"black"</span>
+    <span class="function">fill</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span>
+    <span class="function">noStroke</span>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">center_d</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"ring"</span>
+    <span class="function">noFill</span>
+    <span class="function">stroke</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span>
+    <span class="function">strokeWeight</span><span class="first-parentheses">(</span><span class="variable">r</span> * <span class="integer">0.02</span><span class="first-parentheses">)</span>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">center_d</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw_maru</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="variable">petal_r</span> = <span class="variable">s</span> * <span class="integer">0.31</span>
+  <span class="variable">dist</span> = <span class="variable">s</span> * <span class="integer">0.69</span>
+  <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="variable">petal_r</span> * <span class="integer">2</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw_hishi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">px</span> = -<span class="variable">sa</span>
+    <span class="variable">py</span> = <span class="variable">ca</span>
+    <span class="variable">d</span> = <span class="variable">s</span> * <span class="integer">0.93</span>
+    <span class="variable">w</span> = <span class="variable">s</span> * <span class="integer">0.14</span>
+    <span class="function">quad</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">ca</span> * <span class="variable">d</span> * <span class="integer">0.5</span> + <span class="variable">px</span> * <span class="variable">w</span>, <span class="variable">sa</span> * <span class="variable">d</span> * <span class="integer">0.5</span> + <span class="variable">py</span> * <span class="variable">w</span>, <span class="variable">ca</span> * <span class="variable">d</span>, <span class="variable">sa</span> * <span class="variable">d</span>, <span class="variable">ca</span> * <span class="variable">d</span> * <span class="integer">0.5</span> - <span class="variable">px</span> * <span class="variable">w</span>, <span class="variable">sa</span> * <span class="variable">d</span> * <span class="integer">0.5</span> - <span class="variable">py</span> * <span class="variable">w</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw_hana</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">px</span> = -<span class="variable">sa</span>
+    <span class="variable">py</span> = <span class="variable">ca</span>
+    <span class="variable">tip</span> = <span class="variable">s</span>
+    <span class="variable">w</span> = <span class="variable">s</span> * <span class="integer">0.26</span>
+    <span class="function">beginShape</span>
+    <span class="variable">steps</span> = <span class="integer">12</span>
+    <span class="second-parentheses">(</span><span class="variable">steps</span> + <span class="integer">1</span><span class="second-parentheses">)</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">st</span>|
+      <span class="variable">t</span> = <span class="variable">st</span>.<span class="function">to_f</span> / <span class="variable">steps</span>
+      <span class="variable">d</span> = <span class="variable">tip</span> * <span class="variable">t</span>
+      <span class="variable">pw</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
+      <span class="function">vertex</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">d</span> + <span class="variable">px</span> * <span class="variable">pw</span>, <span class="variable">sa</span> * <span class="variable">d</span> + <span class="variable">py</span> * <span class="variable">pw</span><span class="first-parentheses">)</span>
+    <span class="control-structure">end</span>
+    <span class="variable">steps</span>.<span class="function">downto</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span> <span class="control-structure">do</span> |<span class="variable">st</span>|
+      <span class="variable">t</span> = <span class="variable">st</span>.<span class="function">to_f</span> / <span class="variable">steps</span>
+      <span class="variable">d</span> = <span class="variable">tip</span> * <span class="variable">t</span>
+      <span class="variable">pw</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
+      <span class="function">vertex</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">d</span> - <span class="variable">px</span> * <span class="variable">pw</span>, <span class="variable">sa</span> * <span class="variable">d</span> - <span class="variable">py</span> * <span class="variable">pw</span><span class="first-parentheses">)</span>
+    <span class="control-structure">end</span>
+    <span class="function">endShape</span><span class="first-parentheses">(</span><span class="identifier">CLOSE</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw_ougi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="variable">span</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="integer">0.35</span>
+  <span class="variable">d</span> = <span class="variable">s</span> * <span class="integer">1.86</span>
+  <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
+    <span class="function">arc</span><span class="first-parentheses">(</span><span class="integer">0</span>, <span class="integer">0</span>, <span class="variable">d</span>, <span class="variable">d</span>, <span class="variable">a</span> - <span class="variable">span</span>, <span class="variable">a</span> + <span class="variable">span</span>, <span class="identifier">PIE</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+
+<span class="control-structure">def</span> <span class="function">draw_uroko</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="variable">tip_d</span> = <span class="variable">s</span> * <span class="integer">0.93</span>
+  <span class="variable">base_d</span> = <span class="variable">s</span> * <span class="integer">0.3</span>
+  <span class="variable">base_w</span> = <span class="variable">s</span> * <span class="integer">0.28</span>
+  <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
+    <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">px</span> = -<span class="variable">sa</span>
+    <span class="variable">py</span> = <span class="variable">ca</span>
+    <span class="function">triangle</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">tip_d</span>, <span class="variable">sa</span> * <span class="variable">tip_d</span>, <span class="variable">ca</span> * <span class="variable">base_d</span> + <span class="variable">px</span> * <span class="variable">base_w</span>, <span class="variable">sa</span> * <span class="variable">base_d</span> + <span class="variable">py</span> * <span class="variable">base_w</span>, <span class="variable">ca</span> * <span class="variable">base_d</span> - <span class="variable">px</span> * <span class="variable">base_w</span>, <span class="variable">sa</span> * <span class="variable">base_d</span> - <span class="variable">py</span> * <span class="variable">base_w</span><span class="first-parentheses">)</span>
+  <span class="control-structure">end</span>
+<span class="control-structure">end</span>
+</code>
+  </div>
+  <div id="result-container">
+    <div id="sketch-wrapper">
+      <div id="sketch-holder"><main></main></div>
+      <div id="btn-row">
+        <button id="download-btn">ダウンロード</button>
+        <button id="copy-btn">コードをコピー</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/ruby">
+    require 'js'
+
+    btn_maru = JS.global[:document].getElementById("btn-maru")
+    btn_hishi = JS.global[:document].getElementById("btn-hishi")
+    btn_hana = JS.global[:document].getElementById("btn-hana")
+    btn_ougi = JS.global[:document].getElementById("btn-ougi")
+    btn_uroko = JS.global[:document].getElementById("btn-uroko")
+    btn_center_none = JS.global[:document].getElementById("btn-center-none")
+    btn_center_white = JS.global[:document].getElementById("btn-center-white")
+    btn_center_black = JS.global[:document].getElementById("btn-center-black")
+    btn_center_ring = JS.global[:document].getElementById("btn-center-ring")
+    count_element = JS.global[:document].getElementById("count")
+    size_element = JS.global[:document].getElementById("size")
+    invert_toggle = JS.global[:document].getElementById("invert-toggle")
+
+    @motif = "maru"
+    @center = "white"
+    @count = count_element[:value].to_i
+    @size = size_element[:value].to_i / 100.0
+    @inverted = false
+
+    def draw_maru(s)
+      petal_r = s * 0.31
+      dist = s * 0.69
+      @count.times do |i|
+        a = TWO_PI / @count * i - HALF_PI
+        circle(cos(a) * dist, sin(a) * dist, petal_r * 2)
+      end
+    end
+
+    def draw_hishi(s)
+      @count.times do |i|
+        a = TWO_PI / @count * i
+        ca = cos(a)
+        sa = sin(a)
+        px = -sa
+        py = ca
+        d = s * 0.93
+        w = s * 0.14
+
+        quad(
+          0, 0,
+          ca * d * 0.5 + px * w, sa * d * 0.5 + py * w,
+          ca * d, sa * d,
+          ca * d * 0.5 - px * w, sa * d * 0.5 - py * w
+        )
+      end
+    end
+
+    def draw_hana(s)
+      @count.times do |i|
+        a = TWO_PI / @count * i - HALF_PI
+        ca = cos(a)
+        sa = sin(a)
+        px = -sa
+        py = ca
+        tip = s
+        w = s * 0.26
+
+        beginShape()
+        steps = 12
+        (steps + 1).times do |st|
+          t = st.to_f / steps
+          d = tip * t
+          pw = sin(t * PI) * w
+          vertex(ca * d + px * pw, sa * d + py * pw)
+        end
+        steps.downto(0) do |st|
+          t = st.to_f / steps
+          d = tip * t
+          pw = sin(t * PI) * w
+          vertex(ca * d - px * pw, sa * d - py * pw)
+        end
+        endShape(CLOSE)
+      end
+    end
+
+    def draw_ougi(s)
+      span = TWO_PI / @count * 0.35
+      d = s * 1.86
+      @count.times do |i|
+        a = TWO_PI / @count * i - HALF_PI
+        arc(0, 0, d, d, a - span, a + span, PIE)
+      end
+    end
+
+    def draw_uroko(s)
+      tip_d = s * 0.93
+      base_d = s * 0.3
+      base_w = s * 0.28
+      @count.times do |i|
+        a = TWO_PI / @count * i - HALF_PI
+        ca = cos(a)
+        sa = sin(a)
+        px = -sa
+        py = ca
+        triangle(
+          ca * tip_d, sa * tip_d,
+          ca * base_d + px * base_w, sa * base_d + py * base_w,
+          ca * base_d - px * base_w, sa * base_d - py * base_w
+        )
+      end
+    end
+
+    def setup
+      def canvas_size
+        if windowWidth <= 768
+          [windowWidth * 0.95, windowHeight * 0.55].min
+        else
+          windowWidth / 2
+        end
+      end
+      cw = canvas_size
+      createCanvas(cw, cw)
+      JS.global[:onresize] = proc {
+        cw = canvas_size
+        resizeCanvas(cw, cw)
+      }
+    end
+
+    def draw
+      background(255)
+      translate(width / 2, height / 2)
+      r = width * 0.38
+
+      # 外円（丸）
+      noFill()
+      stroke(0)
+      strokeWeight(r * 0.08)
+      circle(0, 0, r * 2)
+
+      # 内枠
+      strokeWeight(r * 0.022)
+      circle(0, 0, r * 1.82)
+
+      # 塗り ↔ 白抜き
+      if @inverted
+        noFill()
+        stroke(0)
+        strokeWeight(r * 0.02)
+      else
+        fill(0)
+        noStroke()
+      end
+
+      s = r * 0.87 * @size
+
+      case @motif
+      when "maru"
+        draw_maru(s)
+      when "hishi"
+        draw_hishi(s)
+      when "hana"
+        draw_hana(s)
+      when "ougi"
+        draw_ougi(s)
+      when "uroko"
+        draw_uroko(s)
+      end
+
+      center_d = s * 0.35
+      case @center
+      when "white"
+        fill(255)
+        noStroke()
+        circle(0, 0, center_d)
+      when "black"
+        fill(0)
+        noStroke()
+        circle(0, 0, center_d)
+      when "ring"
+        noFill()
+        stroke(0)
+        strokeWeight(r * 0.02)
+        circle(0, 0, center_d)
+      end
+    end
+
+    P5::init(self)
+
+    motif_btns = [btn_maru, btn_hishi, btn_hana, btn_ougi, btn_uroko]
+
+    btn_maru.addEventListener("click") do
+      @motif = "maru"
+      motif_btns.each { |b| b[:className] = "motif-btn" }
+      btn_maru[:className] = "motif-btn active"
+    end
+
+    btn_hishi.addEventListener("click") do
+      @motif = "hishi"
+      motif_btns.each { |b| b[:className] = "motif-btn" }
+      btn_hishi[:className] = "motif-btn active"
+    end
+
+    btn_hana.addEventListener("click") do
+      @motif = "hana"
+      motif_btns.each { |b| b[:className] = "motif-btn" }
+      btn_hana[:className] = "motif-btn active"
+    end
+
+    btn_ougi.addEventListener("click") do
+      @motif = "ougi"
+      motif_btns.each { |b| b[:className] = "motif-btn" }
+      btn_ougi[:className] = "motif-btn active"
+    end
+
+    btn_uroko.addEventListener("click") do
+      @motif = "uroko"
+      motif_btns.each { |b| b[:className] = "motif-btn" }
+      btn_uroko[:className] = "motif-btn active"
+    end
+
+    btn_center_none.addEventListener("click") do
+      @center = "none"
+      btn_center_none[:className] = "motif-btn active"
+      btn_center_white[:className] = "motif-btn"
+      btn_center_black[:className] = "motif-btn"
+      btn_center_ring[:className] = "motif-btn"
+    end
+
+    btn_center_white.addEventListener("click") do
+      @center = "white"
+      btn_center_none[:className] = "motif-btn"
+      btn_center_white[:className] = "motif-btn active"
+      btn_center_black[:className] = "motif-btn"
+      btn_center_ring[:className] = "motif-btn"
+    end
+
+    btn_center_black.addEventListener("click") do
+      @center = "black"
+      btn_center_none[:className] = "motif-btn"
+      btn_center_white[:className] = "motif-btn"
+      btn_center_black[:className] = "motif-btn active"
+      btn_center_ring[:className] = "motif-btn"
+    end
+
+    btn_center_ring.addEventListener("click") do
+      @center = "ring"
+      btn_center_none[:className] = "motif-btn"
+      btn_center_white[:className] = "motif-btn"
+      btn_center_black[:className] = "motif-btn"
+      btn_center_ring[:className] = "motif-btn active"
+    end
+
+    count_element.addEventListener("input") do
+      @count = count_element[:value].to_i
+      JS.global[:document].getElementById("count-value")[:innerText] = @count.to_s
+    end
+
+    size_element.addEventListener("input") do
+      @size = size_element[:value].to_i / 100.0
+      JS.global[:document].getElementById("size-value")[:innerText] = size_element[:value].to_s
+    end
+
+    invert_toggle.addEventListener("click") do
+      @inverted = !@inverted
+      invert_toggle[:innerText] = @inverted.to_s
+    end
+
+    download_btn = JS.global[:document].getElementById("download-btn")
+    download_btn.addEventListener("click") do
+      now = JS.global[:Date].new
+      timestamp = now.toISOString().to_s.gsub(":", "-").split(".")[0]
+      saveCanvas("kamon_#{timestamp}", "png")
+    end
+
+    copy_btn = JS.global[:document].getElementById("copy-btn")
+    copy_btn.addEventListener("click") do
+      code = <<~RUBY
+        def setup
+          @motif = "#{@motif}"
+          @center = "#{@center}"
+          @count = #{@count}
+          @size = #{(@size * 100).round}
+          @inverted = #{@inverted}
+          createCanvas(windowWidth, windowWidth)
+        end
+
+        def draw
+          background(255)
+          translate(width / 2, height / 2)
+          r = width * 0.38
+
+          # 外円
+          noFill
+          stroke(0)
+          strokeWeight(r * 0.08)
+          circle(0, 0, r * 2)
+
+          # 内枠
+          strokeWeight(r * 0.022)
+          circle(0, 0, r * 1.82)
+
+          s = r * 0.87 * @size / 100
+
+          # 塗り ↔ 白抜き
+          if @inverted
+            noFill
+            stroke(0)
+            strokeWeight(r * 0.02)
+          else
+            fill(0)
+            noStroke
+          end
+
+          case @motif
+          when "maru"
+            draw_maru(s)
+          when "hishi"
+            draw_hishi(s)
+          when "hana"
+            draw_hana(s)
+          when "ougi"
+            draw_ougi(s)
+          when "uroko"
+            draw_uroko(s)
+          end
+
+          center_d = s * 0.35
+          case @center
+          when "white"
+            fill(255)
+            noStroke
+            circle(0, 0, center_d)
+          when "black"
+            fill(0)
+            noStroke
+            circle(0, 0, center_d)
+          when "ring"
+            noFill
+            stroke(0)
+            strokeWeight(r * 0.02)
+            circle(0, 0, center_d)
+          end
+        end
+
+        def draw_maru(s)
+          petal_r = s * 0.31
+          dist = s * 0.69
+          @count.times do |i|
+            a = TWO_PI / @count * i - HALF_PI
+            circle(cos(a) * dist, sin(a) * dist, petal_r * 2)
+          end
+        end
+
+        def draw_hishi(s)
+          @count.times do |i|
+            a = TWO_PI / @count * i
+            ca = cos(a)
+            sa = sin(a)
+            px = -sa
+            py = ca
+            d = s * 0.93
+            w = s * 0.14
+            quad(0, 0, ca * d * 0.5 + px * w, sa * d * 0.5 + py * w, ca * d, sa * d, ca * d * 0.5 - px * w, sa * d * 0.5 - py * w)
+          end
+        end
+
+        def draw_hana(s)
+          @count.times do |i|
+            a = TWO_PI / @count * i - HALF_PI
+            ca = cos(a)
+            sa = sin(a)
+            px = -sa
+            py = ca
+            tip = s
+            w = s * 0.26
+            beginShape
+            steps = 12
+            (steps + 1).times do |st|
+              t = st.to_f / steps
+              d = tip * t
+              pw = sin(t * PI) * w
+              vertex(ca * d + px * pw, sa * d + py * pw)
+            end
+            steps.downto(0) do |st|
+              t = st.to_f / steps
+              d = tip * t
+              pw = sin(t * PI) * w
+              vertex(ca * d - px * pw, sa * d - py * pw)
+            end
+            endShape(CLOSE)
+          end
+        end
+
+        def draw_ougi(s)
+          span = TWO_PI / @count * 0.35
+          d = s * 1.86
+          @count.times do |i|
+            a = TWO_PI / @count * i - HALF_PI
+            arc(0, 0, d, d, a - span, a + span, PIE)
+          end
+        end
+
+        def draw_uroko(s)
+          tip_d = s * 0.93
+          base_d = s * 0.3
+          base_w = s * 0.28
+          @count.times do |i|
+            a = TWO_PI / @count * i - HALF_PI
+            ca = cos(a)
+            sa = sin(a)
+            px = -sa
+            py = ca
+            triangle(ca * tip_d, sa * tip_d, ca * base_d + px * base_w, sa * base_d + py * base_w, ca * base_d - px * base_w, sa * base_d - py * base_w)
+          end
+        end
+      RUBY
+      JS.global[:navigator][:clipboard].writeText(code)
+      copy_btn[:innerText] = "コピーしました"
+      JS.global.setTimeout(proc { copy_btn[:innerText] = "コードをコピー" }, 1500)
+    end
+  </script>
+</body>
+</html>
