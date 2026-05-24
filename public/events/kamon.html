@@ -227,7 +227,7 @@
 <body>
   <div id="code-container">
 <code><span class="control-structure">def</span> <span class="function">setup</span>
-  <span class="variable">@motif</span> = <button class="motif-btn active" id="btn-maru" data-motif="maru">円</button> <button class="motif-btn" id="btn-hishi" data-motif="hishi">菱</button> <button class="motif-btn" id="btn-kikyou" data-motif="kikyou">花</button> <button class="motif-btn" id="btn-ougi" data-motif="ougi">扇</button> <button class="motif-btn" id="btn-uroko" data-motif="uroko">鱗</button>
+  <span class="variable">@motif</span> = <button class="motif-btn active" id="btn-maru" data-motif="maru">円</button> <button class="motif-btn" id="btn-hishi" data-motif="hishi">菱</button> <button class="motif-btn" id="btn-hana" data-motif="hana">花</button> <button class="motif-btn" id="btn-ougi" data-motif="ougi">扇</button> <button class="motif-btn" id="btn-uroko" data-motif="uroko">鱗</button>
   <span class="variable">@center</span> = <button class="motif-btn" id="btn-center-none" data-center="none">なし</button> <button class="motif-btn active" id="btn-center-white" data-center="white">白円</button> <button class="motif-btn" id="btn-center-black" data-center="black">黒円</button> <button class="motif-btn" id="btn-center-ring" data-center="ring">黒縁</button>
   <span class="variable">@count</span> =<div class="slider-container"><span id="count-value">5</span><input type="range" id="count" min="3" max="12" value="5"></div>
   <span class="variable">@size</span> =<div class="slider-container"><span id="size-value">80</span><input type="range" id="size" min="20" max="100" value="80"></div>
@@ -267,8 +267,8 @@
     <span class="function">draw_maru</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
   <span class="control-structure">when</span> <span class="string">"hishi"</span>
     <span class="function">draw_hishi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
-  <span class="control-structure">when</span> <span class="string">"kikyou"</span>
-    <span class="function">draw_kikyou</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+  <span class="control-structure">when</span> <span class="string">"hana"</span>
+    <span class="function">draw_hana</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
   <span class="control-structure">when</span> <span class="string">"ougi"</span>
     <span class="function">draw_ougi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
   <span class="control-structure">when</span> <span class="string">"uroko"</span>
@@ -298,15 +298,15 @@
   <span class="variable">dist</span> = <span class="variable">s</span> * <span class="integer">0.69</span>
   <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
     <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
-    <span class="function">circle</span><span class="first-parentheses">(</span><span class="identifier">Math</span>.<span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="variable">petal_r</span> * <span class="integer">2</span><span class="first-parentheses">)</span>
+    <span class="function">circle</span><span class="first-parentheses">(</span><span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span> * <span class="variable">dist</span>, <span class="variable">petal_r</span> * <span class="integer">2</span><span class="first-parentheses">)</span>
   <span class="control-structure">end</span>
 <span class="control-structure">end</span>
 
 <span class="control-structure">def</span> <span class="function">draw_hishi</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
   <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
     <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span>
-    <span class="variable">ca</span> = <span class="identifier">Math</span>.<span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
-    <span class="variable">sa</span> = <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
     <span class="variable">px</span> = -<span class="variable">sa</span>
     <span class="variable">py</span> = <span class="variable">ca</span>
     <span class="variable">d</span> = <span class="variable">s</span> * <span class="integer">0.93</span>
@@ -315,11 +315,11 @@
   <span class="control-structure">end</span>
 <span class="control-structure">end</span>
 
-<span class="control-structure">def</span> <span class="function">draw_kikyou</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
+<span class="control-structure">def</span> <span class="function">draw_hana</span><span class="first-parentheses">(</span><span class="variable">s</span><span class="first-parentheses">)</span>
   <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
     <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
-    <span class="variable">ca</span> = <span class="identifier">Math</span>.<span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
-    <span class="variable">sa</span> = <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
     <span class="variable">px</span> = -<span class="variable">sa</span>
     <span class="variable">py</span> = <span class="variable">ca</span>
     <span class="variable">tip</span> = <span class="variable">s</span>
@@ -329,13 +329,13 @@
     <span class="second-parentheses">(</span><span class="variable">steps</span> + <span class="integer">1</span><span class="second-parentheses">)</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">st</span>|
       <span class="variable">t</span> = <span class="variable">st</span>.<span class="function">to_f</span> / <span class="variable">steps</span>
       <span class="variable">d</span> = <span class="variable">tip</span> * <span class="variable">t</span>
-      <span class="variable">pw</span> = <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
+      <span class="variable">pw</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
       <span class="function">vertex</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">d</span> + <span class="variable">px</span> * <span class="variable">pw</span>, <span class="variable">sa</span> * <span class="variable">d</span> + <span class="variable">py</span> * <span class="variable">pw</span><span class="first-parentheses">)</span>
     <span class="control-structure">end</span>
     <span class="variable">steps</span>.<span class="function">downto</span><span class="first-parentheses">(</span><span class="integer">0</span><span class="first-parentheses">)</span> <span class="control-structure">do</span> |<span class="variable">st</span>|
       <span class="variable">t</span> = <span class="variable">st</span>.<span class="function">to_f</span> / <span class="variable">steps</span>
       <span class="variable">d</span> = <span class="variable">tip</span> * <span class="variable">t</span>
-      <span class="variable">pw</span> = <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
+      <span class="variable">pw</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">t</span> * <span class="identifier">PI</span><span class="second-parentheses">)</span> * <span class="variable">w</span>
       <span class="function">vertex</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">d</span> - <span class="variable">px</span> * <span class="variable">pw</span>, <span class="variable">sa</span> * <span class="variable">d</span> - <span class="variable">py</span> * <span class="variable">pw</span><span class="first-parentheses">)</span>
     <span class="control-structure">end</span>
     <span class="function">endShape</span><span class="first-parentheses">(</span><span class="identifier">CLOSE</span><span class="first-parentheses">)</span>
@@ -357,8 +357,8 @@
   <span class="variable">base_w</span> = <span class="variable">s</span> * <span class="integer">0.28</span>
   <span class="variable">@count</span>.<span class="function">times</span> <span class="control-structure">do</span> |<span class="variable">i</span>|
     <span class="variable">a</span> = <span class="identifier">TWO_PI</span> / <span class="variable">@count</span> * <span class="variable">i</span> - <span class="identifier">HALF_PI</span>
-    <span class="variable">ca</span> = <span class="identifier">Math</span>.<span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
-    <span class="variable">sa</span> = <span class="identifier">Math</span>.<span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">ca</span> = <span class="function">cos</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
+    <span class="variable">sa</span> = <span class="function">sin</span><span class="second-parentheses">(</span><span class="variable">a</span><span class="second-parentheses">)</span>
     <span class="variable">px</span> = -<span class="variable">sa</span>
     <span class="variable">py</span> = <span class="variable">ca</span>
     <span class="function">triangle</span><span class="first-parentheses">(</span><span class="variable">ca</span> * <span class="variable">tip_d</span>, <span class="variable">sa</span> * <span class="variable">tip_d</span>, <span class="variable">ca</span> * <span class="variable">base_d</span> + <span class="variable">px</span> * <span class="variable">base_w</span>, <span class="variable">sa</span> * <span class="variable">base_d</span> + <span class="variable">py</span> * <span class="variable">base_w</span>, <span class="variable">ca</span> * <span class="variable">base_d</span> - <span class="variable">px</span> * <span class="variable">base_w</span>, <span class="variable">sa</span> * <span class="variable">base_d</span> - <span class="variable">py</span> * <span class="variable">base_w</span><span class="first-parentheses">)</span>
@@ -381,7 +381,7 @@
 
     btn_maru = JS.global[:document].getElementById("btn-maru")
     btn_hishi = JS.global[:document].getElementById("btn-hishi")
-    btn_kikyou = JS.global[:document].getElementById("btn-kikyou")
+    btn_hana = JS.global[:document].getElementById("btn-hana")
     btn_ougi = JS.global[:document].getElementById("btn-ougi")
     btn_uroko = JS.global[:document].getElementById("btn-uroko")
     btn_center_none = JS.global[:document].getElementById("btn-center-none")
@@ -403,15 +403,15 @@
       dist = s * 0.69
       @count.times do |i|
         a = TWO_PI / @count * i - HALF_PI
-        circle(Math.cos(a) * dist, Math.sin(a) * dist, petal_r * 2)
+        circle(cos(a) * dist, sin(a) * dist, petal_r * 2)
       end
     end
 
     def draw_hishi(s)
       @count.times do |i|
         a = TWO_PI / @count * i
-        ca = Math.cos(a)
-        sa = Math.sin(a)
+        ca = cos(a)
+        sa = sin(a)
         px = -sa
         py = ca
         d = s * 0.93
@@ -426,11 +426,11 @@
       end
     end
 
-    def draw_kikyou(s)
+    def draw_hana(s)
       @count.times do |i|
         a = TWO_PI / @count * i - HALF_PI
-        ca = Math.cos(a)
-        sa = Math.sin(a)
+        ca = cos(a)
+        sa = sin(a)
         px = -sa
         py = ca
         tip = s
@@ -441,13 +441,13 @@
         (steps + 1).times do |st|
           t = st.to_f / steps
           d = tip * t
-          pw = Math.sin(t * PI) * w
+          pw = sin(t * PI) * w
           vertex(ca * d + px * pw, sa * d + py * pw)
         end
         steps.downto(0) do |st|
           t = st.to_f / steps
           d = tip * t
-          pw = Math.sin(t * PI) * w
+          pw = sin(t * PI) * w
           vertex(ca * d - px * pw, sa * d - py * pw)
         end
         endShape(CLOSE)
@@ -469,8 +469,8 @@
       base_w = s * 0.28
       @count.times do |i|
         a = TWO_PI / @count * i - HALF_PI
-        ca = Math.cos(a)
-        sa = Math.sin(a)
+        ca = cos(a)
+        sa = sin(a)
         px = -sa
         py = ca
         triangle(
@@ -529,8 +529,8 @@
         draw_maru(s)
       when "hishi"
         draw_hishi(s)
-      when "kikyou"
-        draw_kikyou(s)
+      when "hana"
+        draw_hana(s)
       when "ougi"
         draw_ougi(s)
       when "uroko"
@@ -557,7 +557,7 @@
 
     P5::init(self)
 
-    motif_btns = [btn_maru, btn_hishi, btn_kikyou, btn_ougi, btn_uroko]
+    motif_btns = [btn_maru, btn_hishi, btn_hana, btn_ougi, btn_uroko]
 
     btn_maru.addEventListener("click") do
       @motif = "maru"
@@ -571,10 +571,10 @@
       btn_hishi[:className] = "motif-btn active"
     end
 
-    btn_kikyou.addEventListener("click") do
-      @motif = "kikyou"
+    btn_hana.addEventListener("click") do
+      @motif = "hana"
       motif_btns.each { |b| b[:className] = "motif-btn" }
-      btn_kikyou[:className] = "motif-btn active"
+      btn_hana[:className] = "motif-btn active"
     end
 
     btn_ougi.addEventListener("click") do
@@ -687,8 +687,8 @@
             draw_maru(s)
           when "hishi"
             draw_hishi(s)
-          when "kikyou"
-            draw_kikyou(s)
+          when "hana"
+            draw_hana(s)
           when "ougi"
             draw_ougi(s)
           when "uroko"
@@ -718,15 +718,15 @@
           dist = s * 0.69
           @count.times do |i|
             a = TWO_PI / @count * i - HALF_PI
-            circle(Math.cos(a) * dist, Math.sin(a) * dist, petal_r * 2)
+            circle(cos(a) * dist, sin(a) * dist, petal_r * 2)
           end
         end
 
         def draw_hishi(s)
           @count.times do |i|
             a = TWO_PI / @count * i
-            ca = Math.cos(a)
-            sa = Math.sin(a)
+            ca = cos(a)
+            sa = sin(a)
             px = -sa
             py = ca
             d = s * 0.93
@@ -735,11 +735,11 @@
           end
         end
 
-        def draw_kikyou(s)
+        def draw_hana(s)
           @count.times do |i|
             a = TWO_PI / @count * i - HALF_PI
-            ca = Math.cos(a)
-            sa = Math.sin(a)
+            ca = cos(a)
+            sa = sin(a)
             px = -sa
             py = ca
             tip = s
@@ -749,13 +749,13 @@
             (steps + 1).times do |st|
               t = st.to_f / steps
               d = tip * t
-              pw = Math.sin(t * PI) * w
+              pw = sin(t * PI) * w
               vertex(ca * d + px * pw, sa * d + py * pw)
             end
             steps.downto(0) do |st|
               t = st.to_f / steps
               d = tip * t
-              pw = Math.sin(t * PI) * w
+              pw = sin(t * PI) * w
               vertex(ca * d - px * pw, sa * d - py * pw)
             end
             endShape(CLOSE)
@@ -777,8 +777,8 @@
           base_w = s * 0.28
           @count.times do |i|
             a = TWO_PI / @count * i - HALF_PI
-            ca = Math.cos(a)
-            sa = Math.sin(a)
+            ca = cos(a)
+            sa = sin(a)
             px = -sa
             py = ca
             triangle(ca * tip_d, sa * tip_d, ca * base_d + px * base_w, sa * base_d + py * base_w, ca * base_d - px * base_w, sa * base_d - py * base_w)
