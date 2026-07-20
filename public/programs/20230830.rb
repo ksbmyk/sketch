@@ -5,11 +5,11 @@ def setup
   split = 9
   createCanvas(@side * split, @side * split)
   background(255)
+  noLoop
+  noStroke
 end
 
 def draw
-  noLoop
-  noStroke
   x = 0
   while x < width do
     y = 0
