@@ -1,8 +1,8 @@
 def setup
+  #ブルーナカラーイメージ
+  @colors = ["#eb6100", "#004c97", "#15722c", "#fccc00"]
   @side = 80
   split = 9
-  #ブルーナカラー
-  @colors = %w(#eb6100 #004c97 #15722c #fccc00)
   createCanvas(@side * split, @side * split)
   background(255)
 end
