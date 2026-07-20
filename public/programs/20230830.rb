@@ -14,7 +14,7 @@ def draw
   while x < width do
     y = 0
     while y < width do
-      fill(@colors[rand(0..@colors.length - 1)])
+      fill(@colors.sample)
       ellipse(x + @side/2 , y + @side/2, @side, @side)
       y += @side
     end
