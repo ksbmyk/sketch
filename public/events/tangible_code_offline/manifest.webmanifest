@@ -1,0 +1,10 @@
+{
+  "name": "Tangible Code",
+  "short_name": "Tangible Code",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}
